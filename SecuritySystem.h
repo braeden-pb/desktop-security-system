@@ -10,6 +10,8 @@ enum class Status : int {
     Error
 };
 
+class UI;
+
 class SecuritySystem
 {
 public:
@@ -29,7 +31,7 @@ private:
     //Config object
     //Devices object list
     //Storage Object
-    //UI Object
+    UI* mainUi;
     void setStatus(Status status);
     void initializeSystem();
 
