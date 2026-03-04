@@ -16,6 +16,7 @@ class UI : public wxFrame {
     ~UI();
 
     private:
+    SecuritySystem* m_system;
     wxSimplebook* book;
     enum {
         Home_ID = 0,
