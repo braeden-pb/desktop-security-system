@@ -8,12 +8,21 @@
 #include <wx-3.2/wx/wx.h>
 #include <wx/simplebook.h>
 
+class SecuritySystem;
+
 class UI : public wxFrame {
     public:
-    UI();
+    UI(SecuritySystem* system);
     ~UI();
 
     private:
+    wxSimplebook* book;
+    enum {
+        Home_ID = 0,
+        Setting_ID = 1,
+        Storage_ID = 2,
+        Dashboard_ID = 3
+    };
 
 
 };

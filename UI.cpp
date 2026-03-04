@@ -4,8 +4,14 @@
 
 #include "UI.h"
 
-UI::UI() :wxFrame(nullptr, wxID_ANY, "Security System", wxDefaultPosition) {
-    wxSimplebook* book = new wxSimplebook(this, wxID_ANY);
+UI::UI(SecuritySystem* system) :
+wxFrame(nullptr, wxID_ANY, "Security System", wxDefaultPosition)
+
+{
+
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    book = new wxSimplebook(this, wxID_ANY);
+
 
 
 }

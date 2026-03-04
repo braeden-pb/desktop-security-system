@@ -3,4 +3,9 @@
 //
 
 #include "SecuritySystem.h"
+#include "UI.h"
 
+SecuritySystem::SecuritySystem() {
+    mainUi = new UI(this);
+
+}
