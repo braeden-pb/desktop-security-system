@@ -14,16 +14,19 @@ class UI : public wxFrame {
     public:
     UI(SecuritySystem* system);
     ~UI();
-
-    private:
-    SecuritySystem* m_system;
-    wxSimplebook* book;
-    enum {
+    enum PageID {
         Home_ID = 0,
         Setting_ID = 1,
         Storage_ID = 2,
         Dashboard_ID = 3
     };
+    void SwitchPage(PageID id);
+
+    private:
+    SecuritySystem* m_system;
+    wxSimplebook* book;
+    wxMenuBar *menuBar;
+
 
 
 };

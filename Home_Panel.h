@@ -20,7 +20,6 @@ private:
     bool m_isArmed = false;
     SecuritySystem* m_system;
     UI* m_ui;
-    wxPanel *mainPanel;
     void onConfigButtonPressed(wxCommandEvent& event);
     void onArmButtonPressed(wxCommandEvent& event);
     void onDisarmButtonPressed(wxCommandEvent& event);
