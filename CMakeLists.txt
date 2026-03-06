@@ -16,4 +16,13 @@ add_executable(SecuritySystem
         UI.h
 )
 
+add_executable(AlertTest
+        AlertTest.cpp
+        Alert.cpp
+        Event.cpp
+        SecuritySystem.cpp
+)
+
+target_link_libraries(AlertTest ${wxWidgets_LIBRARIES})
+
 target_link_libraries(SecuritySystem ${wxWidgets_LIBRARIES})
