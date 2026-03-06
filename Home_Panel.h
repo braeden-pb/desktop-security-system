@@ -17,6 +17,7 @@ public:
     ~Home_Panel();
 
 private:
+    bool m_isArmed = false;
     SecuritySystem* m_system;
     UI* m_ui;
     wxPanel *mainPanel;

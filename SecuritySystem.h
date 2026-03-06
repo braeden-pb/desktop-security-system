@@ -4,6 +4,7 @@
 #ifndef GROUP55_SECURITYSYSTEM_H
 #define GROUP55_SECURITYSYSTEM_H
 #include <string>
+#include <memory>
 enum class Status : int {
     armed,
     disarmed,
@@ -24,6 +25,7 @@ public:
     //getStorage
     //getDeviceList
     void soundAlarm();
+    UI* getUI();
 
 
 
@@ -31,7 +33,7 @@ private:
     //Config object
     //Devices object list
     //Storage Object
-    UI* mainUi;
+    std::unique_ptr<UI> mainUi;
     void setStatus(Status status);
     void initializeSystem();
 
