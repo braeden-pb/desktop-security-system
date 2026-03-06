@@ -6,6 +6,10 @@
 #include "UI.h"
 
 SecuritySystem::SecuritySystem() {
-    mainUi = new UI(this);
+    mainUi = std::make_unique<UI>(this);
 
+}
+
+UI *SecuritySystem::getUI() {
+    return mainUi.get();
 }

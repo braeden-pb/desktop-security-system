@@ -9,10 +9,10 @@
 class MyApp : public wxApp {
 public:
     bool OnInit() override {
-        SecuritySystem* system = new SecuritySystem();
-        UI* mainUi = new UI(system);
-        mainUi->Show(true);
-        mainUi->Maximize(true);
+        auto* system = new SecuritySystem();
+        UI* mainUI = system->getUI();
+        mainUI->Show(true);
+        mainUI->Maximize(true);
         return true;
     }
 };

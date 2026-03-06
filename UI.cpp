@@ -10,9 +10,9 @@ wxFrame(nullptr, wxID_ANY, "Security System", wxDefaultPosition),
 m_system(system)
 
 {
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    auto* mainSizer = new wxBoxSizer(wxVERTICAL);
     book = new wxSimplebook(this, wxID_ANY);
-    Home_Panel* homePage = new Home_Panel(book, system,this);
+    auto* homePage = new Home_Panel(book, system,this);
     book->AddPage(homePage, "Home");
     mainSizer->Add(book, 1, wxEXPAND);
 
