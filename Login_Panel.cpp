@@ -4,6 +4,8 @@
 
 #include "Login_Panel.h"
 
+#include "UI.h"
+
 Login_Panel::Login_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     : wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame) {
 
@@ -26,8 +28,7 @@ Login_Panel::Login_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame
     mainColumn->SetMinSize(wxSize(300, 200));
 
     auto* passLabel = new wxStaticText(this, wxID_ANY, "Enter System PIN:");
-    auto* pinInput = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(200, -1), wxTE_PASSWORD | wxTE_CENTRE);
-    pinInput->SetFont(wxFont(18, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+    pinInput = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(200, -1), wxTE_PASSWORD | wxTE_CENTRE);           pinInput->SetFont(wxFont(18, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
     auto* loginBtn = new wxButton(this, wxID_ANY, "LOGIN");
 
     mainColumn->Add(passLabel, 0, wxALIGN_CENTER | wxTOP, 20);
@@ -43,10 +44,15 @@ Login_Panel::Login_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame
 
     this->SetSizer(panelSizer);
 
+    loginBtn->Bind(wxEVT_BUTTON, &Login_Panel::onLogin, this);
 }
 
 void Login_Panel::onLogin(wxCommandEvent &event) {
-
+    if (pinInput->GetValue() == "1234") {
+        m_ui->SwitchPage(UI::Home_ID);
+    } else {
+        wxMessageBox("Incorrect PIN", "Access Denied", wxOK | wxICON_ERROR);
+    }
 }
 
 Login_Panel::~Login_Panel() {

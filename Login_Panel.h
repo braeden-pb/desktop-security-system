@@ -18,6 +18,7 @@ public:
 private:
     SecuritySystem* m_system;
     UI* m_ui;
+    wxTextCtrl *pinInput;
     void onLogin(wxCommandEvent& event);
 };
 
