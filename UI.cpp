@@ -37,9 +37,29 @@ menuBar(nullptr)
 
     Centre();
 
+    Bind(wxEVT_MENU, &UI::onExit, this, wxID_EXIT);
 
 
 
+
+
+
+}
+
+void UI::SwitchPage(PageID id) {
+    if (book) {
+        book->SetSelection(id);
+    }
+
+    this->Layout();
+
+}
+
+void UI::onExit(wxCommandEvent& event) {
+    exit(0);
+}
+
+UI::PageID UI::GetPageID() {
 
 }
 
