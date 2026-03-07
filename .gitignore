@@ -1,0 +1,15 @@
+# CLion and IDE metadata
+.idea/
+*.iws
+*.out
+*.user
+
+# Build directories (matching your recent generator fix)
+cmake-build-*/
+/build/
+
+# Compiled binaries and logs
+*.o
+*.obj
+*.exe
+*.log
