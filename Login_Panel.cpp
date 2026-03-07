@@ -15,8 +15,8 @@ Login_Panel::Login_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame
     auto* titleText = new wxStaticText(this, wxID_ANY, "Securtiy System Login");
     wxFont titleFont(28, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
     titleText->SetFont(titleFont);
-    titleText->InvalidateBestSize();
-    titleText->SetMinSize(titleText->GetBestSize());
+    wxSize trueSize = titleText->GetBestSize();
+    titleText->SetMinSize(wxSize(trueSize.x + 10, trueSize.y));
     panelSizer->Add(titleText, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 20);
     panelSizer->AddStretchSpacer(2);
 
