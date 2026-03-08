@@ -2,20 +2,38 @@
 // Created by Braeden Patierno-Barker on 3/6/2026.
 //
 
-Class Storage {
-    public:
-    Storage();
-    ~Storage();
-    std::string saveImage(Image image) {
-        return image->getPath();
+#include "Storage.h"
+
+Storage::Storage() {}
+
+Storage::~Storage() {}
+
+std::string Storage::saveImage(Image image) {
+    imageList.push_back(image);
+    return image.getPath();
+}
+
+bool Storage::deleteImage(int imageID) {
+    for (auto it = imageList.begin(); it != imageList.end(); ++it) {
+        if (it->getID() == imageID) {
+            imageList.erase(it);
+            return true;
+        }
     }
-    bool deleteImage(Image imageID) {
-        return false;
+
+    return false;
+}
+
+std::list<Image> Storage::listImage() {
+    return imageList;
+}
+
+bool Storage::hasTimeStamp(int imageID) {
+    for (auto img : imageList) {
+        if (img.getID() == imageID) {
+            return true;
+        }
     }
-    list<Image> listImage() {
-        return list<Image>();
-    }
-    bool hasTimeStamp(String imageID) {
-        return false;
-    }
+
+    return false;
 }

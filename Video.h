@@ -7,13 +7,16 @@
 
 #include "File.h"
 #include <string>
+#include <wx/mediactrl.h>
 
 class Video : public File {
 private:
     std::string videoLength;
+    bool isPlaying = false;
+    wxMediaCtrl* player = nullptr;
 
 public:
-    Video(int id, std::string filePath, std::string timeStamp, std::string resolution, std::string videoLength);
+    Video(int id, std::string filePath, std::string timeStamp, std::string resolution, std::string videoLength, bool isPlaying, wxMediaCtrl* player);
     ~Video();
     void play();
     void pause();

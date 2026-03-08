@@ -7,15 +7,20 @@
 
 #include <list>
 #include <string>
+#include "Image.h"
 
 class Storage {
+
+private:
+    std::list<Image> imageList;
+
 public:
     Storage();
     ~Storage();
     std::string saveImage(Image image);
-    bool deleteImage(Image imageID);
-    list<Image> listImage();
-    bool hasTimeStamp(String imageID);
+    bool deleteImage(int imageID);
+    std::list<Image> listImage();
+    bool hasTimeStamp(int imageID);
 };
 
 #endif //GROUP55_STORAGE_H
