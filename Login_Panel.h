@@ -14,11 +14,16 @@ class Login_Panel : public wxPanel {
 public:
     Login_Panel(wxWindow* parent, SecuritySystem* system, UI* mainFrame);
     ~Login_Panel();
+    wxWindow* GetPasswordCtrl();
+    wxWindow* GetLoginButton();
+    bool isLoginSuccessful();
 
 private:
     SecuritySystem* m_system;
     UI* m_ui;
     wxTextCtrl *pinInput;
+    wxButton *loginBtn;
+    bool loginSuccessful;
     void onLogin(wxCommandEvent& event);
 };
 
