@@ -13,3 +13,7 @@ Image::~Image() {}
 std::string Image::getSize() {
     return resolution;
 }
+
+int Image::getDPI() {
+    return dpi;
+}
