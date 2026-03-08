@@ -16,8 +16,6 @@ add_executable(SecuritySystem
         UI.h
         Home_Panel.cpp
         Home_Panel.h
-        Login_Panel.cpp
-        Login_Panel.h
 )
 
 target_link_libraries(SecuritySystem ${wxWidgets_LIBRARIES})
