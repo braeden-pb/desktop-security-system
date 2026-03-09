@@ -7,8 +7,6 @@
 
 #include <wx-3.2/wx/wx.h>
 #include <wx/simplebook.h>
-#include "Home_Panel.h"
-#include "Login_Panel.h"
 
 class SecuritySystem;
 
@@ -25,14 +23,11 @@ class UI : public wxFrame {
     void SwitchPage(PageID id);
     void onExit(wxCommandEvent& event);
     PageID GetPageID();
-    Login_Panel* getLoginPanel();
-
 
     private:
     SecuritySystem* m_system;
     wxSimplebook* book;
     wxMenuBar *menuBar;
-    Login_Panel* loginPage;
 
 
 

@@ -4,8 +4,6 @@
 
 #include "Home_Panel.h"
 
-#include "UI.h"
-
 Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     : wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame) {
 
@@ -63,16 +61,7 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
 
 
 
-
     this->SetSizer(panelSizer);
-
-    logoutBtn->Bind(wxEVT_BUTTON, &Home_Panel::onLogout, this);
-
-}
-
-
-void Home_Panel::onLogout(wxCommandEvent &event) {
-    m_ui->SwitchPage(UI::Login_ID);
 }
 
 Home_Panel::~Home_Panel() {}

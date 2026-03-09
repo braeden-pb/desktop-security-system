@@ -11,13 +11,12 @@ Login_Panel::Login_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame
 
     auto* panelSizer = new wxBoxSizer(wxVERTICAL);
     panelSizer->AddStretchSpacer(1);
-    loginSuccessful = false;
 
     auto* titleText = new wxStaticText(this, wxID_ANY, "Securtiy System Login");
     wxFont titleFont(28, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
     titleText->SetFont(titleFont);
-    titleText->InvalidateBestSize();
-    titleText->SetMinSize(titleText->GetBestSize());
+    wxSize trueSize = titleText->GetBestSize();
+    titleText->SetMinSize(wxSize(trueSize.x + 10, trueSize.y));
     panelSizer->Add(titleText, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 20);
     panelSizer->AddStretchSpacer(2);
 
@@ -30,7 +29,7 @@ Login_Panel::Login_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame
 
     auto* passLabel = new wxStaticText(this, wxID_ANY, "Enter System PIN:");
     pinInput = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(200, -1), wxTE_PASSWORD | wxTE_CENTRE);           pinInput->SetFont(wxFont(18, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
-    loginBtn = new wxButton(this, wxID_ANY, "LOGIN");
+    auto* loginBtn = new wxButton(this, wxID_ANY, "LOGIN");
 
     mainColumn->Add(passLabel, 0, wxALIGN_CENTER | wxTOP, 20);
     mainColumn->Add(pinInput, 0, wxALIGN_CENTER | wxTOP, 10);
@@ -51,20 +50,10 @@ Login_Panel::Login_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame
 void Login_Panel::onLogin(wxCommandEvent &event) {
     if (pinInput->GetValue() == "1234") {
         m_ui->SwitchPage(UI::Home_ID);
-        if (m_ui->GetPageID()==UI::Home_ID) {
-            loginSuccessful = true;
-        }
-        pinInput->Clear();
     } else {
         wxMessageBox("Incorrect PIN", "Access Denied", wxOK | wxICON_ERROR);
     }
 }
-
-wxWindow* Login_Panel::GetPasswordCtrl() { return pinInput; }
-
-wxWindow* Login_Panel::GetLoginButton() { return loginBtn; }
-
-bool Login_Panel::isLoginSuccessful() { return loginSuccessful; }
 
 Login_Panel::~Login_Panel() {
 
