@@ -72,6 +72,7 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
 
     actionBtn->Bind(wxEVT_TOGGLEBUTTON,&Home_Panel::onArmButtonPressed,this);
     logoutBtn->Bind(wxEVT_BUTTON,&Home_Panel::onLogout,this);
+    storageBtn->Bind(wxEVT_BUTTON,&Home_Panel::onStorageButtonPressed,this);
 }
 
 void Home_Panel::onArmButtonPressed(wxCommandEvent &event) {
@@ -97,6 +98,10 @@ void Home_Panel::onArmButtonPressed(wxCommandEvent &event) {
 
 void Home_Panel::onLogout(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Login_ID);
+}
+
+void Home_Panel::onStorageButtonPressed(wxCommandEvent &event) {
+    m_ui->SwitchPage(UI::Storage_ID);
 }
 
 Home_Panel::~Home_Panel() {}

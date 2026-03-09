@@ -26,6 +26,7 @@ private:
     void onConfigButtonPressed(wxCommandEvent& event);
     void onArmButtonPressed(wxCommandEvent& event);
     void onLogout(wxCommandEvent& event);
+    void onStorageButtonPressed(wxCommandEvent& event);
     wxTextCtrl* GetPasswordCtrl();
 };
 
