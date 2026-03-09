@@ -3,14 +3,16 @@
 //
 
 #include "UI.h"
-
+#include "Home_Panel.h"
+#include "Login_Panel.h"
+#include "Storage_Panel.h"
 
 UI::UI(SecuritySystem* system) :
 wxFrame(nullptr, wxID_ANY, "Security System", wxDefaultPosition),
 m_system(system),
 menuBar(nullptr)
 {
-
+    wxInitAllImageHandlers();
     menuBar = new wxMenuBar();
     wxMenu* fileMenu = new wxMenu();
     fileMenu->Append(wxID_ABOUT, "&About");
@@ -25,9 +27,11 @@ menuBar(nullptr)
     auto* mainSizer = new wxBoxSizer(wxVERTICAL);
     book = new wxSimplebook(this, wxID_ANY);
     auto* homePage = new Home_Panel(book, system,this);
-    loginPage = new Login_Panel(book,system,this);
+    auto* loginPage = new Login_Panel(book,system,this);
+    auto storagePage = new Storage_Panel(book,system,this);
     book->AddPage(loginPage, "Login");
     book->AddPage(homePage, "Home");
+    book->AddPage(storagePage,"Storage");
     mainSizer->Add(book, 1, wxEXPAND);
 
     SetSizer(mainSizer);
@@ -56,10 +60,6 @@ void UI::SwitchPage(PageID id) {
 
 void UI::onExit(wxCommandEvent& event) {
     exit(0);
-}
-
-Login_Panel* UI::getLoginPanel() {
-    return loginPage;
 }
 
 UI::PageID UI::GetPageID() {

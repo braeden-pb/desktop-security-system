@@ -21,6 +21,14 @@
   </component>
   <component name="CMakeRunConfigurationManager">
     <generated>
+      <config projectName="group55" targetName="gmock_main" />
+      <config projectName="group55" targetName="StorageTests" />
+      <config projectName="group55" targetName="gtest" />
+      <config projectName="group55" targetName="ImageTests" />
+      <config projectName="group55" targetName="FileTests" />
+      <config projectName="group55" targetName="VideoTests" />
+      <config projectName="group55" targetName="gtest_main" />
+      <config projectName="group55" targetName="gmock" />
       <config projectName="group55" targetName="SecuritySystem" />
     </generated>
   </component>
@@ -30,7 +38,16 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="773cc61e-a115-48b7-8d61-df1442a310c9" name="Changes" comment="fix CMakeLists.txt" />
+    <list default="true" id="773cc61e-a115-48b7-8d61-df1442a310c9" name="Changes" comment="add arm button functionaltiy, add status label, create config_panel class">
+      <change afterPath="$PROJECT_DIR$/Storage_Panel.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Storage_Panel.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Home_Panel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Home_Panel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Home_Panel.h" beforeDir="false" afterPath="$PROJECT_DIR$/Home_Panel.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/UI.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI.h" beforeDir="false" afterPath="$PROJECT_DIR$/UI.h" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -104,11 +121,60 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="C/C++ File.TEST_UI.cpp">
+  <component name="RunManager" selected="CMake Application.run securitySystem">
     <configuration name="All in VideoTests.cpp" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" TEST_PATTERN="all-tests(file://$PROJECT_DIR$/VideoTests.cpp)" TEST_MODE="PATTERN">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FileTests" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="group55" TARGET_NAME="FileTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="group55" RUN_TARGET_NAME="FileTests" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ImageTests" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="group55" TARGET_NAME="ImageTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="group55" RUN_TARGET_NAME="ImageTests" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="StorageTests" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="group55" TARGET_NAME="StorageTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="group55" RUN_TARGET_NAME="StorageTests" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VideoTests" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="group55" TARGET_NAME="VideoTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="group55" RUN_TARGET_NAME="VideoTests" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gmock" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="group55" TARGET_NAME="gmock" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gmock_main" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="group55" TARGET_NAME="gmock_main" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gtest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="group55" TARGET_NAME="gtest" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gtest_main" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="group55" TARGET_NAME="gtest_main" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="run securitySystem" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="group55" TARGET_NAME="SecuritySystem" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="group55" RUN_TARGET_NAME="SecuritySystem">
@@ -129,10 +195,18 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Google Test.All in VideoTests.cpp" />
-      <item itemvalue="CMake Application.run securitySystem" />
       <item itemvalue="C/C++ File.TEST_UI.cpp" />
       <item itemvalue="C/C++ File.VideoTests.cpp" />
+      <item itemvalue="CMake Application.run securitySystem" />
+      <item itemvalue="CMake Application.gmock" />
+      <item itemvalue="CMake Application.gmock_main" />
+      <item itemvalue="CMake Application.gtest" />
+      <item itemvalue="CMake Application.gtest_main" />
+      <item itemvalue="Google Test.FileTests" />
+      <item itemvalue="Google Test.ImageTests" />
+      <item itemvalue="Google Test.StorageTests" />
+      <item itemvalue="Google Test.VideoTests" />
+      <item itemvalue="Google Test.All in VideoTests.cpp" />
     </list>
     <recent_temporary>
       <list>
@@ -216,7 +290,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773015448730</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="add arm button functionaltiy, add status label, create config_panel class">
+      <option name="closed" value="true" />
+      <created>1773020251174</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1773020251174</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -264,6 +346,7 @@
     <MESSAGE value="try to get test to work" />
     <MESSAGE value="fix UI errors" />
     <MESSAGE value="fix CMakeLists.txt" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix CMakeLists.txt" />
+    <MESSAGE value="add arm button functionaltiy, add status label, create config_panel class" />
+    <option name="LAST_COMMIT_MESSAGE" value="add arm button functionaltiy, add status label, create config_panel class" />
   </component>
 </project>
