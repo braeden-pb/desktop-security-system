@@ -26,7 +26,7 @@ menuBar(nullptr)
     auto* mainSizer = new wxBoxSizer(wxVERTICAL);
     book = new wxSimplebook(this, wxID_ANY);
     auto* homePage = new Home_Panel(book, system,this);
-    auto loginPage = new Login_Panel(book,system,this);
+    auto* loginPage = new Login_Panel(book,system,this);
     book->AddPage(loginPage, "Login");
     book->AddPage(homePage, "Home");
     mainSizer->Add(book, 1, wxEXPAND);
@@ -60,7 +60,7 @@ void UI::onExit(wxCommandEvent& event) {
 }
 
 UI::PageID UI::GetPageID() {
-
+    return static_cast<PageID>(book->GetSelection());
 }
 
 UI::~UI() {}
