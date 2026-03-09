@@ -1,0 +1,19 @@
+Index: UI.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>//\n// Created by evan on 2026-02-23.\n//\n\n#include \"UI.h\"\n#include \"Home_Panel.h\"\n#include \"Login_Panel.h\"\n\nUI::UI(SecuritySystem* system) :\nwxFrame(nullptr, wxID_ANY, \"Security System\", wxDefaultPosition),\nm_system(system),\nmenuBar(nullptr)\n{\n\n    menuBar = new wxMenuBar();\n    wxMenu* fileMenu = new wxMenu();\n    fileMenu->Append(wxID_ABOUT, \"&About\");\n    fileMenu->AppendSeparator();\n    fileMenu->Append(wxID_EXIT, \"&Exit\");\n\n    menuBar->Append(fileMenu,\"&File\");\n\n    wxFrameBase::SetMenuBar(menuBar);\n\n\n    auto* mainSizer = new wxBoxSizer(wxVERTICAL);\n    book = new wxSimplebook(this, wxID_ANY);\n    auto* homePage = new Home_Panel(book, system,this);\n    auto loginPage = new Login_Panel(book,system,this);\n    book->AddPage(loginPage, \"Login\");\n    book->AddPage(homePage, \"Home\");\n    mainSizer->Add(book, 1, wxEXPAND);\n\n    SetSizer(mainSizer);\n\n    this->SetMinSize(wxSize(600, 400));\n\n    Centre();\n\n    Bind(wxEVT_MENU, &UI::onExit, this, wxID_EXIT);\n\n\n\n\n\n\n}\n\nvoid UI::SwitchPage(PageID id) {\n    if (book) {\n        book->SetSelection(id);\n    }\n\n    this->Layout();\n\n}\n\nvoid UI::onExit(wxCommandEvent& event) {\n    exit(0);\n}\n\nUI::PageID UI::GetPageID() {\n\n}\n\nUI::~UI() {}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/UI.cpp b/UI.cpp
+--- a/UI.cpp	(revision 298f6ec2defcfa478f80e276fd7e623017bd058c)
++++ b/UI.cpp	(date 1773014214440)
+@@ -60,7 +60,7 @@
+ }
+ 
+ UI::PageID UI::GetPageID() {
+-
++    return book
+ }
+ 
+ UI::~UI() {}
