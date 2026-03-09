@@ -15,14 +15,12 @@ class UI : public wxFrame {
     UI(SecuritySystem* system);
     ~UI();
     enum PageID {
-        Login_ID = 0,
-        Home_ID = 1,
-        Setting_ID = 2,
-        Storage_ID = 4,
+        Home_ID = 0,
+        Setting_ID = 1,
+        Storage_ID = 2,
+        Dashboard_ID = 3
     };
     void SwitchPage(PageID id);
-    void onExit(wxCommandEvent& event);
-    PageID GetPageID();
 
     private:
     SecuritySystem* m_system;
