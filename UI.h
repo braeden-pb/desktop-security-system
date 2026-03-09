@@ -17,8 +17,8 @@ class UI : public wxFrame {
     enum PageID {
         Login_ID = 0,
         Home_ID = 1,
-        Setting_ID = 2,
-        Storage_ID = 4,
+        Storage_ID = 2,
+        Setting_ID = 3
     };
     void SwitchPage(PageID id);
     void onExit(wxCommandEvent& event);
