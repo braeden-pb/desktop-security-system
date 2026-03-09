@@ -28,8 +28,6 @@ add_executable(SecuritySystem
         Login_Panel.h Login_Panel.cpp
         Config_Panel.cpp
         Config_Panel.h
-        Storage_Panel.cpp
-        Storage_Panel.h
 )
 
 add_executable(StorageTests

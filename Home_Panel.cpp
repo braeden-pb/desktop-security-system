@@ -4,7 +4,6 @@
 
 #include "Home_Panel.h"
 
-#include "SecuritySystem.h"
 #include "UI.h"
 
 Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
@@ -18,16 +17,12 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     panelSizer->AddStretchSpacer(1);
 
     auto* leftColumn = new wxBoxSizer(wxVERTICAL);
-    statusLabel = new wxStaticText(this, wxID_ANY, "Status : Disarmed");
     auto* cameraPlaceholder = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(400, 300));
     cameraPlaceholder->SetMinSize(wxSize(200, 150));
     cameraPlaceholder->SetBackgroundColour(wxColour(30, 30, 30)); // Dark grey placeholder
-    actionBtn = new wxToggleButton(this, wxID_ANY, "ARM SYSTEM");
+    auto* actionBtn = new wxButton(this, wxID_ANY, "ARM SYSTEM");
     actionBtn->SetFont(buttonFont);
-    actionBtn->SetForegroundColour(*wxGREEN);
 
-
-    leftColumn->Add(statusLabel,0,wxEXPAND);
     leftColumn->Add(cameraPlaceholder, 3, wxEXPAND | wxBOTTOM, 20); // Camera gets more space
     leftColumn->Add(actionBtn, 1, wxEXPAND);
 
@@ -68,40 +63,16 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
 
 
 
+
     this->SetSizer(panelSizer);
 
-    actionBtn->Bind(wxEVT_TOGGLEBUTTON,&Home_Panel::onArmButtonPressed,this);
-    logoutBtn->Bind(wxEVT_BUTTON,&Home_Panel::onLogout,this);
-    storageBtn->Bind(wxEVT_BUTTON,&Home_Panel::onStorageButtonPressed,this);
-}
-
-void Home_Panel::onArmButtonPressed(wxCommandEvent &event) {
-    if (m_isArmed == false) {
-        actionBtn->SetValue(true);
-        actionBtn->SetLabel("DISARM System");
-        actionBtn->SetForegroundColour(*wxRED);
-        statusLabel->SetLabel("Status: Armed");
-        m_system->setStatus(Status::armed);
-        m_isArmed = true;
-    }
-    else {
-        actionBtn->SetValue(false);
-        actionBtn->SetLabel("ARM SYSTEM");
-        actionBtn->SetForegroundColour(*wxGREEN);
-        statusLabel->SetLabel("Status: Disarmed");
-
-        m_system->setStatus(Status::disarmed);
-        m_isArmed = false;
-    }
+    logoutBtn->Bind(wxEVT_BUTTON, &Home_Panel::onLogout, this);
 
 }
+
 
 void Home_Panel::onLogout(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Login_ID);
-}
-
-void Home_Panel::onStorageButtonPressed(wxCommandEvent &event) {
-    m_ui->SwitchPage(UI::Storage_ID);
 }
 
 Home_Panel::~Home_Panel() {}
