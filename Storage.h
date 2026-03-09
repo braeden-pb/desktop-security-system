@@ -7,17 +7,20 @@
 
 #include <list>
 #include <string>
+#include <filesystem>
+#include <chrono>
 #include "Image.h"
 
 class Storage {
 
 private:
     std::list<Image> imageList;
+    std::string storagePath = "./saved_data/";
 
 public:
     Storage();
     ~Storage();
-    std::string saveImage(Image image);
+    std::string saveImage(Image image, std::string sourcePath);
     bool deleteImage(int imageID);
     std::list<Image> listImage();
     bool hasTimeStamp(int imageID);

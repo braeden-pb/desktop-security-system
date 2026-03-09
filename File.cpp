@@ -25,3 +25,7 @@ std::string File::getTimeStamp() {
 std::string File::getResolution() {
     return resolution;
 }
+
+void File::setPath(std::string newPath) {
+    this->filePath = newPath;
+}

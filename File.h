@@ -21,6 +21,8 @@ public:
     std::string getPath();
     std::string getTimeStamp();
     std::string getResolution();
+    void setPath(std::string newPath);
+
 };
 
 #endif //GROUP55_FILE_H
