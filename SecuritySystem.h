@@ -26,6 +26,8 @@ public:
     //getDeviceList
     void soundAlarm();
     UI* getUI();
+    Status systemStatus;
+    void setStatus(Status status);
 
 
 
@@ -34,7 +36,6 @@ private:
     //Devices object list
     //Storage Object
     std::unique_ptr<UI> mainUi;
-    void setStatus(Status status);
     void initializeSystem();
 
 };

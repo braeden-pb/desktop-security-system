@@ -6,6 +6,7 @@
 #define GROUP55_HOME_PANEL_H
 
 #include <wx-3.2/wx/wx.h>
+#include <wx/tglbtn.h>
 
 
 class UI;
@@ -20,9 +21,10 @@ private:
     bool m_isArmed = false;
     SecuritySystem* m_system;
     UI* m_ui;
+    wxToggleButton* actionBtn;
+    wxStaticText* statusLabel;
     void onConfigButtonPressed(wxCommandEvent& event);
     void onArmButtonPressed(wxCommandEvent& event);
-    void onDisarmButtonPressed(wxCommandEvent& event);
     void onLogout(wxCommandEvent& event);
     wxTextCtrl* GetPasswordCtrl();
 };

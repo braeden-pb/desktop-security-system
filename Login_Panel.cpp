@@ -50,6 +50,7 @@ Login_Panel::Login_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame
 void Login_Panel::onLogin(wxCommandEvent &event) {
     if (pinInput->GetValue() == "1234") {
         m_ui->SwitchPage(UI::Home_ID);
+        pinInput->Clear();
     } else {
         wxMessageBox("Incorrect PIN", "Access Denied", wxOK | wxICON_ERROR);
     }
