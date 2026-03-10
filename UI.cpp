@@ -66,7 +66,7 @@ UI::PageID UI::GetPageID() {
     return static_cast<PageID>(book->GetSelection());
 }
 
-Storage_Panel *UI::getStoragePanel() {
+Storage_Panel* UI::getStoragePanel() {
     return storagePage;
 }
 

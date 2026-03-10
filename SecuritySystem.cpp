@@ -22,6 +22,14 @@ void SecuritySystem::setStatus(Status status) {
     systemStatus = status;
 }
 
+void SecuritySystem::arm() {
+    setStatus(Status::armed);
+}
+
+void SecuritySystem::disarm() {
+    setStatus(Status::disarmed);
+}
+
 Storage *SecuritySystem::getStorage() {
     return mainStorage.get();
 }

@@ -23,8 +23,8 @@ public:
     SecuritySystem();
     ~SecuritySystem();
     Status getStatus();
-    void arm(const std::string& password);
-    void disarm(const std::string& password);
+    void arm();
+    void disarm();
     //getConfig
     std::list<std::pair<int, std::string>> getAllImagePaths();
     Storage* getStorage();
@@ -32,7 +32,6 @@ public:
     void soundAlarm();
     UI* getUI();
     Status systemStatus;
-    void setStatus(Status status);
 
 
 
@@ -42,6 +41,7 @@ private:
     std::unique_ptr<Storage> mainStorage;
     std::unique_ptr<UI> mainUi;
     void initializeSystem();
+    void setStatus(Status status);
 
 };
 

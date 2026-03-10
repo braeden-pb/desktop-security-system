@@ -100,28 +100,46 @@ void Storage_Panel::loadImages() {
         if (!thumbnail.IsOk()) {
             continue;
         }
+        // Container panel for thumb + overlay
         wxPanel* itemPanel = new wxPanel(galleryPanel, wxID_ANY);
-        wxBoxSizer* itemSizer = new wxBoxSizer(wxVERTICAL);
+        itemPanel->SetMinSize(wxSize(250, 250));
 
         wxStaticBitmap* thumb = new wxStaticBitmap(itemPanel, wxID_ANY, thumbnail);
-        thumb->SetMinSize(wxSize(250, 250));
+        thumb->SetPosition(wxPoint(0, 0));
+        thumb->SetSize(wxSize(250, 250));
         thumb->Bind(wxEVT_LEFT_DOWN, [this, path](wxMouseEvent&) {
             OpenFullImage(path);
         });
 
-        wxButton* deleteBtn = new wxButton(itemPanel, wxID_ANY, "Delete");
-        deleteBtn->SetBackgroundColour(wxColour(200, 0, 0));
+        // Small delete button in top-right corner
+        wxButton* deleteBtn = new wxButton(itemPanel, wxID_ANY, "x",
+            wxPoint(210, 5), wxSize(35, 35));
+        deleteBtn->SetBackgroundColour(wxColour(180, 30, 30));
         deleteBtn->SetForegroundColour(*wxWHITE);
-        deleteBtn->Bind(wxEVT_BUTTON, [this,id, path, itemPanel](wxCommandEvent&) {
+        deleteBtn->SetWindowStyleFlag(wxBORDER_NONE);
+
+        // Hover effect
+        deleteBtn->Bind(wxEVT_ENTER_WINDOW, [deleteBtn](wxMouseEvent& e) {
+            deleteBtn->SetBackgroundColour(wxColour(220, 50, 50));
+            deleteBtn->Refresh();
+            e.Skip();
+        });
+        deleteBtn->Bind(wxEVT_LEAVE_WINDOW, [deleteBtn](wxMouseEvent& e) {
+            deleteBtn->SetBackgroundColour(wxColour(180, 30, 30));
+            deleteBtn->Refresh();
+            e.Skip();
+        });
+
+        deleteBtn->Bind(wxEVT_BUTTON, [this, id,path, itemPanel](wxCommandEvent&) {
+            int result = wxMessageBox("Are you sure you want to delete this file","Confirm?",wxYES_NO);
+        if (result==wxYES) {
             m_system->getStorage()->deleteImage(id);
             itemPanel->Destroy();
             galleryPanel->FitInside();
             galleryPanel->Layout();
-        });
+        }
 
-        itemSizer->Add(thumb, 0, wxALIGN_CENTER);
-        itemSizer->Add(deleteBtn, 0, wxEXPAND | wxTOP, 5);
-        itemPanel->SetSizer(itemSizer);
+        });
 
         gridSizer->Add(itemPanel, 1, wxEXPAND | wxALL, 5);
     }

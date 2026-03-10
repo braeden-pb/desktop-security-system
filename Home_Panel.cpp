@@ -82,7 +82,7 @@ void Home_Panel::onArmButtonPressed(wxCommandEvent &event) {
         actionBtn->SetLabel("DISARM System");
         actionBtn->SetForegroundColour(*wxRED);
         statusLabel->SetLabel("Status: Armed");
-        m_system->setStatus(Status::armed);
+        m_system->arm();
         m_isArmed = true;
     }
     else {
@@ -91,7 +91,7 @@ void Home_Panel::onArmButtonPressed(wxCommandEvent &event) {
         actionBtn->SetForegroundColour(*wxGREEN);
         statusLabel->SetLabel("Status: Disarmed");
 
-        m_system->setStatus(Status::disarmed);
+        m_system->disarm();
         m_isArmed = false;
     }
 
