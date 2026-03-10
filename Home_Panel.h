@@ -5,7 +5,7 @@
 #ifndef GROUP55_HOME_PANEL_H
 #define GROUP55_HOME_PANEL_H
 
-#include <wx-3.2/wx/wx.h>
+#include <wx/wx.h>
 #include <wx/tglbtn.h>
 
 
