@@ -32,14 +32,15 @@ Storage *SecuritySystem::getStorage() {
     return mainStorage.get();
 }
 
-std::list<std::pair<int, std::string>> SecuritySystem::getAllImagePaths() {
-    std::list<std::pair<int, std::string>> paths;
+std::list<std::tuple<int,std::string,std::string>> SecuritySystem::getAllImages() {
+    std::list<std::tuple<int,std::string,std::string>> paths;
     // Get the list of objects from your storage class
     auto images = mainStorage->listImage();
 
         for (const auto& img : images) {
 
-            paths.emplace_back(File(img).getID(),img.getPath());
+            File f(img);
+            paths.emplace_back(f.getID(), f.getTimeStamp(), img.getPath());
         }
     return paths;
 }

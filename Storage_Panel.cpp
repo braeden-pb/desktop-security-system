@@ -33,7 +33,7 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(ui) {
     galleryPanel = new wxScrolledWindow(this, wxID_ANY);
 
 
-    imageList = system->getAllImagePaths();
+    imageList = system->getAllImages();
 
     gridSizer = new wxFlexGridSizer(0, 4, 15, 15);
     for (int i = 0; i < 4; i++) {
@@ -87,7 +87,7 @@ void Storage_Panel::loadImages() {
     galleryPanel->Layout();
 
 
-    imageList = m_system->getAllImagePaths();
+    imageList = m_system->getAllImages();
 
     if (imageList.empty()) {
         errorLabel->SetLabel("No Images or Videos");

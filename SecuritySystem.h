@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "Storage.h"
+#include <tuple>
 
 enum class Status : int {
     armed,
@@ -26,7 +27,7 @@ public:
     void arm();
     void disarm();
     //getConfig
-    std::list<std::pair<int, std::string>> getAllImagePaths();
+    std::list<std::tuple<int,std::string, std::string>> getAllImages();
     Storage* getStorage();
     //getDeviceList
     void soundAlarm();
