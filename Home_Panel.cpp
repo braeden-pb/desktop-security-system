@@ -104,6 +104,7 @@ void Home_Panel::onLogout(wxCommandEvent &event) {
 void Home_Panel::onStorageButtonPressed(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Storage_ID);
     m_ui->getStoragePanel()->loadImages();
+    m_ui->getStoragePanel()->Layout();
 }
 
 Home_Panel::~Home_Panel() {}

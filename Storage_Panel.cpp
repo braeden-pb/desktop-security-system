@@ -55,13 +55,13 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(ui) {
     this->SetSizer(outerSizer);
 
     errorLabel = new wxStaticText(this, wxID_ANY, "");
-    errorLabel->Hide();
-
     homeBtn->Bind(wxEVT_BUTTON,&Storage_Panel::onBackHome,this);
 
 }
 
 wxBitmap Storage_Panel::loadThumbnail(const wxString& path) {
+
+    wxLogNull noLog;
     wxImage img(path, wxBITMAP_TYPE_ANY);
     if (!img.IsOk()) return wxNullBitmap;
 
@@ -81,36 +81,55 @@ wxBitmap Storage_Panel::loadThumbnail(const wxString& path) {
 }
 
 void Storage_Panel::loadImages() {
+    imageList.clear();
+    gridSizer->Clear(true);
+    galleryPanel->FitInside();
+    galleryPanel->Layout();
+
+
+    imageList = m_system->getAllImagePaths();
+
     if (imageList.empty()) {
         errorLabel->SetLabel("No Images or Videos");
         outerSizer->AddStretchSpacer(1);
         outerSizer->Add(errorLabel, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 50);
         return;
     }
-    for (const auto& path : imageList) {
+    for (const auto& [id,path] : imageList) {
         wxBitmap thumbnail = loadThumbnail(path);
         if (!thumbnail.IsOk()) {
-
             continue;
         }
-        wxStaticBitmap* thumb = new wxStaticBitmap(galleryPanel, wxID_ANY, thumbnail);
+        wxPanel* itemPanel = new wxPanel(galleryPanel, wxID_ANY);
+        wxBoxSizer* itemSizer = new wxBoxSizer(wxVERTICAL);
+
+        wxStaticBitmap* thumb = new wxStaticBitmap(itemPanel, wxID_ANY, thumbnail);
         thumb->SetMinSize(wxSize(250, 250));
-
-
-        thumb->Bind(wxEVT_LEFT_DOWN, [this, path](wxMouseEvent& event) {
+        thumb->Bind(wxEVT_LEFT_DOWN, [this, path](wxMouseEvent&) {
             OpenFullImage(path);
-    });
+        });
 
-        gridSizer->Add(thumb, 1, wxEXPAND | wxALL, 5);
+        wxButton* deleteBtn = new wxButton(itemPanel, wxID_ANY, "Delete");
+        deleteBtn->SetBackgroundColour(wxColour(200, 0, 0));
+        deleteBtn->SetForegroundColour(*wxWHITE);
+        deleteBtn->Bind(wxEVT_BUTTON, [this,id, path, itemPanel](wxCommandEvent&) {
+            m_system->getStorage()->deleteImage(id);
+            itemPanel->Destroy();
+            galleryPanel->FitInside();
+            galleryPanel->Layout();
+        });
+
+        itemSizer->Add(thumb, 0, wxALIGN_CENTER);
+        itemSizer->Add(deleteBtn, 0, wxEXPAND | wxTOP, 5);
+        itemPanel->SetSizer(itemSizer);
+
+        gridSizer->Add(itemPanel, 1, wxEXPAND | wxALL, 5);
     }
     galleryPanel->FitInside();
 }
 
 void Storage_Panel::onBackHome(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Home_ID);
-    gridSizer->Clear();
-    galleryPanel->FitInside();
-    galleryPanel->Layout();
 }
 
 void Storage_Panel::OnGalleryResize(wxSizeEvent& event) {

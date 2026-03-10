@@ -24,7 +24,7 @@ public:
     wxFlexGridSizer* gridSizer;
     wxScrolledWindow* galleryPanel;
     wxBoxSizer* outerSizer;
-    std::list<std::string> imageList;
+    std::list<std::pair<int, std::string>> imageList;
     wxBitmap loadThumbnail(const wxString& filepath);
     void OnGalleryResize(wxSizeEvent& event);
     void OpenFullImage(const wxString& path);

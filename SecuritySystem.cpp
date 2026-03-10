@@ -22,13 +22,18 @@ void SecuritySystem::setStatus(Status status) {
     systemStatus = status;
 }
 
-std::list<std::string> SecuritySystem::getAllImagePaths() {
-    std::list<std::string> paths;
+Storage *SecuritySystem::getStorage() {
+    return mainStorage.get();
+}
+
+std::list<std::pair<int, std::string>> SecuritySystem::getAllImagePaths() {
+    std::list<std::pair<int, std::string>> paths;
     // Get the list of objects from your storage class
     auto images = mainStorage->listImage();
 
         for (const auto& img : images) {
-            paths.push_back(img.getPath());
+
+            paths.emplace_back(File(img).getID(),img.getPath());
         }
     return paths;
 }

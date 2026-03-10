@@ -26,7 +26,8 @@ public:
     void arm(const std::string& password);
     void disarm(const std::string& password);
     //getConfig
-    std::list<std::string> getAllImagePaths();
+    std::list<std::pair<int, std::string>> getAllImagePaths();
+    Storage* getStorage();
     //getDeviceList
     void soundAlarm();
     UI* getUI();

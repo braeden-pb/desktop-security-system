@@ -8,7 +8,7 @@
 namespace fs = std::filesystem;
 
 Storage::Storage() {
-    storagePath = "../saved_data/";
+    storagePath = fs::current_path().string() + "/saved_data/";;
     if (!fs::exists(storagePath)) {
         fs::create_directory(storagePath);
     }

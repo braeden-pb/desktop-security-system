@@ -34,6 +34,7 @@ add_executable(SecuritySystem
         Storage.cpp Storage.h
         Image.h Image.cpp
         File.cpp File.h
+        Home_Panel.cpp
 
 )
 
