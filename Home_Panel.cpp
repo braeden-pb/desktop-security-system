@@ -87,6 +87,9 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     actionBtn->Bind(wxEVT_TOGGLEBUTTON,&Home_Panel::onArmButtonPressed,this);
     logoutBtn->Bind(wxEVT_BUTTON,&Home_Panel::onLogout,this);
     storageBtn->Bind(wxEVT_BUTTON,&Home_Panel::onStorageButtonPressed,this);
+    alarmButton->Bind(wxEVT_TOGGLEBUTTON,&Home_Panel::onAlarmButtonPressed,this);
+
+
 }
 
 /**
@@ -98,7 +101,7 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
  * @param event The wxCommandEvent triggered by the toggle button.
  */
 void Home_Panel::onArmButtonPressed(wxCommandEvent &event) {
-    if (m_isArmed == false) {
+    if (!m_isArmed) {
         actionBtn->SetValue(true);
         actionBtn->SetLabel("DISARM System");
         actionBtn->SetForegroundColour(*wxRED);

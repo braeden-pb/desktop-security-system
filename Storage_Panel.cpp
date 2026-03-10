@@ -41,9 +41,6 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(ui) {
 
     galleryPanel = new wxScrolledWindow(this, wxID_ANY);
 
-
-    imageList = system->getAllImages();
-
     gridSizer = new wxFlexGridSizer(0, 4, 15, 15);
     for (int i = 0; i < 4; i++) {
         gridSizer->AddGrowableCol(i, 1);
@@ -64,6 +61,9 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(ui) {
     this->SetSizer(outerSizer);
 
     errorLabel = new wxStaticText(this, wxID_ANY, "");
+    outerSizer->AddStretchSpacer(1);
+    outerSizer->Add(errorLabel, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 50);
+    errorLabel->Hide();
     homeBtn->Bind(wxEVT_BUTTON,&Storage_Panel::onBackHome,this);
 
 }
@@ -107,18 +107,17 @@ wxBitmap Storage_Panel::loadThumbnail(const wxString& path) {
  * Displays an error label if no images are found.
  */
 void Storage_Panel::loadImages() {
-    imageList.clear();
+    errorLabel->Show(false);
     gridSizer->Clear(true);
     galleryPanel->FitInside();
     galleryPanel->Layout();
 
 
-    imageList = m_system->getAllImages();
+    auto imageList = m_system->getAllImages();
 
     if (imageList.empty()) {
         errorLabel->SetLabel("No Images or Videos");
-        outerSizer->AddStretchSpacer(1);
-        outerSizer->Add(errorLabel, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 50);
+        errorLabel->Show(true);
         return;
     }
     for (const auto& [id,time,path] : imageList) {
@@ -126,22 +125,29 @@ void Storage_Panel::loadImages() {
         if (!thumbnail.IsOk()) {
             continue;
         }
-        // Container panel for thumb + overlay
-        wxPanel* itemPanel = new wxPanel(galleryPanel, wxID_ANY);
-        itemPanel->SetMinSize(wxSize(250, 280));
 
-        wxStaticBitmap* thumb = new wxStaticBitmap(itemPanel, wxID_ANY, thumbnail);
+        wxBoxSizer* itemSizer = new wxBoxSizer(wxVERTICAL);
+
+        wxPanel* itemPanel = new wxPanel(galleryPanel, wxID_ANY);
+        itemPanel->SetMinSize(wxSize(250, 300));
+
+        wxPanel* thumbContainer = new wxPanel(itemPanel, wxID_ANY);
+        thumbContainer->SetMinSize(wxSize(250, 250));
+
+        wxStaticBitmap* thumb = new wxStaticBitmap(thumbContainer, wxID_ANY, thumbnail);
         thumb->SetPosition(wxPoint(0, 0));
         thumb->SetSize(wxSize(250, 250));
         thumb->Bind(wxEVT_LEFT_DOWN, [this, path](wxMouseEvent&) {
             OpenFullImage(path);
         });
-        wxStaticText* timeLabel = new wxStaticText(itemPanel, wxID_ANY, time,
-    wxPoint(0, 253), wxSize(250, 20));
+
+        itemSizer->Add(thumbContainer, 0, wxEXPAND);
+
+        wxStaticText* timeLabel = new wxStaticText(itemPanel, wxID_ANY, time);
         timeLabel->SetForegroundColour(wxColour(180, 180, 180));
         wxFont labelFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
         timeLabel->SetFont(labelFont);
-        timeLabel->SetWindowStyleFlag(wxALIGN_CENTRE_HORIZONTAL);
+        itemSizer->Add(timeLabel, 0, wxALIGN_CENTER | wxTOP, 4);
 
         wxButton* deleteBtn = new wxButton(itemPanel, wxID_ANY, "x",
             wxPoint(210, 5), wxSize(35, 35));
@@ -171,6 +177,7 @@ void Storage_Panel::loadImages() {
 
         });
 
+        itemPanel->SetSizer(itemSizer);
         gridSizer->Add(itemPanel, 1, wxEXPAND | wxALL, 5);
     }
     galleryPanel->FitInside();
@@ -199,6 +206,8 @@ void Storage_Panel::OnGalleryResize(wxSizeEvent& event) {
     int panelWidth = event.GetSize().GetWidth();
     int thumbSize = 265; // 250px + 15px gap
     int cols = std::max(1, panelWidth / thumbSize);
+
+
 
     gridSizer->SetCols(cols);
     galleryPanel->Layout();
@@ -248,10 +257,11 @@ void Storage_Panel::OpenFullImage(const wxString& path) {
 
     closeBtn->Bind(wxEVT_BUTTON, [frame](wxCommandEvent&) { frame->Destroy(); });
 
-    wxSize screenSize = frame->GetClientSize();
+    wxDisplay display(wxDisplay::GetFromWindow(this));
+    wxRect screen = display.GetClientArea();
     int topBarHeight = 50;
-    int availableWidth = screenSize.GetWidth() - 40;
-    int availableHeight = screenSize.GetHeight() - topBarHeight - 40;
+    int availableWidth = screen.GetWidth() - 40;
+    int availableHeight = screen.GetHeight() - topBarHeight - 40;
 
     double scaleX = (double)availableWidth / img.GetWidth();
     double scaleY = (double)availableHeight / img.GetHeight();
@@ -287,6 +297,4 @@ void Storage_Panel::OpenFullImage(const wxString& path) {
 /**
  * @brief Destructor for Storage_Panel.
  */
-Storage_Panel::~Storage_Panel() {
-
-}
+Storage_Panel::~Storage_Panel() {}

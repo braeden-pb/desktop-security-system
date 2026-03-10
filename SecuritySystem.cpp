@@ -9,10 +9,17 @@
 SecuritySystem::SecuritySystem() {
     mainStorage = std::make_unique<Storage>();
     mainUi = std::make_unique<UI>(this);
+    systemStatus = Status::disarmed;
 
 }
 
-UI *SecuritySystem::getUI() {
+SecuritySystem::SecuritySystem(bool headless) {
+    mainStorage = std::make_unique<Storage>();
+    if (!headless) mainStorage = std::make_unique<UI>(this);
+    systemStatus = Status::disarmed;
+}
+
+UI *SecuritySystem::getUI() const{
     return mainUi.get();
 }
 
@@ -20,8 +27,13 @@ void SecuritySystem::setStatus(Status status) {
     systemStatus = status;
 }
 
-bool SecuritySystem::validatePIN(const std::string& pin) {
+bool SecuritySystem::validatePIN(const std::string& pin) const{
     return pin=="1234";
+}
+
+
+bool SecuritySystem::isArmed() const {
+    return systemStatus == Status::armed;
 }
 
 void SecuritySystem::arm() {
@@ -32,7 +44,7 @@ void SecuritySystem::disarm() {
     setStatus(Status::disarmed);
 }
 
-Storage *SecuritySystem::getStorage() {
+Storage *SecuritySystem::getStorage() const{
     return mainStorage.get();
 }
 
@@ -42,9 +54,7 @@ std::list<std::tuple<int,std::string,std::string>> SecuritySystem::getAllImages(
     auto images = mainStorage->listImage();
 
         for (const auto& img : images) {
-
-            File f(img);
-            paths.emplace_back(f.getID(), f.getTimeStamp(), img.getPath());
+            paths.emplace_back(img.getID(), img.getTimeStamp(), img.getPath());
         }
     return paths;
 }

@@ -22,17 +22,19 @@ class SecuritySystem
 {
 public:
     SecuritySystem();
+    explicit SecuritySystem(bool headless);
     ~SecuritySystem();
     Status getStatus();
     void arm();
     void disarm();
+    bool isArmed() const;
     //getConfig
     std::list<std::tuple<int,std::string, std::string>> getAllImages();
-    bool validatePIN(const std::string& pin);
-    Storage* getStorage();
+    bool validatePIN(const std::string& pin) const;
+    Storage* getStorage() const;
     //getDeviceList
     void soundAlarm();
-    UI* getUI();
+    UI* getUI() const;
     Status systemStatus;
 
 
@@ -43,6 +45,7 @@ private:
     std::unique_ptr<UI> mainUi;
     void setStatus(Status status);
     void initializeSystem();
+
 };
 
 

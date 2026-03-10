@@ -45,9 +45,6 @@ private:
     wxScrolledWindow* galleryPanel;///< Scrollable container for the image grid
     wxBoxSizer* outerSizer;        ///< Outer vertical sizer for the panel
 
-    /// List of images as (id, timestamp, filepath) tuples
-    std::list<std::tuple<int, std::string, std::string>> imageList;
-
     /**
      * @brief Loads and scales an image from disk into a thumbnail bitmap.
      * @param filepath The path to the image file.

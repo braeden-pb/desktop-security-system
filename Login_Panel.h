@@ -44,7 +44,7 @@ public:
      * @brief Returns whether the last login attempt was successful.
      * @return True if login was successful, false otherwise.
      */
-    bool isLoginSuccessful();
+    bool isLoginSuccessful() const;
 
 private:
     SecuritySystem* m_system;  ///< Pointer to the security system for PIN validation
