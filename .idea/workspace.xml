@@ -39,14 +39,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="773cc61e-a115-48b7-8d61-df1442a310c9" name="Changes" comment="add arm button functionaltiy, add status label, create config_panel class">
-      <change afterPath="$PROJECT_DIR$/Storage_Panel.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Storage_Panel.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Home_Panel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Home_Panel.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Home_Panel.h" beforeDir="false" afterPath="$PROJECT_DIR$/Home_Panel.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/UI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI.h" beforeDir="false" afterPath="$PROJECT_DIR$/UI.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +103,7 @@
     "RunOnceActivity.west.config.association.type.startup.service": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "UI",
+    "git-widget-placeholder": "Rebasing UI",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "/home/evan/group55",
     "node.js.detected.package.eslint": "true",
@@ -197,11 +192,11 @@
     <list>
       <item itemvalue="C/C++ File.TEST_UI.cpp" />
       <item itemvalue="C/C++ File.VideoTests.cpp" />
-      <item itemvalue="CMake Application.run securitySystem" />
       <item itemvalue="CMake Application.gmock" />
       <item itemvalue="CMake Application.gmock_main" />
       <item itemvalue="CMake Application.gtest" />
       <item itemvalue="CMake Application.gtest_main" />
+      <item itemvalue="CMake Application.run securitySystem" />
       <item itemvalue="Google Test.FileTests" />
       <item itemvalue="Google Test.ImageTests" />
       <item itemvalue="Google Test.StorageTests" />
