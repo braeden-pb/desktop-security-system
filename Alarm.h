@@ -6,6 +6,8 @@
 #define GROUP55_ALARM_H
 
 #include <string>
+#include <SFML/Audio.hpp>
+
 
 class Alarm {
 private:
@@ -21,9 +23,7 @@ public:
     // Activates the alarm indefinitely
     void activate();
 
-    // Activates the alarm for a specific duration
-    void activate(int durationSec);
-
+    bool loadSound(sf::SoundBuffer& buffer);  // bool not sf::SoundBuffer
     // Deactivates the alarm
     void deactivate();
 
