@@ -1,23 +1,31 @@
-//
-// Created by rushd on 3/8/26.
-// updated by rushd on 3/10/2026
-//
-
 #include "Alarm.h"
 #include <iostream>
+#include <SFML/Audio.hpp>
+#include <thread>
 #include <chrono>
 
 // Construct the alarm with default settings
 Alarm::Alarm()
-    : isActive(false), volume(10), soundType("mp3"), lastActivatedAt("") {}
+    : isActive(false), volume(10), soundType("wav"), lastActivatedAt("") {}
 
-// Activates the alarm until manually stopped
+// Activates the alarm
 void Alarm::activate() {
     isActive = true;
     std::cout << "Alarm activated!" << std::endl;
 
-    // Play the alarm sound file
-    system("mpg321 ../sounds/alarm.mp3");
+    sf::SoundBuffer buffer;
+    if (!buffer.loadFromFile("../sounds/alarm.wav")) {
+        std::cout << "Failed to load sound file." << std::endl;
+        return;
+    }
+
+    sf::Sound sound;
+    sound.setBuffer(buffer);
+    sound.play();
+
+    while (sound.getStatus() == sf::Sound::Playing) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
 }
 
 // Activates the alarm for a specific duration in seconds
@@ -25,10 +33,18 @@ void Alarm::activate(int durationSec) {
     isActive = true;
     std::cout << "Alarm activated for " << durationSec << " seconds" << std::endl;
 
-    // Play the alarm sound once per second for the given duration
-    for (int i = 0; i < durationSec; i++) {
-        system("mpg321 ../sounds/alarm.mp3");
+    sf::SoundBuffer buffer;
+    if (!buffer.loadFromFile("../sounds/alarm.wav")) {
+        std::cout << "Failed to load sound file." << std::endl;
+        return;
     }
+
+    sf::Sound sound;
+    sound.setBuffer(buffer);
+    sound.play();
+
+    std::this_thread::sleep_for(std::chrono::seconds(durationSec));
+    sound.stop();
 }
 
 // Stops the alarm and updates its status

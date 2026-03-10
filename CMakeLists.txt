@@ -9,8 +9,8 @@ find_package(wxWidgets REQUIRED COMPONENTS core base)
 include(${wxWidgets_USE_FILE})
 
 find_package(GTest REQUIRED)
+find_package(SFML 2.5 COMPONENTS audio REQUIRED)
 
-# Main application
 add_executable(SecuritySystem
         main.cpp
         SecuritySystem.cpp
@@ -25,16 +25,24 @@ add_executable(SecuritySystem
         Alarm.h
 )
 
-target_link_libraries(SecuritySystem ${wxWidgets_LIBRARIES})
+target_link_libraries(SecuritySystem
+        ${wxWidgets_LIBRARIES}
+        sfml-audio
+)
 
-# Alarm tests
 add_executable(AlarmTest
         AlarmTest.cpp
         Alarm.cpp
         Alarm.h
 )
 
-target_link_libraries(AlarmTest GTest::gtest GTest::gtest_main pthread)
+target_link_libraries(AlarmTest
+        GTest::gtest
+        GTest::gtest_main
+        ${wxWidgets_LIBRARIES}
+        sfml-audio
+        pthread
+)
 
 enable_testing()
 add_test(NAME AlarmTests COMMAND AlarmTest)
