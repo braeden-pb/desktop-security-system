@@ -41,8 +41,6 @@ private:
     std::unique_ptr<UI> mainUi;
     void setStatus(Status status);
     void initializeSystem();
-    void setStatus(Status status);
-
 };
 
 
