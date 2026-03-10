@@ -16,6 +16,9 @@ private:
     std::string soundType;         // type of sound the alarm produces
     std::string lastActivatedAt;   // timestamp of the last activation
 
+    sf::SoundBuffer buffer;
+    sf::Sound sound;
+
 public:
     // Constructor
     Alarm();

@@ -21,26 +21,21 @@ void Alarm::activate() {
     isActive = true;
     std::cout << "Alarm activated!" << std::endl;
 
-    sf::SoundBuffer buffer;
 
     if (!loadSound(buffer)) {
         std::cout << "Failed to load sound." << std::endl;
         return;
     }
-    sf::Sound sound;
     sound.setBuffer(buffer);
     sound.setLoop(true);
     sound.play();
-
-    while (sound.getStatus() == sf::Sound::Playing) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
 }
 
 
 // Stops the alarm and updates its status
 void Alarm::deactivate() {
     isActive = false;
+    sound.stop();
     std::cout << "Alarm deactivated." << std::endl;
 }
 
