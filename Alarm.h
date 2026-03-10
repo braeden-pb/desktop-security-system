@@ -9,20 +9,29 @@
 
 class Alarm {
 private:
-    bool isActive;
-    int volume;
-    std::string soundType;
-    std::string lastActivatedAt;
+    bool isActive;                 // shows whether the alarm is currently active
+    int volume;                    // alarm volume level
+    std::string soundType;         // type of sound the alarm produces
+    std::string lastActivatedAt;   // timestamp of the last activation
 
 public:
+    // Constructor
     Alarm();
-    Alarm(int volume, const std::string& soundType);
 
+    // Activates the alarm indefinitely
     void activate();
+
+    // Activates the alarm for a specific duration
     void activate(int durationSec);
+
+    // Deactivates the alarm
     void deactivate();
+
+    // Tests the alarm sound
     void testAlarm();
+
+    // Returns the current alarm status
     bool getStatus() const;
 };
 
-#endif //GROUP55_ALARM_H
+#endif // GROUP55_ALARM_H

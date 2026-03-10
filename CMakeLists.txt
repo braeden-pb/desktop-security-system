@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(wxWidgets REQUIRED COMPONENTS core base)
 include(${wxWidgets_USE_FILE})
 
+find_package(GTest REQUIRED)
+
+# Main application
 add_executable(SecuritySystem
         main.cpp
         SecuritySystem.cpp
@@ -23,3 +26,15 @@ add_executable(SecuritySystem
 )
 
 target_link_libraries(SecuritySystem ${wxWidgets_LIBRARIES})
+
+# Alarm tests
+add_executable(AlarmTest
+        AlarmTest.cpp
+        Alarm.cpp
+        Alarm.h
+)
+
+target_link_libraries(AlarmTest GTest::gtest GTest::gtest_main pthread)
+
+enable_testing()
+add_test(NAME AlarmTests COMMAND AlarmTest)
