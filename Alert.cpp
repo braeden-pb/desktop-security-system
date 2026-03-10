@@ -11,6 +11,9 @@ Alert::Alert(Event& event, std::string email, SecuritySystem& system)
 
 void Alert::sendAlert() {
     std::cout << "Alert sent to " << email << " at " << event.getTime() << std::endl;
+    if (uiCallback) {
+        uiCallback->onAlert(email, event.getTime());
+    }
 }
 
 Event Alert::getEvent() {

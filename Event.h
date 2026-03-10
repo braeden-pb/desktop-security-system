@@ -9,7 +9,7 @@ private:
 
 public:
     Event(std::string time);
-    std::string getTime();
+    std::string getTime() const;
 };
 
 #endif
