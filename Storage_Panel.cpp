@@ -4,32 +4,60 @@
 
 #include "Storage_Panel.h"
 
+#include "SecuritySystem.h"
+#include "UI.h"
+
+
 Storage_Panel::Storage_Panel(wxWindow *parent, SecuritySystem *system, UI *ui) :
 wxPanel(parent, wxID_ANY), m_system(system), m_ui(ui) {
 
-    auto* mainSizer = new wxBoxSizer(wxVERTICAL);
-    wxScrolledWindow* galleryPanel = new wxScrolledWindow(this, wxID_ANY);
+    outerSizer = new wxBoxSizer(wxVERTICAL);
 
-    imageList;
+    auto* topBarSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    wxFlexGridSizer* gridSizer = new wxFlexGridSizer(0, 4, 10, 10);
+    auto* titleText = new wxStaticText(this, wxID_ANY, "Storage");
+    wxFont titleFont(28, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
+    titleText->SetFont(titleFont);
+    wxSize trueSize = titleText->GetBestSize();
+    titleText->SetMinSize(wxSize(trueSize.x + 10, trueSize.y));
 
-    for (const auto& path : imageList) {
-        wxStaticBitmap* thumb = new wxStaticBitmap(galleryPanel, wxID_ANY, loadThumbnail(path));
+    auto homeBtn = new wxButton(this,wxID_ANY,"Back Home");
 
-        // Bind a click event to open the full image
-        // thumb->Bind(wxEVT_LEFT_DOWN, [path](wxMouseEvent& event) {
-        //     OpenFullImage(path);
-        // });
+    topBarSizer->Add(homeBtn,0,wxLEFT,10);
+    topBarSizer->AddStretchSpacer(1);
+    topBarSizer->Add(titleText, 0, wxALIGN_CENTER_VERTICAL);
+    topBarSizer->AddStretchSpacer(1);
 
-        gridSizer->Add(thumb, 0, wxALL, 5);
+    outerSizer->Add(topBarSizer, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 20);
+
+    galleryPanel = new wxScrolledWindow(this, wxID_ANY);
+
+
+    imageList = system->getAllImagePaths();
+
+    gridSizer = new wxFlexGridSizer(0, 4, 15, 15);
+    for (int i = 0; i < 4; i++) {
+        gridSizer->AddGrowableCol(i, 1);
     }
 
-    galleryPanel->SetSizer(gridSizer);
+    wxBoxSizer* horizontalCenteringSizer = new wxBoxSizer(wxHORIZONTAL);
+    horizontalCenteringSizer->AddStretchSpacer(1);
+    horizontalCenteringSizer->Add(gridSizer, 0, wxALIGN_CENTER);
+    horizontalCenteringSizer->AddStretchSpacer(1);
+
+    galleryPanel->SetSizer(horizontalCenteringSizer);
+
     galleryPanel->SetScrollRate(0, 10);
 
-    mainSizer->Add(galleryPanel, 1, wxEXPAND);
-    this->SetSizer(mainSizer);
+    galleryPanel->Bind(wxEVT_SIZE, &Storage_Panel::OnGalleryResize, this);
+
+    outerSizer->Add(galleryPanel, 1, wxEXPAND | wxALL, 20);
+    this->SetSizer(outerSizer);
+
+    errorLabel = new wxStaticText(this, wxID_ANY, "");
+    errorLabel->Hide();
+
+    homeBtn->Bind(wxEVT_BUTTON,&Storage_Panel::onBackHome,this);
 
 }
 
@@ -37,19 +65,134 @@ wxBitmap Storage_Panel::loadThumbnail(const wxString& path) {
     wxImage img(path, wxBITMAP_TYPE_ANY);
     if (!img.IsOk()) return wxNullBitmap;
 
-    int thumbW = 150;
-    int thumbH = 150;
+    const int maxSize = 250;
+    int w = img.GetWidth();
+    int h = img.GetHeight();
 
-    double ratio = (double)img.GetWidth() / img.GetHeight();
-    if (img.GetWidth() > img.GetHeight()) {
-        thumbH = thumbW / ratio;
+    if (w > h) {
+        h = (int)(maxSize * (double)h / w);
+        w = maxSize;
     } else {
-        thumbW = thumbH * ratio;
+        w = (int)(maxSize * (double)w / h);
+        h = maxSize;
     }
 
-    return wxBitmap(img.Scale(thumbW, thumbH, wxIMAGE_QUALITY_HIGH));
+    return wxBitmap(img.Scale(w, h, wxIMAGE_QUALITY_HIGH));
 }
 
+void Storage_Panel::loadImages() {
+    if (imageList.empty()) {
+        errorLabel->SetLabel("No Images or Videos");
+        outerSizer->AddStretchSpacer(1);
+        outerSizer->Add(errorLabel, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 50);
+        return;
+    }
+    for (const auto& path : imageList) {
+        wxBitmap thumbnail = loadThumbnail(path);
+        if (!thumbnail.IsOk()) {
+
+            continue;
+        }
+        wxStaticBitmap* thumb = new wxStaticBitmap(galleryPanel, wxID_ANY, thumbnail);
+        thumb->SetMinSize(wxSize(250, 250));
+
+
+        thumb->Bind(wxEVT_LEFT_DOWN, [this, path](wxMouseEvent& event) {
+            OpenFullImage(path);
+    });
+
+        gridSizer->Add(thumb, 1, wxEXPAND | wxALL, 5);
+    }
+    galleryPanel->FitInside();
+}
+
+void Storage_Panel::onBackHome(wxCommandEvent &event) {
+    m_ui->SwitchPage(UI::Home_ID);
+    gridSizer->Clear();
+    galleryPanel->FitInside();
+    galleryPanel->Layout();
+}
+
+void Storage_Panel::OnGalleryResize(wxSizeEvent& event) {
+    int panelWidth = event.GetSize().GetWidth();
+    int thumbSize = 265; // 250px + 15px gap
+    int cols = std::max(1, panelWidth / thumbSize);
+
+    gridSizer->SetCols(cols);
+    galleryPanel->Layout();
+    event.Skip();
+}
+
+
+void Storage_Panel::OpenFullImage(const wxString& path) {
+    wxFrame* frame = new wxFrame(nullptr, wxID_ANY, "Image Viewer", wxDefaultPosition,
+                                  wxDefaultSize, wxDEFAULT_FRAME_STYLE);
+
+    frame->ShowFullScreen(true);
+    frame->SetBackgroundColour(*wxBLACK);
+
+    wxImage img(path, wxBITMAP_TYPE_ANY);
+    if (!img.IsOk()) {
+        frame->Destroy();
+        return;
+    }
+
+    wxPanel* panel = new wxPanel(frame, wxID_ANY, wxDefaultPosition,
+                              wxDefaultSize, wxTAB_TRAVERSAL | wxWANTS_CHARS);
+    panel->SetBackgroundColour(*wxBLACK);
+
+    wxPanel* topBar = new wxPanel(panel, wxID_ANY);
+    topBar->SetBackgroundColour(wxColour(30, 30, 30));
+
+    wxBoxSizer* topBarSizer = new wxBoxSizer(wxHORIZONTAL);
+    topBarSizer->AddStretchSpacer(1);
+
+    wxButton* closeBtn = new wxButton(topBar, wxID_ANY, "✕",
+                                       wxDefaultPosition, wxSize(40, 40));
+    closeBtn->SetBackgroundColour(wxColour(200, 0, 0));
+    closeBtn->SetForegroundColour(*wxWHITE);
+    closeBtn->SetWindowStyleFlag(wxBORDER_NONE);
+
+    topBarSizer->Add(closeBtn, 0,  wxEXPAND, 5);
+    topBar->SetSizer(topBarSizer);
+
+    closeBtn->Bind(wxEVT_BUTTON, [frame](wxCommandEvent&) { frame->Destroy(); });
+
+    wxSize screenSize = frame->GetClientSize();
+    int topBarHeight = 50;
+    int availableWidth = screenSize.GetWidth() - 40;
+    int availableHeight = screenSize.GetHeight() - topBarHeight - 40;
+
+    double scaleX = (double)availableWidth / img.GetWidth();
+    double scaleY = (double)availableHeight / img.GetHeight();
+    double scale = std::min(scaleX, scaleY);
+
+    int newW = (int)(img.GetWidth() * scale);
+    int newH = (int)(img.GetHeight() * scale);
+
+    wxBitmap fullBitmap(img.Scale(newW, newH, wxIMAGE_QUALITY_HIGH));
+    wxStaticBitmap* imgDisplay = new wxStaticBitmap(panel, wxID_ANY, fullBitmap);
+
+    wxBoxSizer* mainVerticalSizer = new wxBoxSizer(wxVERTICAL);
+    mainVerticalSizer->Add(topBar, 0, wxEXPAND);
+    mainVerticalSizer->AddStretchSpacer(1);
+    mainVerticalSizer->Add(imgDisplay, 0, wxALIGN_CENTER);
+    mainVerticalSizer->AddStretchSpacer(1);
+
+    panel->SetSizer(mainVerticalSizer);
+
+    wxBoxSizer* frameSizer = new wxBoxSizer(wxVERTICAL);
+    frameSizer->Add(panel, 1, wxEXPAND);
+    frame->SetSizer(frameSizer);
+
+
+    panel->Bind(wxEVT_KEY_DOWN, [frame](wxKeyEvent& e) {
+        if (e.GetKeyCode() == WXK_ESCAPE) frame->Destroy();
+    });
+    frame->Bind(wxEVT_CLOSE_WINDOW, [frame](wxCloseEvent&) { frame->Destroy(); });
+    panel->SetFocus();
+    frame->Layout();
+}
 
 Storage_Panel::~Storage_Panel() {
 

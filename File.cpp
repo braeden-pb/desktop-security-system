@@ -14,7 +14,7 @@ int File::getID() {
     return id;
 }
 
-std::string File::getPath() {
+std::string File::getPath() const {
     return filePath;
 }
 

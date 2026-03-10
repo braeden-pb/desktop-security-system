@@ -5,6 +5,7 @@
 #include "Home_Panel.h"
 
 #include "SecuritySystem.h"
+#include "Storage_Panel.h"
 #include "UI.h"
 
 Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
@@ -102,6 +103,7 @@ void Home_Panel::onLogout(wxCommandEvent &event) {
 
 void Home_Panel::onStorageButtonPressed(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Storage_ID);
+    m_ui->getStoragePanel()->loadImages();
 }
 
 Home_Panel::~Home_Panel() {}

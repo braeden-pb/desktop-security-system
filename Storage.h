@@ -15,7 +15,7 @@ class Storage {
 
 private:
     std::list<Image> imageList;
-    std::string storagePath = "./saved_data/";
+    std::string storagePath;
 
 public:
     Storage();

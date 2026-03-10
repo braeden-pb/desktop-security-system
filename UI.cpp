@@ -27,8 +27,8 @@ menuBar(nullptr)
     auto* mainSizer = new wxBoxSizer(wxVERTICAL);
     book = new wxSimplebook(this, wxID_ANY);
     auto* homePage = new Home_Panel(book, system,this);
-    auto* loginPage = new Login_Panel(book,system,this);
-    auto storagePage = new Storage_Panel(book,system,this);
+    loginPage = new Login_Panel(book,system,this);
+    storagePage = new Storage_Panel(book,system,this);
     book->AddPage(loginPage, "Login");
     book->AddPage(homePage, "Home");
     book->AddPage(storagePage,"Storage");
@@ -64,6 +64,10 @@ void UI::onExit(wxCommandEvent& event) {
 
 UI::PageID UI::GetPageID() {
     return static_cast<PageID>(book->GetSelection());
+}
+
+Storage_Panel *UI::getStoragePanel() {
+    return storagePage;
 }
 
 UI::~UI() {}

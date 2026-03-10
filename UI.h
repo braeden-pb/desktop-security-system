@@ -9,6 +9,7 @@
 #include <wx/simplebook.h>
 #include "Home_Panel.h"
 #include "Login_Panel.h"
+#include "Storage_Panel.h"
 
 class SecuritySystem;
 
@@ -26,6 +27,7 @@ class UI : public wxFrame {
     void onExit(wxCommandEvent& event);
     PageID GetPageID();
     Login_Panel* getLoginPanel();
+    Storage_Panel* getStoragePanel();
 
 
     private:
@@ -33,6 +35,7 @@ class UI : public wxFrame {
     wxSimplebook* book;
     wxMenuBar *menuBar;
     Login_Panel* loginPage;
+    Storage_Panel* storagePage;
 
 
 

@@ -30,6 +30,11 @@ add_executable(SecuritySystem
         Config_Panel.h
         Storage_Panel.cpp
         Storage_Panel.h
+        SecuritySystem.h
+        Storage.cpp Storage.h
+        Image.h Image.cpp
+        File.cpp File.h
+
 )
 
 add_executable(StorageTests
