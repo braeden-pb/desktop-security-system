@@ -5,7 +5,7 @@ project(group55)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(wxWidgets REQUIRED COMPONENTS core base)
+find_package(wxWidgets REQUIRED COMPONENTS core base media)
 include(${wxWidgets_USE_FILE})
 
 include(FetchContent)
@@ -63,3 +63,4 @@ add_executable(VideoTests
 target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
 target_link_libraries(SecuritySystem ${wxWidgets_LIBRARIES})
+
