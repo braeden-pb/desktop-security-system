@@ -20,6 +20,10 @@ void SecuritySystem::setStatus(Status status) {
     systemStatus = status;
 }
 
+bool SecuritySystem::validatePIN(const std::string& pin) {
+    return pin=="1234";
+}
+
 void SecuritySystem::arm() {
     setStatus(Status::armed);
 }

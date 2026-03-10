@@ -28,6 +28,7 @@ public:
     void disarm();
     //getConfig
     std::list<std::tuple<int,std::string, std::string>> getAllImages();
+    bool validatePIN(const std::string& pin);
     Storage* getStorage();
     //getDeviceList
     void soundAlarm();

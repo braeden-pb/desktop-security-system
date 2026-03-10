@@ -4,8 +4,20 @@
 
 #include "Login_Panel.h"
 
+#include "SecuritySystem.h"
 #include "UI.h"
 
+/**
+ * @brief Constructs the Login_Panel UI component.
+ *
+ * Initializes the login screen with a title, PIN input field,
+ * and a login button. The panel is vertically and horizontally
+ * centered within the window.
+ *
+ * @param parent The parent wxWindow.
+ * @param system Pointer to the SecuritySystem for PIN validation.
+ * @param mainFrame Pointer to the main UI frame for panel navigation.
+ */
 Login_Panel::Login_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     : wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame) {
 
@@ -47,8 +59,17 @@ Login_Panel::Login_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame
     loginBtn->Bind(wxEVT_BUTTON, &Login_Panel::onLogin, this);
 }
 
+/**
+ * @brief Handles the LOGIN button press.
+ *
+ * Validates the entered PIN via the SecuritySystem. On success,
+ * navigates to the Home panel and clears the input field.
+ * On failure, displays an error dialog.
+ *
+ * @param event The wxCommandEvent triggered by the login button.
+ */
 void Login_Panel::onLogin(wxCommandEvent &event) {
-    if (pinInput->GetValue() == "1234") {
+    if (m_system->validatePIN(std::string(pinInput->GetValue()))) {
         m_ui->SwitchPage(UI::Home_ID);
         pinInput->Clear();
     } else {
@@ -56,6 +77,9 @@ void Login_Panel::onLogin(wxCommandEvent &event) {
     }
 }
 
+/**
+ * @brief Destructor for Login_Panel.
+ */
 Login_Panel::~Login_Panel() {
 
 }
