@@ -3,14 +3,26 @@
 #include "SecuritySystem.h"
 #include <iostream>
 
-int main() {
+class TestUI : public IAlertCallback {
+public:
+    void onAlert(const std::string& email, const std::string& time) override {
+        std::cout << "UI received alert: " << email << " at " << time << std::endl;
+    }
+};
 
+int main() {
     SecuritySystem system;
     Event event("2026-03-06 15:00");
-
     Alert alert(event, "test@email.com", system);
 
-    std::cout << "Testing sendAlert()" << std::endl;
+    // test WITHOUT callback
+    std::cout << "Testing sendAlert() without UI..." << std::endl;
+    alert.sendAlert();
+
+    // test WITH callback
+    TestUI ui;
+    alert.setUICallback(&ui);
+    std::cout << "Testing sendAlert() with UI..." << std::endl;
     alert.sendAlert();
 
     std::cout << "Testing getEvent()" << std::endl;
@@ -19,5 +31,4 @@ int main() {
 
     std::cout << "Testing discard()" << std::endl;
     alert.discard();
-
 }

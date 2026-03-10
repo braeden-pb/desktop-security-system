@@ -10,8 +10,15 @@
 
 class SecuritySystem;
 
+class IAlertCallback {
+public:
+    virtual void onAlert(const std::string& email, const std::string& time) = 0;
+    virtual ~IAlertCallback() = default;
+};
+
 class Alert {
 private:
+    IAlertCallback* uiCallback = nullptr;
     Event& event;
     std::string email;
     SecuritySystem& system;
@@ -19,10 +26,13 @@ private:
 public:
     Alert(Event& event, std::string email, SecuritySystem& system);
 
+    void setUICallback(IAlertCallback* cb) {
+        uiCallback = cb;
+    }
+
     void sendAlert();
     Event getEvent();
     void discard();
 };
-
 
 #endif //GROUP55_ALERT_H

@@ -4,6 +4,6 @@ Event::Event(std::string time) {
     timeStamp = time;
 }
 
-std::string Event::getTime() {
+std::string Event::getTime() const{
     return timeStamp;
 }
