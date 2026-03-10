@@ -1,9 +1,3 @@
-/**
- * @file StorageTest.cpp
- * @brief Acceptance tests for User Stories related to Image Management.
- * @details Specifically addresses US #1 (Save Image) and US #4 (Delete Image).
- */
-
 #include <gtest/gtest.h>
 #include <fstream>
 #include <filesystem>
@@ -14,55 +8,56 @@ namespace fs = std::filesystem;
 
 class StorageTest : public ::testing::Test {
 protected:
-    // Use a unique pointer so we can restart the Storage service for every test
-    std::unique_ptr<Storage> store;
-
-    std::string file1 = "test_img1.jpg";
-
-    void SetUp() override {
-        // 1. Create source dummy file
-        std::ofstream(file1) << "dummy data";
-
-        // 2. Clean the environment
-        if (fs::exists("../saved_data")) {
-            //fs::remove_all("../saved_data");
-        }
-        fs::create_directory("../saved_data");
-
-        // 3. Initialize the storage object AFTER the directory is ready
-        store = std::make_unique<Storage>();
-    }
-
-    void TearDown() override {
-        if (fs::exists(file1)) fs::remove(file1);
-    }
+    Storage store;
+    // Helper images for testing
+    Image img1 = Image(1, "camera_view_1.jpg", "10:00", "4K", 300);
+    Image img2 = Image(2, "camera_view_2.jpg", "10:05", "1080p", 72);
 };
 
-/**
- * @test Acceptance Test for User Story #1: "As a user, I want to save images."
- * @details Verifies acceptance criteria: File exists on disk and metadata is tracked.
- */
-TEST_F(StorageTest, US1_SaveImageAcceptance) {
-    Image img1(1, file1, "10:00", "4K", 300);
-    std::string savedPath = store->saveImage(img1, file1);
+// 1. Test saveImage() - Verifies the path is returned and item is added
+TEST_F(StorageTest, SaveImageMethod) {
+    std::string path = store.saveImage(img1);
 
-    EXPECT_TRUE(fs::exists(savedPath)) << "AC 1.1: Physical file must be created.";
-    EXPECT_EQ(store->listImage().size(), 1) << "AC 1.2: Metadata must be added to list.";
+    EXPECT_EQ(path, "camera_view_1.jpg");
+    EXPECT_EQ(store.listImage().size(), 1);
 }
 
-/**
- * @test Acceptance Test for User Story #4: "As a user, I want to delete images."
- */
-TEST_F(StorageTest, US4_DeleteImageAcceptance) {
-    Image img1(1, file1, "10:00", "4K", 300);
-    std::string savedPath = store->saveImage(img1, file1);
+// 2. Test listImage() - Verifies we can retrieve the full list
+TEST_F(StorageTest, ListImageMethod) {
+    store.saveImage(img1);
+    store.saveImage(img2);
 
-    // Dynamically fetch the ID assigned by the store
-    int id = store->listImage().back().getID();
+    std::list<Image> results = store.listImage();
+    EXPECT_EQ(results.size(), 2);
+}
 
-    bool result = store->deleteImage(id);
+// 3. Test deleteImage() - Successful deletion via iterator logic
+TEST_F(StorageTest, DeleteImageSuccess) {
+    store.saveImage(img1);
 
+    bool result = store.deleteImage(1);
     EXPECT_TRUE(result);
-    EXPECT_FALSE(fs::exists(savedPath)) << "AC 4.1: File must be removed from disk.";
-    EXPECT_EQ(store->listImage().size(), 0) << "AC 4.2: List must be empty.";
+    EXPECT_EQ(store.listImage().size(), 0);
+}
+
+// 4. Test deleteImage() - Failure case when ID doesn't exist
+TEST_F(StorageTest, DeleteImageFailure) {
+    store.saveImage(img1);
+
+    bool result = store.deleteImage(999); // Non-existent ID
+    EXPECT_FALSE(result);
+    EXPECT_EQ(store.listImage().size(), 1);
+}
+
+// 5. Test hasTimeStamp() - Verifies the search loop logic
+TEST_F(StorageTest, HasTimeStampMethod) {
+    store.saveImage(img2);
+
+    EXPECT_TRUE(store.hasTimeStamp(2));
+    EXPECT_FALSE(store.hasTimeStamp(55));
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

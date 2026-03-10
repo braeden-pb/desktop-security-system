@@ -18,7 +18,7 @@ public:
     File(int id, std::string filePath, std::string timeStamp, std::string resolution);
     virtual ~File();
     int getID();
-    std::string getPath();
+    std::string getPath() const;
     std::string getTimeStamp();
     std::string getResolution();
     void setPath(std::string newPath);

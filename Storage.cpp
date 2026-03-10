@@ -8,7 +8,6 @@
 #include "Storage.h"
 #include <iostream>
 
-namespace fs = std::filesystem;
 
 /**
  * @brief Construct a new Storage object.
@@ -16,7 +15,10 @@ namespace fs = std::filesystem;
  * internal imageList with the files found on disk.
  * * @throws std::filesystem::filesystem_error if the directory iterator fails.
  */
+namespace fs = std::filesystem;
+
 Storage::Storage() {
+    storagePath = fs::current_path().string() + "/saved_data/";;
     if (!fs::exists(storagePath)) {
         fs::create_directory(storagePath);
     }
@@ -24,16 +26,13 @@ Storage::Storage() {
     try {
         int idCounter = 1;
         for (const auto& entry : fs::directory_iterator(storagePath)) {
-            // Only processes files (not directories)
             if (entry.is_regular_file()) {
                 std::string path = entry.path().string();
 
-                //! Convert filesystem time to a readable system clock format
                 std::filesystem::file_time_type ftime = std::filesystem::last_write_time(path);
                 auto sctime = std::chrono::clock_cast<std::chrono::system_clock>(ftime);
                 std::string time_str = std::format("{:%Y-%m-%d %H:%M:%S}", sctime);
 
-                // Defaulting metadata for the images and resolution and dpi are placeholders
                 imageList.push_back(Image(idCounter, path, time_str, "1080p", 0));
                 idCounter++;
             }
@@ -43,15 +42,14 @@ Storage::Storage() {
     }
 }
 
-//! Default destructor.
 Storage::~Storage() {}
 
 /**
- * @brief Saves an image to the local storage directory.
- * * @param image The Image object metadata to be stored in the internal list.
- * @param sourcePath The current path of the image on the disk.
- * @return std::string The destination path where the image was saved, or empty string on failure.
- */
+* @brief Saves an image to the local storage directory.
+* * @param image The Image object metadata to be stored in the internal list.
+* @param sourcePath The current path of the image on the disk.
+* @return std::string The destination path where the image was saved, or empty string on failure.
+*/
 std::string Storage::saveImage(Image image, std::string sourcePath) {
     try {
         // Construct destination path

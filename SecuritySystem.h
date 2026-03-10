@@ -5,6 +5,9 @@
 #define GROUP55_SECURITYSYSTEM_H
 #include <string>
 #include <memory>
+
+#include "Storage.h"
+
 enum class Status : int {
     armed,
     disarmed,
@@ -12,6 +15,7 @@ enum class Status : int {
 };
 
 class UI;
+class Storage;
 
 class SecuritySystem
 {
@@ -19,24 +23,25 @@ public:
     SecuritySystem();
     ~SecuritySystem();
     Status getStatus();
-    void arm(const std::string& password);
-    void disarm(const std::string& password);
+    void arm();
+    void disarm();
     //getConfig
-    //getStorage
+    std::list<std::pair<int, std::string>> getAllImagePaths();
+    Storage* getStorage();
     //getDeviceList
     void soundAlarm();
     UI* getUI();
     Status systemStatus;
-    void setStatus(Status status);
-
 
 
 private:
     //Config object
     //Devices object list
-    //Storage Object
+    std::unique_ptr<Storage> mainStorage;
     std::unique_ptr<UI> mainUi;
+    void setStatus(Status status);
     void initializeSystem();
+    void setStatus(Status status);
 
 };
 

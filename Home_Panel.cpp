@@ -5,6 +5,7 @@
 #include "Home_Panel.h"
 
 #include "SecuritySystem.h"
+#include "Storage_Panel.h"
 #include "UI.h"
 
 Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
@@ -81,7 +82,7 @@ void Home_Panel::onArmButtonPressed(wxCommandEvent &event) {
         actionBtn->SetLabel("DISARM System");
         actionBtn->SetForegroundColour(*wxRED);
         statusLabel->SetLabel("Status: Armed");
-        m_system->setStatus(Status::armed);
+        m_system->arm();
         m_isArmed = true;
     }
     else {
@@ -90,7 +91,7 @@ void Home_Panel::onArmButtonPressed(wxCommandEvent &event) {
         actionBtn->SetForegroundColour(*wxGREEN);
         statusLabel->SetLabel("Status: Disarmed");
 
-        m_system->setStatus(Status::disarmed);
+        m_system->disarm();
         m_isArmed = false;
     }
 
@@ -102,6 +103,8 @@ void Home_Panel::onLogout(wxCommandEvent &event) {
 
 void Home_Panel::onStorageButtonPressed(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Storage_ID);
+    m_ui->getStoragePanel()->loadImages();
+    m_ui->getStoragePanel()->Layout();
 }
 
 Home_Panel::~Home_Panel() {}

@@ -307,6 +307,7 @@ File.o: File.cpp.o
 
 # target to build an object file
 File.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/File.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/StorageTests.dir/build.make CMakeFiles/StorageTests.dir/File.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImageTests.dir/build.make CMakeFiles/ImageTests.dir/File.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileTests.dir/build.make CMakeFiles/FileTests.dir/File.cpp.o
@@ -318,6 +319,7 @@ File.i: File.cpp.i
 
 # target to preprocess a source file
 File.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/File.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/StorageTests.dir/build.make CMakeFiles/StorageTests.dir/File.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImageTests.dir/build.make CMakeFiles/ImageTests.dir/File.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileTests.dir/build.make CMakeFiles/FileTests.dir/File.cpp.i
@@ -329,6 +331,7 @@ File.s: File.cpp.s
 
 # target to generate assembly for a file
 File.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/File.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/StorageTests.dir/build.make CMakeFiles/StorageTests.dir/File.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImageTests.dir/build.make CMakeFiles/ImageTests.dir/File.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileTests.dir/build.make CMakeFiles/FileTests.dir/File.cpp.s
@@ -388,6 +391,7 @@ Image.o: Image.cpp.o
 
 # target to build an object file
 Image.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/Image.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/StorageTests.dir/build.make CMakeFiles/StorageTests.dir/Image.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImageTests.dir/build.make CMakeFiles/ImageTests.dir/Image.cpp.o
 .PHONY : Image.cpp.o
@@ -397,6 +401,7 @@ Image.i: Image.cpp.i
 
 # target to preprocess a source file
 Image.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/Image.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/StorageTests.dir/build.make CMakeFiles/StorageTests.dir/Image.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImageTests.dir/build.make CMakeFiles/ImageTests.dir/Image.cpp.i
 .PHONY : Image.cpp.i
@@ -406,6 +411,7 @@ Image.s: Image.cpp.s
 
 # target to generate assembly for a file
 Image.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/Image.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/StorageTests.dir/build.make CMakeFiles/StorageTests.dir/Image.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImageTests.dir/build.make CMakeFiles/ImageTests.dir/Image.cpp.s
 .PHONY : Image.cpp.s
@@ -487,6 +493,7 @@ Storage.o: Storage.cpp.o
 
 # target to build an object file
 Storage.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/Storage.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/StorageTests.dir/build.make CMakeFiles/StorageTests.dir/Storage.cpp.o
 .PHONY : Storage.cpp.o
 
@@ -495,6 +502,7 @@ Storage.i: Storage.cpp.i
 
 # target to preprocess a source file
 Storage.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/Storage.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/StorageTests.dir/build.make CMakeFiles/StorageTests.dir/Storage.cpp.i
 .PHONY : Storage.cpp.i
 
@@ -503,6 +511,7 @@ Storage.s: Storage.cpp.s
 
 # target to generate assembly for a file
 Storage.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/Storage.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/StorageTests.dir/build.make CMakeFiles/StorageTests.dir/Storage.cpp.s
 .PHONY : Storage.cpp.s
 

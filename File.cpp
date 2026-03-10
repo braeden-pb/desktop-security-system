@@ -33,7 +33,7 @@ int File::getID() {
  * @brief Gets the current filesystem path of the file.
  * @return std::string The full path string.
  */
-std::string File::getPath() {
+std::string File::getPath() const {
     return filePath;
 }
 
