@@ -68,16 +68,24 @@ add_executable(VideoTests
 )
 target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
-target_link_libraries(SecuritySystem ${wxWidgets_LIBRARIES})
+target_link_libraries(SecuritySystem
+        ${wxWidgets_LIBRARIES}
+        sfml-audio
+)
 
-# Alarm tests
 add_executable(AlarmTest
         AlarmTest.cpp
         Alarm.cpp
         Alarm.h
 )
 
-target_link_libraries(AlarmTest GTest::gtest GTest::gtest_main pthread)
+target_link_libraries(AlarmTest
+        GTest::gtest
+        GTest::gtest_main
+        ${wxWidgets_LIBRARIES}
+        sfml-audio
+        pthread
+)
 
 enable_testing()
 add_test(NAME AlarmTests COMMAND AlarmTest)
