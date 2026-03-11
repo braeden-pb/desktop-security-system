@@ -14,14 +14,14 @@ using namespace std;
     * and then initiates config object using simple default values.
     */
 Config::Config() {
-    if (this->readFromFile() == false) { //Attempt to read values from file
+    if (readFromFile() == false) { //Attempt to read values from file
         //If the file cannot be read from, specify this and then set default values for all variables.
         std::cout << "Failed to read from file.";
         motionSensitivity = 0;
         captureMode = false;
         clipSeconds = 0;
         photosPer = 1;
-        password = 123;
+        password = "123";
         authorizedFaces.clear();
     }
 }
@@ -143,8 +143,8 @@ void Config::setPhotosPer(int photos) {
      *
      * @return A string of the password
      */
-int Config::getPassword() {
-    return this.password;
+string Config::getPassword() {
+    return this->password;
 }
 
 /**
@@ -156,7 +156,7 @@ int Config::getPassword() {
    * @param password The new password to be used.
    */
 void Config::setPassword(string password) {
-    this.password = password;
+    this->password = password;
 }
 
 /**
@@ -302,7 +302,7 @@ bool Config::readFromFile() {
         ifstream configFile("config.txt");
 
         getline(configFile, inText);
-        this.motionSensitivity = stoi(inText);
+        this->motionSensitivity = stoi(inText);
 
         getline(configFile, inText);
         if (inText == "1")
@@ -311,13 +311,13 @@ bool Config::readFromFile() {
             captureMode = false;
 
         getline(configFile, inText);
-        this.clipSeconds = stoi(inText);
+        this->clipSeconds = stoi(inText);
 
         getline(configFile, inText);
-        this.photosPer = stoi(inText);
+        this->photosPer = stoi(inText);
 
         getline(configFile, inText);
-        this.password = inText;
+        this->password = inText;
 
         authorizedFaces.clear(); //Clear authorized faces list before refilling it
         while (getline (configFile, inText)) {
