@@ -1,28 +1,31 @@
-//
-// Created by rushd on 3/10/26.
-//
 #include <gtest/gtest.h>
 #include "Alarm.h"
 
+// Bypasses sound loading so tests work without audio hardware
+class SilentAlarm : public Alarm {
+protected:
+    bool loadSound(sf::SoundBuffer&) override { return true; }
+};
+
 TEST(AlarmTest, DefaultStatusIsInactive) {
-    Alarm alarm;
+    Alarm alarm;  // fine as-is, never calls loadSound
     EXPECT_FALSE(alarm.getStatus());
 }
 
 TEST(AlarmTest, ActivateSetsStatusTrue) {
-    Alarm alarm;
+    SilentAlarm alarm;
     alarm.activate();
     EXPECT_TRUE(alarm.getStatus());
 }
 
 TEST(AlarmTest, DeactivateSetsStatusFalse) {
-    Alarm alarm;
+    SilentAlarm alarm;
     alarm.activate();
     alarm.deactivate();
     EXPECT_FALSE(alarm.getStatus());
 }
 
 TEST(AlarmTest, TestAlarmRunsWithoutCrash) {
-    Alarm alarm;
+    SilentAlarm alarm;
     EXPECT_NO_THROW(alarm.testAlarm());
 }
