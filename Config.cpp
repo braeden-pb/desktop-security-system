@@ -21,6 +21,7 @@ Config::Config() {
         captureMode = false;
         clipSeconds = 0;
         photosPer = 1;
+        password = 123;
         authorizedFaces.clear();
     }
 }
@@ -135,6 +136,30 @@ void Config::setPhotosPer(int photos) {
 }
 
 /**
+     * @brief Returns the password.
+     *
+     * @details
+     * Returns a string representing the password being used for this security system.
+     *
+     * @return A string of the password
+     */
+int Config::getPassword() {
+    return this.password;
+}
+
+/**
+   * @brief Sets the password value
+   *
+   * @details
+   * Sets the value representing the password for the security system to the given string.
+   *
+   * @param password The new password to be used.
+   */
+void Config::setPassword(string password) {
+    this.password = password;
+}
+
+/**
    * @brief Returns the full list of authorized faces.
    *
    * @details
@@ -229,7 +254,7 @@ void Config::resetAuthorizedFaces() {
      * @details
      * Creates or overwrites a file named "config.txt". The first line of this file will contain the
      * value of motionSensitivty. Second line contains captureMode, either 1 or 0. Third line contains
-     * clipSeconds. Fourth line contains photosPer. After this, each following line contains one entry
+     * clipSeconds. Fourth line contains photosPer, and fifth contains password. After this, each following line contains one entry
      * from the list of authorized faces, until the entire list is written out. Afterwards, closes the file.
      * If the writing to file is unsuccessful, returns false. Otherwise, returns true upon successful file
      * writing.
@@ -244,6 +269,7 @@ bool Config::writeToFile() {
         configFile << captureMode << endl;
         configFile << clipSeconds << endl;
         configFile << photosPer << endl;
+        configFile << password << endl;
 
         for (int i = 0; i < authorizedFaces.size(); i++) { //Add each entry from the list to the file in a different line.
             configFile << authorizedFaces[i] << endl;
@@ -289,6 +315,9 @@ bool Config::readFromFile() {
 
         getline(configFile, inText);
         this.photosPer = stoi(inText);
+
+        getline(configFile, inText);
+        this.password = inText;
 
         authorizedFaces.clear(); //Clear authorized faces list before refilling it
         while (getline (configFile, inText)) {

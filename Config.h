@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+using namespace std;
 
 class Config {
 public:
@@ -21,6 +22,8 @@ public:
     void setSeconds(int seconds);
     int getPhotosPer();
     void setPhotosPer(int photos);
+    string getPassword();
+    void setPassword(string newPassword);
     vector<string> getAuthorizedFaces();
     bool removeAuthorizedFace(string face);
     bool addAuthorizedFace(string face);
@@ -48,6 +51,11 @@ private:
      * Stores the number of photos taken per camera trigger as an integer value.
      */
     int photosPer;
+
+    /**
+     * Stores the password for the system.
+     */
+    string password;
 
     /**
      * Stores a list of strings representing all the authorized faces for the security system.
