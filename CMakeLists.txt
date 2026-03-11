@@ -46,11 +46,10 @@ add_executable(SecuritySystem
         Config_Panel.h
         Storage_Panel.cpp
         Storage_Panel.h
-        SecuritySystem.h
         Storage.cpp Storage.h
         Image.h Image.cpp
         File.cpp File.h
-        Home_Panel.cpp
+        Alarm.cpp Alarm.h
 
 )
 
@@ -72,7 +71,7 @@ add_executable(FileTests
         FileTests.cpp
         File.cpp
 )
-target_link_libraries(FileTests GTest::gtest_main)
+target_link_libraries(FileTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
 target_link_libraries(ImageTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
@@ -84,10 +83,6 @@ add_executable(VideoTests
 )
 target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
-target_link_libraries(SecuritySystem
-        ${wxWidgets_LIBRARIES}
-        sfml-audio
-)
 # Link both wxWidgets and the fetched SFML audio
 target_link_libraries(SecuritySystem PRIVATE ${wxWidgets_LIBRARIES} sfml-audio)
 

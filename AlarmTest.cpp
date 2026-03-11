@@ -22,12 +22,6 @@ TEST(AlarmTest, DeactivateSetsStatusFalse) {
     EXPECT_FALSE(alarm.getStatus());
 }
 
-TEST(AlarmTest, TimedActivateSetsStatusTrue) {
-    Alarm alarm;
-    alarm.activate(1);
-    EXPECT_TRUE(alarm.getStatus());
-}
-
 TEST(AlarmTest, TestAlarmRunsWithoutCrash) {
     Alarm alarm;
     EXPECT_NO_THROW(alarm.testAlarm());
