@@ -214,6 +214,19 @@ FileTests/fast:
 .PHONY : FileTests/fast
 
 #=============================================================================
+# Target rules for targets named SystemTests
+
+# Build rule for target.
+SystemTests: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SystemTests
+.PHONY : SystemTests
+
+# fast build rule for target.
+SystemTests/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SystemTests.dir/build.make CMakeFiles/SystemTests.dir/build
+.PHONY : SystemTests/fast
+
+#=============================================================================
 # Target rules for targets named VideoTests
 
 # Build rule for target.
@@ -470,6 +483,7 @@ SecuritySystem.o: SecuritySystem.cpp.o
 # target to build an object file
 SecuritySystem.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/SecuritySystem.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SystemTests.dir/build.make CMakeFiles/SystemTests.dir/SecuritySystem.cpp.o
 .PHONY : SecuritySystem.cpp.o
 
 SecuritySystem.i: SecuritySystem.cpp.i
@@ -478,6 +492,7 @@ SecuritySystem.i: SecuritySystem.cpp.i
 # target to preprocess a source file
 SecuritySystem.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/SecuritySystem.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SystemTests.dir/build.make CMakeFiles/SystemTests.dir/SecuritySystem.cpp.i
 .PHONY : SecuritySystem.cpp.i
 
 SecuritySystem.s: SecuritySystem.cpp.s
@@ -486,6 +501,7 @@ SecuritySystem.s: SecuritySystem.cpp.s
 # target to generate assembly for a file
 SecuritySystem.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/SecuritySystem.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SystemTests.dir/build.make CMakeFiles/SystemTests.dir/SecuritySystem.cpp.s
 .PHONY : SecuritySystem.cpp.s
 
 Storage.o: Storage.cpp.o
@@ -659,6 +675,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SecuritySystem.dir/build.make CMakeFiles/SecuritySystem.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+tests/SystemTest.o: tests/SystemTest.cpp.o
+.PHONY : tests/SystemTest.o
+
+# target to build an object file
+tests/SystemTest.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SystemTests.dir/build.make CMakeFiles/SystemTests.dir/tests/SystemTest.cpp.o
+.PHONY : tests/SystemTest.cpp.o
+
+tests/SystemTest.i: tests/SystemTest.cpp.i
+.PHONY : tests/SystemTest.i
+
+# target to preprocess a source file
+tests/SystemTest.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SystemTests.dir/build.make CMakeFiles/SystemTests.dir/tests/SystemTest.cpp.i
+.PHONY : tests/SystemTest.cpp.i
+
+tests/SystemTest.s: tests/SystemTest.cpp.s
+.PHONY : tests/SystemTest.s
+
+# target to generate assembly for a file
+tests/SystemTest.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SystemTests.dir/build.make CMakeFiles/SystemTests.dir/tests/SystemTest.cpp.s
+.PHONY : tests/SystemTest.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -675,6 +715,7 @@ help:
 	@echo "... ImageTests"
 	@echo "... SecuritySystem"
 	@echo "... StorageTests"
+	@echo "... SystemTests"
 	@echo "... VideoTests"
 	@echo "... gmock"
 	@echo "... gmock_main"
@@ -725,6 +766,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... tests/SystemTest.o"
+	@echo "... tests/SystemTest.i"
+	@echo "... tests/SystemTest.s"
 .PHONY : help
 
 

@@ -25,7 +25,7 @@ File::~File() {}
  * @brief Gets the unique ID of the file.
  * @return int The file's identifier.
  */
-int File::getID() {
+int File::getID() const {
     return id;
 }
 
@@ -41,7 +41,7 @@ std::string File::getPath() const {
  * @brief Gets the timestamp string associated with the file.
  * @return std::string The formatted date/time string.
  */
-std::string File::getTimeStamp() {
+std::string File::getTimeStamp() const{
     return timeStamp;
 }
 
@@ -49,7 +49,7 @@ std::string File::getTimeStamp() {
  * @brief Gets the resolution metadata of the image.
  * @return std::string The resolution string.
  */
-std::string File::getResolution() {
+std::string File::getResolution() const{
     return resolution;
 }
 

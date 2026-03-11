@@ -72,6 +72,11 @@ add_executable(FileTests
         FileTests.cpp
         File.cpp
 )
+add_executable(SystemTests
+        tests/SystemTest.cpp
+        SecuritySystem.cpp
+
+)
 target_link_libraries(FileTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
 target_link_libraries(ImageTests GTest::gtest_main ${wxWidgets_LIBRARIES})
