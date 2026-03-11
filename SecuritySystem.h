@@ -17,6 +17,7 @@ enum class Status : int {
 
 class UI;
 class Storage;
+class Alarm;
 
 class SecuritySystem
 {
@@ -34,6 +35,8 @@ public:
     Storage* getStorage() const;
     //getDeviceList
     void soundAlarm();
+    bool getIsAlarmActive() const;
+    void turnOffAlarm();
     UI* getUI() const;
     Status systemStatus;
 
@@ -43,6 +46,7 @@ private:
     //Devices object list
     std::unique_ptr<Storage> mainStorage;
     std::unique_ptr<UI> mainUi;
+    std::unique_ptr<Alarm> alarm;
     void setStatus(Status status);
     void initializeSystem();
 

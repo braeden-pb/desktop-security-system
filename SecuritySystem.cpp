@@ -3,6 +3,8 @@
 //
 
 #include "SecuritySystem.h"
+
+#include "Alarm.h"
 #include "UI.h"
 #include "Storage.h"
 
@@ -10,12 +12,14 @@ SecuritySystem::SecuritySystem() {
     mainStorage = std::make_unique<Storage>();
     mainUi = std::make_unique<UI>(this);
     systemStatus = Status::disarmed;
+    alarm = std::make_unique<Alarm>();
+
 
 }
 
 SecuritySystem::SecuritySystem(bool headless) {
     mainStorage = std::make_unique<Storage>();
-    if (!headless) mainStorage = std::make_unique<UI>(this);
+    if (!headless) mainStorage = std::make_unique<Storage>();
     systemStatus = Status::disarmed;
 }
 
@@ -25,6 +29,18 @@ UI *SecuritySystem::getUI() const{
 
 void SecuritySystem::setStatus(Status status) {
     systemStatus = status;
+}
+
+void SecuritySystem::soundAlarm() {
+    alarm->activate();
+}
+
+void SecuritySystem::turnOffAlarm() {
+    alarm->deactivate();
+}
+
+bool SecuritySystem::getIsAlarmActive() const {
+    return alarm->getStatus();
 }
 
 bool SecuritySystem::validatePIN(const std::string& pin) const{

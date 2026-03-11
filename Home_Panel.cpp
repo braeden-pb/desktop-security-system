@@ -34,8 +34,8 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     cameraPlaceholder->SetMinSize(wxSize(200, 150));
     cameraPlaceholder->SetBackgroundColour(wxColour(30, 30, 30)); // Dark grey placeholder
     actionBtn = new wxToggleButton(this, wxID_ANY, "ARM SYSTEM");
-    auto* alarmButton = new wxToggleButton(this,wxID_ANY, "Sound Alarm");
-    alarmButton->SetFont(buttonFont);
+    alarmBtn = new wxToggleButton(this,wxID_ANY, "Sound Alarm");
+    alarmBtn->SetFont(buttonFont);
     actionBtn->SetFont(buttonFont);
     actionBtn->SetForegroundColour(*wxGREEN);
 
@@ -43,7 +43,7 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     leftColumn->Add(statusLabel,0,wxEXPAND);
     leftColumn->Add(cameraPlaceholder, 3, wxEXPAND | wxBOTTOM, 20); // Camera gets more space
     leftColumn->Add(actionBtn, 1, wxEXPAND);
-    leftColumn->Add(alarmButton,1,wxEXPAND);
+    leftColumn->Add(alarmBtn,1,wxEXPAND);
 
     //btn font
     auto* rightColumn = new wxBoxSizer(wxVERTICAL);
@@ -87,7 +87,7 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     actionBtn->Bind(wxEVT_TOGGLEBUTTON,&Home_Panel::onArmButtonPressed,this);
     logoutBtn->Bind(wxEVT_BUTTON,&Home_Panel::onLogout,this);
     storageBtn->Bind(wxEVT_BUTTON,&Home_Panel::onStorageButtonPressed,this);
-    alarmButton->Bind(wxEVT_TOGGLEBUTTON,&Home_Panel::onAlarmButtonPressed,this);
+    alarmBtn->Bind(wxEVT_TOGGLEBUTTON,&Home_Panel::onAlarmButtonPressed,this);
 
 
 }
@@ -154,7 +154,16 @@ void Home_Panel::onStorageButtonPressed(wxCommandEvent &event) {
  * @todo Implement alarm sound functionality.
  */
 void Home_Panel::onAlarmButtonPressed(wxCommandEvent &event) {
-    // TODO: implement alarm sound
+    if (!m_system->getIsAlarmActive()) {
+        alarmBtn->SetValue(true);
+        alarmBtn->SetLabel("Turn Off Alarm");
+        m_system->soundAlarm();
+    }
+    else {
+        alarmBtn->SetValue(false);
+        alarmBtn->SetLabel("Sound Alarm");
+        m_system->turnOffAlarm();
+    }
 }
 
 /**

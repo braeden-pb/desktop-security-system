@@ -37,6 +37,7 @@ private:
     UI* m_ui;                      ///< Pointer to the main UI frame
     wxToggleButton* actionBtn;     ///< The ARM/DISARM toggle button
     wxStaticText* statusLabel;     ///< Displays the current system status
+    wxToggleButton* alarmBtn;
 
     /**
     * @brief Handles the Config button press, navigating to the Config panel.
