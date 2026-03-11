@@ -17,10 +17,10 @@ protected:
 public:
     File(int id, std::string filePath, std::string timeStamp, std::string resolution);
     virtual ~File();
-    int getID();
+    int getID() const;
     std::string getPath() const;
-    std::string getTimeStamp();
-    std::string getResolution();
+    std::string getTimeStamp() const;
+    std::string getResolution() const;
     void setPath(std::string newPath);
 
 };

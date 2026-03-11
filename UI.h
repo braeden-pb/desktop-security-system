@@ -7,6 +7,7 @@
 
 #include <wx/wx.h>
 #include <wx/simplebook.h>
+#include <wx/display.h>
 #include "Home_Panel.h"
 #include "Login_Panel.h"
 #include "Storage_Panel.h"
@@ -25,9 +26,9 @@ class UI : public wxFrame {
     };
     void SwitchPage(PageID id);
     void onExit(wxCommandEvent& event);
-    PageID GetPageID();
+    PageID GetPageID() const;
     Login_Panel* getLoginPanel();
-    Storage_Panel* getStoragePanel();
+    Storage_Panel* getStoragePanel() const;
 
 
     private:
@@ -36,6 +37,7 @@ class UI : public wxFrame {
     wxMenuBar *menuBar;
     Login_Panel* loginPage;
     Storage_Panel* storagePage;
+    Home_Panel* homePage;
 
 
 

@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "Storage.h"
+#include <tuple>
 
 enum class Status : int {
     armed,
@@ -16,21 +17,27 @@ enum class Status : int {
 
 class UI;
 class Storage;
+class Alarm;
 
 class SecuritySystem
 {
 public:
     SecuritySystem();
+    explicit SecuritySystem(bool headless);
     ~SecuritySystem();
     Status getStatus();
     void arm();
     void disarm();
+    bool isArmed() const;
     //getConfig
-    std::list<std::pair<int, std::string>> getAllImagePaths();
-    Storage* getStorage();
+    std::list<std::tuple<int,std::string, std::string>> getAllImages();
+    bool validatePIN(const std::string& pin) const;
+    Storage* getStorage() const;
     //getDeviceList
     void soundAlarm();
-    UI* getUI();
+    bool getIsAlarmActive() const;
+    void turnOffAlarm();
+    UI* getUI() const;
     Status systemStatus;
 
 
@@ -39,8 +46,10 @@ private:
     //Devices object list
     std::unique_ptr<Storage> mainStorage;
     std::unique_ptr<UI> mainUi;
+    std::unique_ptr<Alarm> alarm;
     void setStatus(Status status);
     void initializeSystem();
+
 };
 
 

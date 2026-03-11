@@ -11,6 +11,7 @@ public:
     bool OnInit() override {
         auto* system = new SecuritySystem();
         UI* mainUI = system->getUI();
+        wxInitAllImageHandlers();
         mainUI->Show(true);
         mainUI->Maximize(true);
         return true;
