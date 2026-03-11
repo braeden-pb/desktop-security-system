@@ -20,8 +20,7 @@ private:
 public:
     Storage();
     ~Storage();
-    std::string saveImage(Image image, std::string sourcePath);
-    bool deleteImage(int imageID);
+    std::string saveImage(Image image, std::string sourcePath = "");    bool deleteImage(int imageID);
     std::list<Image> listImage();
     bool hasTimeStamp(int imageID);
 };
