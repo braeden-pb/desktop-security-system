@@ -56,8 +56,8 @@ mkdir build && cd build
 # Configure
 cmake ..
 
-# Build all targets
-cmake --build .
+### Build the Application Only
+cmake --build . --target SecuritySystem
 ```
 
 > On first run, CMake will automatically download **SFML 3.0.0** and **GoogleTest 1.14.0** via FetchContent. This requires an internet connection.
@@ -86,24 +86,53 @@ From the `build/` directory:
 
 ---
 
-## Running Tests
+## Building & Running Tests
 
-Each test suite is a separate executable. From the `build/` directory:
+Each test suite is a separate CMake target. Build and run them individually as needed.
 
+### Alarm Tests
 ```bash
-./AlarmTest       # Alarm audio playback tests
-./StorageTests    # Storage read/write tests
-./ImageTests      # Image model tests
-./FileTests       # File model tests
-./SystemTests     # End-to-end system integration tests
-./VideoTests      # Video file tests
+cmake --build . --target AlarmTest
+./AlarmTest
 ```
 
-### Run All Tests at Once
+### Storage Tests
+```bash
+cmake --build . --target StorageTests
+./StorageTests
+```
+
+### Image Tests
+```bash
+cmake --build . --target ImageTests
+./ImageTests
+```
+
+### File Tests
+```bash
+cmake --build . --target FileTests
+./FileTests
+```
+
+### System Tests
+```bash
+cmake --build . --target SystemTests
+./SystemTests
+```
+
+### Video Tests
+```bash
+cmake --build . --target VideoTests
+./VideoTests
+```
+
+### Build and Run All Tests at Once
 
 ```bash
+cmake --build . --target StorageTests AlarmTest ImageTests FileTests SystemTests VideoTests
 ctest --output-on-failure
 ```
+
 
 ---
 
