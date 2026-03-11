@@ -7,23 +7,25 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(wxWidgets REQUIRED COMPONENTS core base media)
 include(FetchContent)
 
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+
 # 1. Fetch SFML for the "Alarm Noise" User Story (3 points)
 FetchContent_Declare(
         SFML
         GIT_REPOSITORY https://github.com/SFML/SFML.git
-        GIT_TAG 2.6.x
+        GIT_TAG 3.0.0
 )
 set(SFML_BUILD_AUDIO ON CACHE BOOL "" FORCE)
 set(SFML_BUILD_GRAPHICS OFF CACHE BOOL "" FORCE)
 set(SFML_BUILD_WINDOW OFF CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK OFF CACHE BOOL "" FORCE)
+set(SFML_USE_SYSTEM_DEPS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(SFML)
 
 # 2. Fetch GoogleTest for your Stage #3 Acceptance Tests
 FetchContent_Declare(
         googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG v1.14.0
+        URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)

@@ -11,7 +11,7 @@ Alarm::Alarm()
 
 
 bool Alarm::loadSound(sf::SoundBuffer& buffer) {
-    std::string soundPath = std::filesystem::current_path().string() + "/sounds/alarm.wav";
+    std::string soundPath = "../sounds/alarm.wav";
     std::cout << "Loading Sound From: " << soundPath << std::endl;
     return buffer.loadFromFile(soundPath);
 }
@@ -26,16 +26,16 @@ void Alarm::activate() {
         std::cout << "Failed to load sound." << std::endl;
         return;
     }
-    sound.setBuffer(buffer);
-    sound.setLoop(true);
-    sound.play();
+    sound.emplace(buffer);
+    sound->setLooping(true);
+    sound->play();
 }
 
 
 // Stops the alarm and updates its status
 void Alarm::deactivate() {
     isActive = false;
-    sound.stop();
+    sound->stop();
     std::cout << "Alarm deactivated." << std::endl;
 }
 

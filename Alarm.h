@@ -17,7 +17,7 @@ private:
     std::string lastActivatedAt;   // timestamp of the last activation
 
     sf::SoundBuffer buffer;
-    sf::Sound sound;
+    std::optional<sf::Sound> sound;
 
 public:
     // Constructor
