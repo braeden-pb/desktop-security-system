@@ -5,7 +5,7 @@
 #include "Storage.h"
 
 SecuritySystem::SecuritySystem() {
-    mainStorage = std::make_unique<Storage>();
+    mainStorage = std::make_unique<Storage>("../saved_data/");
     mainUi = std::make_unique<UI>(this);
     systemStatus = Status::disarmed;
     alarm = std::make_unique<Alarm>();
@@ -14,8 +14,8 @@ SecuritySystem::SecuritySystem() {
 }
 
 SecuritySystem::SecuritySystem(bool headless) {
-    mainStorage = std::make_unique<Storage>();
-    if (!headless) mainStorage = std::make_unique<Storage>();
+    mainStorage = std::make_unique<Storage>("../saved_data/");
+    if (!headless) mainStorage = std::make_unique<Storage>("../saved_data/");
     systemStatus = Status::disarmed;
 }
 
