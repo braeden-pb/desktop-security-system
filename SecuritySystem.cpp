@@ -8,6 +8,13 @@
 #include "UI.h"
 #include "Storage.h"
 
+
+/**
+ * @brief Constructs a fully initialized SecuritySystem with UI, storage, and alarm.
+ *
+ * Creates all subsystems — @ref Storage, @ref UI, and @ref Alarm — and sets
+ * the initial system status to disarmed.
+ */
 SecuritySystem::SecuritySystem() {
     mainStorage = std::make_unique<Storage>();
     mainUi = std::make_unique<UI>(this);
@@ -17,58 +24,145 @@ SecuritySystem::SecuritySystem() {
 
 }
 
+/**
+ * @brief Constructs a SecuritySystem with optional headless mode.
+ *
+ * In headless mode, no UI is created. Storage is always initialized.
+ * The system starts in a disarmed state.
+ *
+ * @param headless If true, skips UI initialization for non-interactive use.
+ *
+ * @note The current implementation initializes Storage regardless of the
+ *       headless flag. The conditional re-assignment appears to be a bug.
+ */
 SecuritySystem::SecuritySystem(bool headless) {
     mainStorage = std::make_unique<Storage>();
     if (!headless) mainStorage = std::make_unique<Storage>();
     systemStatus = Status::disarmed;
 }
 
+/**
+ * @brief Destroys the SecuritySystem and releases all owned subsystems.
+ */
 SecuritySystem::~SecuritySystem() {}
 
+/**
+ * @brief Returns a non-owning pointer to the UI subsystem.
+ *
+ * @return UI* Pointer to the active UI instance, or nullptr if running headless.
+ */
 UI *SecuritySystem::getUI() const{
     return mainUi.get();
 }
 
+/**
+ * @brief Sets the current armed/disarmed status of the system.
+ *
+ * @param status The new @ref Status value to apply.
+ */
 void SecuritySystem::setStatus(Status status) {
     systemStatus = status;
 }
 
+/**
+ * @brief Activates the alarm.
+ *
+ * Delegates to @ref Alarm::activate(). The alarm will sound continuously
+ * until @ref turnOffAlarm() is called.
+ */
 void SecuritySystem::soundAlarm() {
     alarm->activate();
 }
 
+/**
+ * @brief Deactivates the alarm.
+ *
+ * Delegates to @ref Alarm::deactivate() to stop audio playback.
+ *
+ * @pre @ref soundAlarm() must have been called prior to this.
+ */
 void SecuritySystem::turnOffAlarm() {
     alarm->deactivate();
 }
 
+
+/**
+ * @brief Checks whether the alarm is currently sounding.
+ *
+ * @return true  if the alarm is active.
+ * @return false if the alarm is inactive.
+ */
 bool SecuritySystem::getIsAlarmActive() const {
     return alarm->getStatus();
 }
 
+
+/**
+ * @brief Validates a given PIN against the system's stored PIN.
+ *
+ * @param pin The PIN string to validate.
+ * @return true  if the PIN matches.
+ * @return false if the PIN is incorrect.
+ *
+ * @warning The PIN is currently hardcoded as "1234". This should be
+ *          replaced with a secure lookup from @ref Storage before deployment.
+ */
 bool SecuritySystem::validatePIN(const std::string& pin) const{
     return pin=="1234";
 }
 
-
+/**
+ * @brief Returns whether the system is currently armed.
+ *
+ * @return true  if the system status is @ref Status::armed.
+ * @return false otherwise.
+ */
 bool SecuritySystem::isArmed() const {
     return systemStatus == Status::armed;
 }
 
+/**
+ * @brief Arms the security system.
+ *
+ * Sets the system status to @ref Status::armed. Once armed, any
+ * triggered sensor should result in @ref soundAlarm() being called.
+ */
 void SecuritySystem::arm() {
     setStatus(Status::armed);
 }
 
+/**
+ * @brief Disarms the security system.
+ *
+ * Sets the system status to @ref Status::disarmed, preventing
+ * further alarm triggers until re-armed.
+ */
 void SecuritySystem::disarm() {
     setStatus(Status::disarmed);
 }
 
+/**
+ * @brief Returns a non-owning pointer to the Storage subsystem.
+ *
+ * @return Storage* Pointer to the active Storage instance.
+ */
 Storage *SecuritySystem::getStorage() const{
     return mainStorage.get();
 }
 
+/**
+ * @brief Retrieves all stored images as a flat list of tuples.
+ *
+ * Queries @ref Storage for all image records and unpacks each into
+ * a tuple of (ID, timestamp, file path).
+ *
+ * @return A list of tuples where each entry contains:
+ *         - `int`         — the image ID
+ *         - `std::string` — the timestamp the image was captured
+ *         - `std::string` — the file path to the image on disk
+ */
 std::list<std::tuple<int,std::string,std::string>> SecuritySystem::getAllImages() {
     std::list<std::tuple<int,std::string,std::string>> paths;
-    // Get the list of objects from your storage class
     auto images = mainStorage->listImage();
 
         for (const auto& img : images) {
