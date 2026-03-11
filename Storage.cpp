@@ -7,6 +7,7 @@
 
 #include "Storage.h"
 #include <iostream>
+#include <chrono>
 
 
 /**
@@ -30,9 +31,10 @@ Storage::Storage() {
                 std::string path = entry.path().string();
 
                 std::filesystem::file_time_type ftime = std::filesystem::last_write_time(path);
-                auto sctime = std::chrono::clock_cast<std::chrono::system_clock>(ftime);
+                auto sctime = std::chrono::file_clock::to_sys(ftime);
+                auto sys_tp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(sctime);
+                auto cftime = std::chrono::system_clock::to_time_t(sys_tp);
                 std::string time_str = std::format("{:%Y-%m-%d %H:%M:%S}", sctime);
-
                 imageList.push_back(Image(idCounter, path, time_str, "1080p", 0));
                 idCounter++;
             }
