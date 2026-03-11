@@ -18,7 +18,7 @@ private:
     std::string storagePath;
 
 public:
-    Storage();
+    Storage(std::string storagePath);
     ~Storage();
     std::string saveImage(Image image, std::string sourcePath = "");    bool deleteImage(int imageID);
     std::list<Image> listImage();

@@ -18,8 +18,7 @@
  */
 namespace fs = std::filesystem;
 
-Storage::Storage() {
-    storagePath = "../saved_data/";;
+Storage::Storage(std::string storagePath) : storagePath(storagePath) {
     if (!fs::exists(storagePath)) {
         fs::create_directory(storagePath);
     }
@@ -55,7 +54,7 @@ Storage::~Storage() {}
 std::string Storage::saveImage(Image image, std::string sourcePath) {
     try {
         // Construct destination path
-        std::string dest = "../saved_data/" + sourcePath;
+        std::string dest = storagePath + sourcePath;
 
         // Perform the physical file copy, replacing any existing file with the same name
         std::filesystem::copy(sourcePath, dest, std::filesystem::copy_options::overwrite_existing);

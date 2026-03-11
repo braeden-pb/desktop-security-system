@@ -9,16 +9,16 @@ namespace fs = std::filesystem;
 class StorageTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        if (fs::exists("../saved_data/")) fs::remove_all("../saved_data/");
-        fs::create_directory("../saved_data/");
+        if (fs::exists("../test_data/")) fs::remove_all("../test_data/");
+        fs::create_directory("../test_data/");
         std::ofstream("camera_view_1.jpg").close();
         std::ofstream("camera_view_2.jpg").close();
-        store = new Storage();
+        store = new Storage("../test_data/");
     }
 
     void TearDown() override {
         delete store;
-        if (fs::exists("../saved_data/")) //fs::remove_all("../saved_data/");
+        fs::remove_all("../test_data/");
         fs::remove("camera_view_1.jpg");
         fs::remove("camera_view_2.jpg");
     }
