@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14) # FetchContent works better with 3.14+
+cmake_minimum_required(VERSION 3.14)
 project(group55)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -9,7 +9,7 @@ include(FetchContent)
 
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
-# 1. Fetch SFML for the "Alarm Noise" User Story (3 points)
+
 FetchContent_Declare(
         SFML
         GIT_REPOSITORY https://github.com/SFML/SFML.git
@@ -22,7 +22,6 @@ set(SFML_BUILD_NETWORK OFF CACHE BOOL "" FORCE)
 set(SFML_USE_SYSTEM_DEPS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(SFML)
 
-# 2. Fetch GoogleTest for your Stage #3 Acceptance Tests
 FetchContent_Declare(
         googletest
         URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
@@ -30,7 +29,6 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# 3. Find wxWidgets (including 'media' for your Video story)
 find_package(wxWidgets REQUIRED COMPONENTS core base media)
 include(${wxWidgets_USE_FILE})
 
@@ -60,7 +58,7 @@ add_executable(StorageTests
         Image.cpp
         File.cpp
 )
-# Link GTest and wxWidgets (in case your headers need them)
+
 target_link_libraries(StorageTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
 add_executable(ImageTests
@@ -87,7 +85,7 @@ add_executable(SystemTests
 
 target_link_libraries(SystemTests
         GTest::gtest_main
-        sfml-audio           # <-- this fixes sf::Sound and sf::SoundBuffer errors
+        sfml-audio
         sfml-system
         ${wxWidgets_LIBRARIES}
 )
@@ -99,7 +97,6 @@ target_link_libraries(FileTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
 target_link_libraries(ImageTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
-# 5. Video Specific Tests
 add_executable(VideoTests
         tests/VideoTests.cpp
         Video.cpp
@@ -107,10 +104,8 @@ add_executable(VideoTests
 )
 target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
-# Link both wxWidgets and the fetched SFML audio
 target_link_libraries(SecuritySystem PRIVATE ${wxWidgets_LIBRARIES} sfml-audio)
 
-# Alarm User Story Acceptance Test
 add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h)
 target_link_libraries(AlarmTest PRIVATE GTest::gtest_main sfml-audio ${wxWidgets_LIBRARIES})
 
