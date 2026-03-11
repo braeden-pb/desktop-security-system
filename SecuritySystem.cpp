@@ -1,7 +1,3 @@
-//
-// Created by evan on 2026-02-19.
-//
-
 #include "SecuritySystem.h"
 
 #include "Alarm.h"
@@ -76,5 +72,6 @@ std::list<std::tuple<int,std::string,std::string>> SecuritySystem::getAllImages(
         }
     return paths;
 }
+
 
 
