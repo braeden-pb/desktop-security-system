@@ -107,6 +107,11 @@ add_executable(VideoTests
 )
 target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
+add_executable(alertTests
+        AlertTest.cpp
+)
+target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
+
 # Link both wxWidgets and the fetched SFML audio
 target_link_libraries(SecuritySystem PRIVATE ${wxWidgets_LIBRARIES} sfml-audio)
 
