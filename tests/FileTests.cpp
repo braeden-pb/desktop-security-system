@@ -7,7 +7,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "File.h"
+#include "../File.h"
 
 /**
  * @class FileTest

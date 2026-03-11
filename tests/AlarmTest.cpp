@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "Alarm.h"
+#include "../Alarm.h"
 #include <thread>
 
 

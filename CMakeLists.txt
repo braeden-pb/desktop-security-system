@@ -55,7 +55,7 @@ add_executable(SecuritySystem
 )
 
 add_executable(StorageTests
-        StorageTests.cpp
+        tests/StorageTests.cpp
         Storage.cpp
         Image.cpp
         File.cpp
@@ -64,26 +64,44 @@ add_executable(StorageTests
 target_link_libraries(StorageTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
 add_executable(ImageTests
-        ImageTests.cpp
+        tests/ImageTests.cpp
         Image.cpp
         File.cpp
 )
 add_executable(FileTests
-        FileTests.cpp
+        tests/FileTests.cpp
         File.cpp
 )
 add_executable(SystemTests
         tests/SystemTest.cpp
         SecuritySystem.cpp
-
+        Alarm.cpp
+        Storage.cpp
+        File.cpp
+        UI.cpp
+        Image.cpp
+        Home_Panel.cpp
+        Login_Panel.cpp
+        Storage_Panel.cpp
 )
+
+target_link_libraries(SystemTests
+        GTest::gtest_main
+        sfml-audio           # <-- this fixes sf::Sound and sf::SoundBuffer errors
+        sfml-system
+        ${wxWidgets_LIBRARIES}
+)
+
+target_link_libraries(SystemTests GTest::gtest_main ${wxWidgets_LIBRARIES})
+
+
 target_link_libraries(FileTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
 target_link_libraries(ImageTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
 # 5. Video Specific Tests
 add_executable(VideoTests
-        VideoTests.cpp
+        tests/VideoTests.cpp
         Video.cpp
         File.cpp
 )
@@ -93,7 +111,7 @@ target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 target_link_libraries(SecuritySystem PRIVATE ${wxWidgets_LIBRARIES} sfml-audio)
 
 # Alarm User Story Acceptance Test
-add_executable(AlarmTest AlarmTest.cpp Alarm.cpp Alarm.h)
+add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h)
 target_link_libraries(AlarmTest PRIVATE GTest::gtest_main sfml-audio ${wxWidgets_LIBRARIES})
 
 enable_testing()

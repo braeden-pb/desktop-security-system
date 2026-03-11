@@ -7,7 +7,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "Video.h"
+#include "../Video.h"
 
 /**
  * @class VideoTest

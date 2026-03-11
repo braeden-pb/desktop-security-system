@@ -7,7 +7,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "Image.h"
+#include "../Image.h"
 
 /**
  * @test Acceptance Test for "View Gallery": Verifies image resolution/size.

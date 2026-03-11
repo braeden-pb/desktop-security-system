@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <filesystem>
-#include "Storage.h"
-#include "Image.h"
+#include "../Storage.h"
+#include "../Image.h"
 
 namespace fs = std::filesystem;
 

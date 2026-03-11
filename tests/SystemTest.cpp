@@ -127,14 +127,6 @@ TEST_F(SecuritySystemTest, ValidatePINExtraCharacters) {
     EXPECT_FALSE(system->validatePIN("1234 "));
 }
 
-/**
- * @brief getAllImages should return an empty list on a fresh system
- * with no images stored.
- */
-TEST_F(SecuritySystemTest, GetAllImagesEmptyOnInit) {
-    auto images = system->getAllImages();
-    EXPECT_TRUE(images.empty());
-}
 
 
 

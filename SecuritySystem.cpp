@@ -23,6 +23,8 @@ SecuritySystem::SecuritySystem(bool headless) {
     systemStatus = Status::disarmed;
 }
 
+SecuritySystem::~SecuritySystem() {}
+
 UI *SecuritySystem::getUI() const{
     return mainUi.get();
 }
