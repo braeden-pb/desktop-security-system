@@ -4,7 +4,7 @@
 *.out
 *.user
 
-# Build directories (matching your recent generator fix)
+# Build directories
 cmake-build-*/
 /build/
 
@@ -13,3 +13,26 @@ cmake-build-*/
 *.obj
 *.exe
 *.log
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+
+# GoogleTest / FetchContent cache
+_deps/
+
+# Compiled shared/static libraries
+*.a
+*.so
+*.dylib
+*.lib
+*.dll
+
+# macOS junk
+.DS_Store
+
+# VSCode (in case teammates use it)
+.vscode/
