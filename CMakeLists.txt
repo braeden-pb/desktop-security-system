@@ -111,3 +111,8 @@ target_link_libraries(AlarmTest PRIVATE GTest::gtest_main sfml-audio ${wxWidgets
 
 enable_testing()
 add_test(NAME AlarmTests COMMAND AlarmTest)
+add_test(NAME StorageTests COMMAND StorageTests)
+add_test(NAME VideoTests COMMAND VideoTests)
+add_test(NAME SystemTests COMMAND SystemTests)
+add_test(NAME FileTests COMMAND FileTests)
+add_test(NAME ImageTests COMMAND ImageTests)
