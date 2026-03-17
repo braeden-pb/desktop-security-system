@@ -7,32 +7,23 @@
 
 #include <string>
 #include "Event.h"
+#include "Observer.h"
 
 class SecuritySystem;
 
-class IAlertCallback {
-public:
-    virtual void onAlert(const std::string& email, const std::string& time) = 0;
-    virtual ~IAlertCallback() = default;
-};
-
-class Alert {
+class Alert : public Observer {
 private:
-    IAlertCallback* uiCallback = nullptr;
-    Event& event;
+    Event event;
     std::string email;
     SecuritySystem& system;
 
 public:
-    Alert(Event& event, std::string email, SecuritySystem& system);
-
-    void setUICallback(IAlertCallback* cb) {
-        uiCallback = cb;
-    }
-
+    Alert(Event event, std::string email, SecuritySystem& system);
+    void motionDetected();
     void sendAlert();
     Event getEvent();
     void discard();
+    void update(const std::string& eventMsg) override;
 };
 
 #endif //GROUP55_ALERT_H

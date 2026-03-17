@@ -49,3 +49,8 @@ void Alarm::testAlarm() {
 bool Alarm::getStatus() const {
     return isActive;
 }
+void Alarm::update(const std::string& event) {
+    if (event == "Alarm triggered") {
+        activate();
+    }
+}

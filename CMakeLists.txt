@@ -126,7 +126,8 @@ target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 target_link_libraries(SecuritySystem PRIVATE ${wxWidgets_LIBRARIES} sfml-audio)
 
 # Alarm User Story Acceptance Test
-add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h)
+add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h
+        Observer.h)
 target_link_libraries(AlarmTest PRIVATE GTest::gtest_main sfml-audio ${wxWidgets_LIBRARIES})
 
 enable_testing()

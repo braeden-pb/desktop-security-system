@@ -3,12 +3,16 @@
 #include "Alarm.h"
 #include "UI.h"
 #include "Storage.h"
+#include "Alert.h"
+
 
 SecuritySystem::SecuritySystem() {
     mainStorage = std::make_unique<Storage>();
     mainUi = std::make_unique<UI>(this);
     systemStatus = Status::disarmed;
     alarm = std::make_unique<Alarm>();
+    addObserver(mainUi.get());
+    addObserver(alarm.get());
 
 
 }
@@ -17,6 +21,8 @@ SecuritySystem::SecuritySystem(bool headless) {
     mainStorage = std::make_unique<Storage>();
     if (!headless) mainStorage = std::make_unique<Storage>();
     systemStatus = Status::disarmed;
+    alarm = std::make_unique<Alarm>();
+    addObserver(alarm.get());
 }
 
 SecuritySystem::~SecuritySystem() {}
@@ -30,7 +36,7 @@ void SecuritySystem::setStatus(Status status) {
 }
 
 void SecuritySystem::soundAlarm() {
-    alarm->activate();
+    notifyObservers("Alarm triggered");
 }
 
 void SecuritySystem::turnOffAlarm() {
@@ -71,6 +77,20 @@ std::list<std::tuple<int,std::string,std::string>> SecuritySystem::getAllImages(
             paths.emplace_back(img.getID(), img.getTimeStamp(), img.getPath());
         }
     return paths;
+}
+
+void SecuritySystem::addObserver(Observer* o) {
+    observers.push_back(o);
+}
+
+void SecuritySystem::notifyObservers(const std::string& event) {
+    for (auto* o : observers) {
+        o->update(event);
+    }
+}
+
+void SecuritySystem::soundAlert() {
+    notifyObservers("Motion detected");
 }
 
 
