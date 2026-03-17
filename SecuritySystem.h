@@ -34,9 +34,9 @@ public:
     bool validatePIN(const std::string& pin) const;
     Storage* getStorage() const;
     //getDeviceList
-    void soundAlarm();
+    void soundAlarm() const;
     bool getIsAlarmActive() const;
-    void turnOffAlarm();
+    void turnOffAlarm() const;
     UI* getUI() const;
     Status systemStatus;
 

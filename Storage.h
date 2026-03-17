@@ -22,7 +22,7 @@ public:
     ~Storage();
     std::string saveImage(Image image, std::string sourcePath = "");    bool deleteImage(int imageID);
     std::list<Image> listImage();
-    bool hasTimeStamp(int imageID);
+    bool hasTimeStamp(int imageID) const;
 };
 
 #endif //GROUP55_STORAGE_H

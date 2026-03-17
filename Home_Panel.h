@@ -74,7 +74,6 @@ private:
      * @brief Returns the password input control.
      * @return Pointer to the password wxTextCtrl.
      */
-    wxTextCtrl* GetPasswordCtrl();
 };
 
 

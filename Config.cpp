@@ -42,7 +42,7 @@ Config::~Config() {
     *
     * @return The motion sensitivity value.
     */
-int Config::getSensitivity() {
+int Config::getSensitivity() const {
     return motionSensitivity;
 }
 
@@ -67,7 +67,7 @@ void Config::setSensitivity(int sensitivity) {
      *
      * @return The capture mode value.
      */
-bool Config::getCaptureMode() {
+bool Config::getCaptureMode() const {
     return captureMode;
 }
 
@@ -92,7 +92,7 @@ void Config::setCaptureMode(bool mode) {
      *
      * @return The clip seconds value.
      */
-int Config::getSeconds() {
+int Config::getSeconds() const {
     return clipSeconds;
 }
 
@@ -118,7 +118,7 @@ void Config::setSeconds(int seconds) {
      *
      * @return The photos per value.
      */
-int Config::getPhotosPer() {
+int Config::getPhotosPer() const {
     return photosPer;
 }
 

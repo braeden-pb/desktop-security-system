@@ -49,6 +49,7 @@ add_executable(SecuritySystem
         Image.h Image.cpp
         File.cpp File.h
         Alarm.cpp Alarm.h
+        Config.cpp
 
 )
 
@@ -109,6 +110,9 @@ target_link_libraries(SecuritySystem PRIVATE ${wxWidgets_LIBRARIES} sfml-audio)
 add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h)
 target_link_libraries(AlarmTest PRIVATE GTest::gtest_main sfml-audio ${wxWidgets_LIBRARIES})
 
+add_executable(ConfigTests ConfigTests.cpp Config.cpp)
+
+
 enable_testing()
 add_test(NAME AlarmTests COMMAND AlarmTest)
 add_test(NAME StorageTests COMMAND StorageTests)
@@ -116,3 +120,4 @@ add_test(NAME VideoTests COMMAND VideoTests)
 add_test(NAME SystemTests COMMAND SystemTests)
 add_test(NAME FileTests COMMAND FileTests)
 add_test(NAME ImageTests COMMAND ImageTests)
+add_test(NAME ConfigTests COMMAND ConfigTests)

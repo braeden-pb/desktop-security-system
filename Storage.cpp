@@ -113,7 +113,7 @@ std::list<Image> Storage::listImage() {
  * @param imageID The ID to search for.
  * @return true if the image is found in imageList.
  */
-bool Storage::hasTimeStamp(int imageID) {
+bool Storage::hasTimeStamp(int imageID) const {
     for (auto img : imageList) {
         if (img.getID() == imageID) {
             return true;

@@ -14,13 +14,13 @@ class Config {
 public:
     Config();
     ~Config();
-    int getSensitivity();
+    int getSensitivity() const;
     void setSensitivity(int sensitivity);
-    bool getCaptureMode();
+    bool getCaptureMode() const;
     void setCaptureMode(bool mode);
-    int getSeconds();
+    int getSeconds() const;
     void setSeconds(int seconds);
-    int getPhotosPer();
+    int getPhotosPer() const;
     void setPhotosPer(int photos);
     string getPassword();
     void setPassword(string newPassword);

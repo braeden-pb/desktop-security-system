@@ -37,6 +37,6 @@ std::string Image::getSize() {
  * @brief Gets the Dots Per Inch (DPI) of the image.
  * @return int The DPI value.
  */
-int Image::getDPI() {
+int Image::getDPI() const {
     return dpi;
 }

@@ -16,7 +16,7 @@ public:
     Image(int id, std::string filePath, std::string timeStamp, std::string resolution, int dpi);
     ~Image();
     std::string getSize();
-    int getDPI();
+    int getDPI() const;
 };
 
 #endif //GROUP55_IMAGE_H

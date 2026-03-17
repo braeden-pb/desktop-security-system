@@ -67,7 +67,7 @@ void SecuritySystem::setStatus(Status status) {
  * Delegates to @ref Alarm::activate(). The alarm will sound continuously
  * until @ref turnOffAlarm() is called.
  */
-void SecuritySystem::soundAlarm() {
+void SecuritySystem::soundAlarm() const {
     alarm->activate();
 }
 
@@ -78,7 +78,7 @@ void SecuritySystem::soundAlarm() {
  *
  * @pre @ref soundAlarm() must have been called prior to this.
  */
-void SecuritySystem::turnOffAlarm() {
+void SecuritySystem::turnOffAlarm() const {
     alarm->deactivate();
 }
 

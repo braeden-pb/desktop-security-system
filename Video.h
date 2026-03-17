@@ -7,6 +7,7 @@
 
 #include "File.h"
 #include <string>
+#include <wx/wx.h>
 #include <wx/mediactrl.h>
 
 class Video : public File {
