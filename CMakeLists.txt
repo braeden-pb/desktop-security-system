@@ -93,16 +93,12 @@ add_executable(AlertTest
 
 target_link_libraries(AlertTest ${wxWidgets_LIBRARIES})
 
-target_link_libraries(SecuritySystem ${wxWidgets_LIBRARIES})
 target_link_libraries(SystemTests
         GTest::gtest_main
         sfml-audio
         sfml-system
         ${wxWidgets_LIBRARIES}
 )
-
-target_link_libraries(SystemTests GTest::gtest_main ${wxWidgets_LIBRARIES})
-
 
 target_link_libraries(FileTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 

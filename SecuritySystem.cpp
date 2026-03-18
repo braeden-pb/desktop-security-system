@@ -17,7 +17,7 @@ SecuritySystem::SecuritySystem() {
     mainUi = std::make_unique<UI>(this);
     systemStatus = Status::disarmed;
     alarm = std::make_unique<Alarm>();
-    addObserver(mainUi.get());
+    //addObserver(mainUi.get());
     addObserver(alarm.get());
 
 
