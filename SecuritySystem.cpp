@@ -3,6 +3,8 @@
 #include "Alarm.h"
 #include "UI.h"
 #include "Storage.h"
+#include "Alert.h"
+
 
 /**
  * @brief Constructs a fully initialized SecuritySystem with UI, storage, and alarm.
@@ -15,6 +17,8 @@ SecuritySystem::SecuritySystem() {
     mainUi = std::make_unique<UI>(this);
     systemStatus = Status::disarmed;
     alarm = std::make_unique<Alarm>();
+    addObserver(mainUi.get());
+    addObserver(alarm.get());
 
 
 }
@@ -36,6 +40,8 @@ SecuritySystem::SecuritySystem(bool headless) {
     mainStorage = std::make_unique<Storage>("../saved_data/");
     if (!headless) mainStorage = std::make_unique<Storage>("../saved_data/");
     systemStatus = Status::disarmed;
+    alarm = std::make_unique<Alarm>();
+    addObserver(alarm.get());
 }
 
 /**
@@ -67,8 +73,8 @@ void SecuritySystem::setStatus(Status status) {
  * Delegates to @ref Alarm::activate(). The alarm will sound continuously
  * until @ref turnOffAlarm() is called.
  */
-void SecuritySystem::soundAlarm() const {
-    alarm->activate();
+void SecuritySystem::soundAlarm() {
+    notifyObservers("Alarm triggered");
 }
 
 /**
@@ -167,6 +173,21 @@ std::list<std::tuple<int,std::string,std::string>> SecuritySystem::getAllImages(
         }
     return paths;
 }
+
+void SecuritySystem::addObserver(Observer* o) {
+    observers.push_back(o);
+}
+
+void SecuritySystem::notifyObservers(const std::string& event) {
+    for (auto* o : observers) {
+        o->update(event);
+    }
+}
+
+void SecuritySystem::soundAlert() {
+    notifyObservers("Motion detected");
+}
+
 
 
 

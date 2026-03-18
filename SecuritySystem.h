@@ -8,6 +8,8 @@
 
 #include "Storage.h"
 #include <tuple>
+#include "Observer.h"
+#include "Alert.h"
 
 enum class Status : int {
     armed,
@@ -22,6 +24,8 @@ class Alarm;
 class SecuritySystem
 {
 public:
+    void addObserver(Observer* o);
+    void notifyObservers(const std::string& event);
     SecuritySystem();
     explicit SecuritySystem(bool headless);
     ~SecuritySystem();
@@ -34,7 +38,8 @@ public:
     bool validatePIN(const std::string& pin) const;
     Storage* getStorage() const;
     //getDeviceList
-    void soundAlarm() const;
+    void soundAlarm();
+    void soundAlert();
     bool getIsAlarmActive() const;
     void turnOffAlarm() const;
     UI* getUI() const;
@@ -44,6 +49,7 @@ public:
 private:
     //Config object
     //Devices object list
+    std::vector<Observer*> observers;
     std::unique_ptr<Storage> mainStorage;
     std::unique_ptr<UI> mainUi;
     std::unique_ptr<Alarm> alarm;

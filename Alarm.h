@@ -7,9 +7,10 @@
 
 #include <string>
 #include <SFML/Audio.hpp>
+#include "Observer.h"
 
 
-class Alarm {
+class Alarm : public Observer{
 private:
     bool isActive;                 // shows whether the alarm is currently active
     int volume;                    // alarm volume level
@@ -35,6 +36,8 @@ public:
 
     // Returns the current alarm status
     bool getStatus() const;
+
+    void update(const std::string& event) override;
 };
 
 #endif // GROUP55_ALARM_H

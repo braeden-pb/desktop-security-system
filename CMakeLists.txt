@@ -84,6 +84,16 @@ add_executable(SystemTests
         Storage_Panel.cpp
 )
 
+add_executable(AlertTest
+        AlertTest.cpp
+        Alert.cpp
+        Event.cpp
+        SecuritySystem.cpp
+)
+
+target_link_libraries(AlertTest ${wxWidgets_LIBRARIES})
+
+target_link_libraries(SecuritySystem ${wxWidgets_LIBRARIES})
 target_link_libraries(SystemTests
         GTest::gtest_main
         sfml-audio
@@ -107,7 +117,9 @@ target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
 target_link_libraries(SecuritySystem PRIVATE ${wxWidgets_LIBRARIES} sfml-audio)
 
-add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h)
+# Alarm User Story Acceptance Test
+add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h
+        Observer.h)
 target_link_libraries(AlarmTest PRIVATE GTest::gtest_main sfml-audio ${wxWidgets_LIBRARIES})
 
 add_executable(ConfigTests ConfigTests.cpp Config.cpp)

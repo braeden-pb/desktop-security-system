@@ -1,0 +1,21 @@
+Index: AlarmTest.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>//\n// Created by rushd on 3/10/26.\n//\n#include <gtest/gtest.h>\n#include \"Alarm.h\"\n\nTEST(AlarmTest, DefaultStatusIsInactive) {\n    Alarm alarm;\n    EXPECT_FALSE(alarm.getStatus());\n}\n\nTEST(AlarmTest, ActivateSetsStatusTrue) {\n    Alarm alarm;\n    alarm.activate();\n    EXPECT_TRUE(alarm.getStatus());\n}\n\nTEST(AlarmTest, DeactivateSetsStatusFalse) {\n    Alarm alarm;\n    alarm.activate();\n    alarm.deactivate();\n    EXPECT_FALSE(alarm.getStatus());\n}\n\nTEST(AlarmTest, TimedActivateSetsStatusTrue) {\n    Alarm alarm;\n    alarm.activate(1);\n    EXPECT_TRUE(alarm.getStatus());\n}\n\nTEST(AlarmTest, TestAlarmRunsWithoutCrash) {\n    Alarm alarm;\n    EXPECT_NO_THROW(alarm.testAlarm());\n}
+===================================================================
+diff --git a/AlarmTest.cpp b/AlarmTest.cpp
+--- a/AlarmTest.cpp	(revision 9576afe0c205854e472458841200526a11e7ac4c)
++++ b/AlarmTest.cpp	(date 1773138637197)
+@@ -22,11 +22,7 @@
+     EXPECT_FALSE(alarm.getStatus());
+ }
+ 
+-TEST(AlarmTest, TimedActivateSetsStatusTrue) {
+-    Alarm alarm;
+-    alarm.activate(1);
+-    EXPECT_TRUE(alarm.getStatus());
+-}
++
+ 
+ TEST(AlarmTest, TestAlarmRunsWithoutCrash) {
+     Alarm alarm;
