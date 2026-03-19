@@ -11,6 +11,7 @@
 #include "Home_Panel.h"
 #include "Login_Panel.h"
 #include "Storage_Panel.h"
+#include "Config_Panel.h"
 
 class SecuritySystem;
 
@@ -38,6 +39,7 @@ class UI : public wxFrame {
     Login_Panel* loginPage;
     Storage_Panel* storagePage;
     Home_Panel* homePage;
+    Config_Panel* configPage;
 
 
 

@@ -1,6 +1,7 @@
 #include "SecuritySystem.h"
 
 #include "Alarm.h"
+#include "Config.h"
 #include "UI.h"
 #include "Storage.h"
 #include "Alert.h"
@@ -17,6 +18,7 @@ SecuritySystem::SecuritySystem() {
     mainUi = std::make_unique<UI>(this);
     systemStatus = Status::disarmed;
     alarm = std::make_unique<Alarm>();
+    config = std::make_unique<Config>();
     //addObserver(mainUi.get());
     addObserver(alarm.get());
 
@@ -56,6 +58,10 @@ SecuritySystem::~SecuritySystem() {}
  */
 UI *SecuritySystem::getUI() const{
     return mainUi.get();
+}
+
+Config *SecuritySystem::getConfig() {
+    return config.get();
 }
 
 /**
@@ -110,7 +116,7 @@ bool SecuritySystem::getIsAlarmActive() const {
  *          replaced with a secure lookup from @ref Storage before deployment.
  */
 bool SecuritySystem::validatePIN(const std::string& pin) const {
-    return pin == "1234";
+    return pin == config->getPassword();
 }
 
 /**

@@ -88,6 +88,7 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     logoutBtn->Bind(wxEVT_BUTTON,&Home_Panel::onLogout,this);
     storageBtn->Bind(wxEVT_BUTTON,&Home_Panel::onStorageButtonPressed,this);
     alarmBtn->Bind(wxEVT_TOGGLEBUTTON,&Home_Panel::onAlarmButtonPressed,this);
+    settingsBtn->Bind(wxEVT_BUTTON,&Home_Panel::onConfigButtonPressed,this);
 
 
 }
@@ -134,6 +135,8 @@ void Home_Panel::onLogout(wxCommandEvent &event) {
 }
 
 
+
+
 /**
  * @brief Handles the Storage button press.
  *
@@ -145,6 +148,10 @@ void Home_Panel::onStorageButtonPressed(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Storage_ID);
     m_ui->getStoragePanel()->loadImages();
     m_ui->getStoragePanel()->Layout();
+}
+
+void Home_Panel::onConfigButtonPressed(wxCommandEvent &event) {
+    m_ui->SwitchPage(UI::Setting_ID);
 }
 
 /**

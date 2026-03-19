@@ -23,7 +23,9 @@ Config::Config() {
         photosPer = 1;
         password = "123";
         authorizedFaces.clear();
+        writeToFile();
     }
+
 }
 
 /**
@@ -277,6 +279,7 @@ bool Config::writeToFile() {
 
         configFile.close();
     } catch (...) { //If any error is caught, return false.
+        std::cout << "Failed to open file";
         return false;
     }
 

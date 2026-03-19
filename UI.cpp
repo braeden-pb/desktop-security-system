@@ -37,9 +37,11 @@ menuBar(new wxMenuBar())
     homePage = new Home_Panel(book, system,this);
     loginPage = new Login_Panel(book,system,this);
     storagePage = new Storage_Panel(book,system,this);
+    configPage = new Config_Panel(book,system,this);
     book->AddPage(loginPage, "Login");
     book->AddPage(homePage, "Home");
     book->AddPage(storagePage,"Storage");
+    book->AddPage(configPage,"Config");
     mainSizer->Add(book, 1, wxEXPAND);
 
     SetSizer(mainSizer);

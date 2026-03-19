@@ -7,31 +7,36 @@
 
 #include <wx/wx.h>
 #include <wx/filepicker.h>
+#include <wx/spinctrl.h>
 class UI;
 class SecuritySystem;
 
 
-class Config_Panel : wxPanel {
+class Config_Panel : public wxPanel {
     public:
     Config_Panel(wxWindow* parent, SecuritySystem* system, UI* mainFrame);
     ~Config_Panel();
     SecuritySystem* m_system;
     UI* m_ui;
+    bool changesMade;
+    bool changesSaved;
 
 
 private:
-    wxStaticText* m_staticText1;
-    wxScrolledWindow* m_scrolledWindow1;
-    wxStaticText* m_staticText3;
-    wxTextCtrl* m_textCtrl2;
-    wxButton* m_button1;
-    wxStaticText* m_staticText5;
-    wxSlider* m_slider1;
-    wxStaticText* m_staticText4;
-    wxFilePickerCtrl* m_filePicker1;
-    wxStaticText* m_staticText6;
-    wxRadioBox* m_radioBox1;
-    wxButton* m_button2;
+    wxStaticText* title;
+    wxScrolledWindow* innerScrollWindow;
+    wxButton* PasswordBtn;
+    wxButton* ClipLenBtn;
+    wxButton* motionBtn;
+    wxButton* alarmConfigBtn;
+    wxButton* SaveBtn;
+    wxButton* homeBtn;
+    void onChangePass(wxCommandEvent& event);
+    void onChangeClipLen(wxCommandEvent& event);
+    void onChangeMotion(wxCommandEvent& event);
+    void onChangeAlarm(wxCommandEvent& event);
+    void onSave(wxCommandEvent& event);
+    void onHomeButton(wxCommandEvent& event);
 };
 
 

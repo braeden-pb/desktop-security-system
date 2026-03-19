@@ -20,6 +20,7 @@ enum class Status : int {
 class UI;
 class Storage;
 class Alarm;
+class Config;
 
 class SecuritySystem
 {
@@ -33,7 +34,7 @@ public:
     void arm();
     void disarm();
     bool isArmed() const;
-    //getConfig
+    Config* getConfig();
     std::list<std::tuple<int,std::string, std::string>> getAllImages();
     bool validatePIN(const std::string& pin) const;
     Storage* getStorage() const;
@@ -47,7 +48,7 @@ public:
 
 
 private:
-    //Config object
+    std::unique_ptr<Config> config;
     //Devices object list
     std::vector<Observer*> observers;
     std::unique_ptr<Storage> mainStorage;
