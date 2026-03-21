@@ -50,6 +50,11 @@ add_executable(SecuritySystem
         File.cpp File.h
         Alarm.cpp Alarm.h
         Config.cpp
+        Device.cpp
+        Device.h
+        Network.cpp
+        Network.h
+        ../Protocol.h
 
 )
 
