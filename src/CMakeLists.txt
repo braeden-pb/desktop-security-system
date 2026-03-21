@@ -85,7 +85,7 @@ add_executable(SystemTests
 )
 
 add_executable(AlertTest
-        AlertTest.cpp
+        tests/AlertTest.cpp
         Alert.cpp
         Event.cpp
         SecuritySystem.cpp
@@ -118,7 +118,7 @@ add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h
         Observer.h)
 target_link_libraries(AlarmTest PRIVATE GTest::gtest_main sfml-audio ${wxWidgets_LIBRARIES})
 
-add_executable(ConfigTests ConfigTests.cpp Config.cpp)
+add_executable(ConfigTests tests/ConfigTests.cpp Config.cpp)
 
 
 enable_testing()
