@@ -17,9 +17,9 @@ cmake-build-*/
 # CMake generated files
 CMakeCache.txt
 CMakeFiles/
-cmake_install.cmake
+src/cmake_install.cmake
 install_manifest.txt
-CTestTestfile.cmake
+src/CTestTestfile.cmake
 
 # GoogleTest / FetchContent cache
 _deps/
