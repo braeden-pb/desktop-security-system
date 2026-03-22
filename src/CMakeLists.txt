@@ -120,7 +120,9 @@ target_link_libraries(SecuritySystem PRIVATE ${wxWidgets_LIBRARIES} sfml-audio)
 
 # Alarm User Story Acceptance Test
 add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h
-        Observer.h)
+        Observer.h
+        ../Motion_Sensor.cpp
+        ../Motion_Sensor.h)
 target_link_libraries(AlarmTest PRIVATE GTest::gtest_main sfml-audio ${wxWidgets_LIBRARIES})
 
 add_executable(ConfigTests tests/ConfigTests.cpp Config.cpp)

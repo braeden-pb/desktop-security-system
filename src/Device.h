@@ -18,6 +18,9 @@ public:
     virtual void disconnect() = 0;
     bool isConnected() const { return connected; }
 
+protected:
+    void setConnected(bool state) { connected = state; }
+
 private:
     bool connected = false;
     std::string ip;
