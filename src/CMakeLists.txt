@@ -54,7 +54,7 @@ add_executable(SecuritySystem
         Device.h
         Network.cpp
         Network.h
-        ../Protocol.h
+        ../Shared/Protocol.h
 
 )
 

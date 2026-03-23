@@ -12,7 +12,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include "../Protocol.h"
+#include "../Shared/Protocol.h"
 
 
 class Network {
