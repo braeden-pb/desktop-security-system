@@ -5,7 +5,7 @@
 #ifndef GROUP55_MOTION_SENSOR_H
 #define GROUP55_MOTION_SENSOR_H
 
-#include "src/Device.h"
+#include "Device.h"
 #include <string>
 #include <chrono>
 #include <ctime>
@@ -30,6 +30,8 @@ class Motion_Sensor : public Device {
         void disconnect() override;
         void updateState(bool currentState);
         bool detectMotion();
+        void activate();
+        void deactivate();
         void onMotion();
         void updateStatus();
         int getSensitivity();

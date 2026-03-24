@@ -14,6 +14,12 @@ std::string Motion_Sensor::getName() const {
     return "Motion_Sensor";
 }
 
+void Motion_Sensor::activate() {
+    //connect funtion
+    setConnected(true);
+    detectMotion(); // maybe call in thread?
+}
+
 std::string Motion_Sensor::getStatus() const {
     if (isConnected()) {
         return "Connected";
