@@ -23,21 +23,25 @@ void Motion_Sensor_PI::activate() {
         std::lock_guard<std::mutex> lock(mtx);
         active = true;
         wiringPiISR(PIR_PIN, INT_EDGE_BOTH, &Motion_Sensor_PI::isrHandler);
+	detectMotion();
     }
-    sensorThread = std::thread(&Motion_Sensor_PI::detectMotion, this);
+    //sensorThread = std::thread(&Motion_Sensor_PI::detectMotion, this);
 }
 
 void Motion_Sensor_PI::detectMotion() {
+    std::cout << "detectMotion started\n";
     while (active) {
-        bool currentState = digitalRead(PIR_PIN) == HIGH;
+        int pinState = digitalRead(PIR_PIN);
+        std::cout << "PIN STATE: " << pinState << "\n";  // see what pin is reading
+
+        bool currentState = pinState == HIGH;
         if (currentState && !motionDetected) {
             motionDetected = true;
             onMotion();
         } else if (!currentState) {
             motionDetected = false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(motionSleep));
-
+        usleep(500000);  // slow it down so you can read the output
     }
 }
 
@@ -66,7 +70,7 @@ void Motion_Sensor_PI::deactivate() {
     if (sensorThread.joinable()) {
         sensorThread.join();
     }
-    motionDetected;
+    //motionDetected;
 }
 
 

@@ -7,12 +7,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(FetchContent)
 
 # OpenCV
-FetchContent_Declare(
-        opencv
-        GIT_REPOSITORY https://github.com/opencv/opencv.git
-        GIT_TAG        4.9.0
-)
-FetchContent_MakeAvailable(opencv)
+#FetchContent_Declare(
+#        opencv
+#        GIT_REPOSITORY https://github.com/opencv/opencv.git
+ #       GIT_TAG        4.9.0
+#)
+#FetchContent_MakeAvailable(opencv)
 
 # WiringPi (no CMakeLists.txt, manual build)
 FetchContent_Declare(
@@ -20,21 +20,8 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/WiringPi/WiringPi.git
         GIT_TAG        3.10
 )
-FetchContent_MakeAvailable(wiringpi)
-
-add_library(wiringPi STATIC
-        ${wiringpi_SOURCE_DIR}/wiringPi/wiringPi.c
-        ${wiringpi_SOURCE_DIR}/wiringPi/wiringPiI2C.c
-        ${wiringpi_SOURCE_DIR}/wiringPi/wiringPiSPI.c
-        ${wiringpi_SOURCE_DIR}/wiringPi/wiringSerial.c
-        ${wiringpi_SOURCE_DIR}/wiringPi/wiringShift.c
-        ${wiringpi_SOURCE_DIR}/wiringPi/piHiPri.c
-        ${wiringpi_SOURCE_DIR}/wiringPi/piThread.c
-        ${wiringpi_SOURCE_DIR}/wiringPi/softPwm.c
-        ${wiringpi_SOURCE_DIR}/wiringPi/softTone.c
-)
-target_include_directories(wiringPi PUBLIC ${wiringpi_SOURCE_DIR}/wiringPi)
-target_link_libraries(wiringPi PUBLIC pthread crypt m)
+find_library(WIRINGPI_LIB wiringPi REQUIRED)
+set(GPIO_LIB ${WIRINGPI_LIB})
 
 
 #find_package(PkgConfig REQUIRED)
@@ -54,10 +41,10 @@ target_include_directories(pi-camera PRIVATE
 
 # Link libraries
 target_link_libraries(pi-camera PRIVATE
-        opencv_core
-        opencv_imgproc
-        opencv_highgui
-        opencv_videoio
+        #opencv_core
+        #opencv_imgproc
+        #opencv_highgui
+        #opencv_videoio
         wiringPi
 )
 

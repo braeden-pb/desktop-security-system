@@ -4,8 +4,9 @@
 
 #include "Motion_Sensor_PI.h"
 
-int main(int argc, char *argv[]) {
-    Motion_Sensor_PI *motion = new Motion_Sensor_PI(5,5);
+int main() {
+    Motion_Sensor_PI *motion = new Motion_Sensor_PI(5,10);
     motion->activate();
+    return 0;
 
 }
