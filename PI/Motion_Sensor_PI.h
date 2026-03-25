@@ -8,6 +8,7 @@
 #include <wiringPi.h>
 #include <mutex>
 #include <thread>
+#include <atomic>
 #include <iostream>
 #include <unistd.h>
 #include <thread>
@@ -24,11 +25,10 @@ class Motion_Sensor_PI {
 
 
 private:
-
-    void detectMotion();
+    static void detectMotion();
     void onMotion();
-    bool active;
-    bool motionDetected;
+    std::atomic<bool> active;
+    std::atomic<bool> motionDetected;
     int sensitivity;
     void setSensitivity(int sensitivity);
     int motionSleep;
