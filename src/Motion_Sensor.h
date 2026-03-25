@@ -9,6 +9,7 @@
 #include <string>
 #include <chrono>
 #include <ctime>
+#include "Network.h"
 
 class Motion_Sensor : public Device {
     private:
@@ -19,10 +20,11 @@ class Motion_Sensor : public Device {
         bool rearmPending;
         int motionCount;
         int rearmDelayMs;
+        Network* network;
         std::chrono::steady_clock::time_point rearmUntil;
 
     public:
-        Motion_Sensor();
+        Motion_Sensor(Network* network);
         ~Motion_Sensor();
         std::string getName() const override;
         std::string getStatus() const override;

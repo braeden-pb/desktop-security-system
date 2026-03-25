@@ -32,6 +32,8 @@ add_executable(pi-camera
         main.cpp
         NetworkServer.cpp NetworkServer.h
         Motion_Sensor_PI.cpp Motion_Sensor_PI.h
+        Camera_PI.cpp
+        Camera_PI.h
 )
 
 # Include shared protocol
