@@ -32,8 +32,6 @@ void Motion_Sensor_PI::detectMotion() {
     std::cout << "detectMotion started\n";
     while (active) {
         int pinState = digitalRead(PIR_PIN);
-        std::cout << "PIN STATE: " << pinState << "\n";  // see what pin is reading
-
         bool currentState = pinState == HIGH;
         if (currentState && !motionDetected) {
             motionDetected = true;
@@ -41,7 +39,7 @@ void Motion_Sensor_PI::detectMotion() {
         } else if (!currentState) {
             motionDetected = false;
         }
-        usleep(500000);  // slow it down so you can read the output
+        sleep(1);
     }
 }
 
