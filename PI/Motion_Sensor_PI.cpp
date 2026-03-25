@@ -39,13 +39,15 @@ void Motion_Sensor_PI::detectMotion() {
         } else if (!currentState) {
             motionDetected = false;
         }
-        sleep(1);
+        usleep(500000);
     }
 }
 
 void Motion_Sensor_PI::onMotion() {
     motionDetected = true;
     std::cout << "Motion detected!\n";
+    //Send signal to UI
+    motionDetected = false;
 }
 
 void Motion_Sensor_PI::isrHandler() {
