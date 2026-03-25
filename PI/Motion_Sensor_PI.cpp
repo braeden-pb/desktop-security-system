@@ -18,14 +18,17 @@ Motion_Sensor_PI::Motion_Sensor_PI(int sensitivity, int motionSleep) : active(fa
 }
 
 void Motion_Sensor_PI::activate() {
-    {
         active = true;
 	    detectMotion();
-    }}
+    }
+
+bool Motion_Sensor_PI::isActive() {
+    return active;
+}
 
 void Motion_Sensor_PI::detectMotion() {
     std::cout << "detectMotion started\n";
-    wiringPiISR(PIR_PIN, INT_EDGE_BOTH, &Motion_Sensor_PI::isrHandler);
+        wiringPiISR(PIR_PIN, INT_EDGE_BOTH, &Motion_Sensor_PI::isrHandler);
 }
 
 void Motion_Sensor_PI::onMotion() {
@@ -49,7 +52,7 @@ void Motion_Sensor_PI::isrHandler() {
 
 void Motion_Sensor_PI::deactivate() {
     active = false;
-    //motionDetected;
+
 }
 
 

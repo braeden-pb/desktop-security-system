@@ -21,11 +21,12 @@ class Motion_Sensor_PI {
     static void isrHandler();
     void activate();
     void deactivate();
+    bool isActive();
 
 
 
 private:
-    static void detectMotion();
+    void detectMotion();
     void onMotion();
     std::atomic<bool> active;
     std::atomic<bool> motionDetected;
