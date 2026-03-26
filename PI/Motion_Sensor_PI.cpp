@@ -34,7 +34,10 @@ void Motion_Sensor_PI::detectMotion() {
 void Motion_Sensor_PI::onMotion() {
     motionDetected = true;
     std::cout << "Motion detected!\n";
-    //Send signal to UI
+}
+
+bool Motion_Sensor_PI::isMotionDetected() {
+    return motionDetected;
 }
 
 void Motion_Sensor_PI::isrHandler() {

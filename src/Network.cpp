@@ -4,6 +4,9 @@
 
 #include "Network.h"
 
+#include <functional>
+#include <thread>
+
 Network::Network()
     : socket_(-1)        // -1 means no socket yet
     , connected_(false)  // not connected yet
@@ -84,3 +87,23 @@ std::vector<uint8_t> Network::receive() {
     return payload;
 }
 
+void Network::startReceiving(std::function<void(PacketHeader)> callback) {
+    receiveThread = std::thread([this, callback]() {
+        while (connected_) {
+            PacketHeader header{};
+            int n = recv(socket_, &header, sizeof(header), MSG_WAITALL);
+            if (n <= 0) {
+                connected_ = false;
+                break;
+            }
+            callback(header);
+        }
+    });
+}
+
+void Network::stopReceiving() {
+    connected_ = false;
+    if (socket_ >= 0) close(socket_);
+    if (receiveThread.joinable())
+        receiveThread.join();
+}

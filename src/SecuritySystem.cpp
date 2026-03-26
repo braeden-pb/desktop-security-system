@@ -32,6 +32,8 @@ SecuritySystem::SecuritySystem() {
         std::cerr << "Could not connect to Pi" << std::endl;
     }
 
+}
+
 
 
 
@@ -154,10 +156,18 @@ bool SecuritySystem::isArmed() const {
  */
 void SecuritySystem::arm() {
     setStatus(Status::armed);
+    activateHardware();
 }
 
 void SecuritySystem::activateHardware() {
+    motion_sensor->addObserver(this);
     motion_sensor->activate();
+    network->startReceiving([this](PacketHeader header) {
+        if (header.system == System::Motion &&
+            header.command == Command::MotionDetected) {
+            std::cerr << "Test" << std::endl;
+        }
+    });
 }
 
 /**

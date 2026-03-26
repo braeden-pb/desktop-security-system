@@ -71,6 +71,13 @@ void NetworkServer::sendRaw(const void *data, size_t size) {
     }
 }
 
+void NetworkServer::sendPacket(const PacketHeader& header, const std::vector<uint8_t>& payload) {
+    if (!clientConnected) return;
+    sendRaw(&header, sizeof(header));
+    if (!payload.empty())
+        sendRaw(payload.data(), payload.size());
+}
+
 void NetworkServer::acceptLoop() {
     while(running) {
         clientFd = accept(serverFd, nullptr, nullptr);

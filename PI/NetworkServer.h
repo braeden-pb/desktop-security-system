@@ -26,6 +26,8 @@ class NetworkServer {
         int getPort();
         void onCommand(std::function<void(Command)> callback);
         bool isClientConnected() const { return clientConnected; }
+        void sendPacket(const PacketHeader &header, const std::vector<uint8_t> &payload);
+
 
     private:
         void acceptLoop();

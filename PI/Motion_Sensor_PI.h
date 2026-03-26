@@ -22,12 +22,15 @@ class Motion_Sensor_PI {
     void activate();
     void deactivate();
     bool isActive();
+    bool isMotionDetected();
+
 
 
 
 private:
     void detectMotion();
     void onMotion();
+
     std::atomic<bool> active;
     std::atomic<bool> motionDetected;
     int sensitivity;
