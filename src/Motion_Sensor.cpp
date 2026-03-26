@@ -5,9 +5,9 @@
 #include "Motion_Sensor.h"
 #include <iostream>
 
-Motion_Sensor::Motion_Sensor(Network* network) : sensitivity(5), motionDetected(false), lastDetected(0),
+Motion_Sensor::Motion_Sensor() : sensitivity(5), motionDetected(false), lastDetected(0),
       lastState(false), rearmPending(false), motionCount(0), rearmDelayMs(2000) {
-    this->network = network;
+
 }
 
 Motion_Sensor::~Motion_Sensor() {}
@@ -16,8 +16,22 @@ std::string Motion_Sensor::getName() const {
     return "Motion_Sensor";
 }
 
+void Motion_Sensor::updateState(bool currentState) {
+    if (motionDetected)
+        notifyObservers("Motion detected");
+}
+
+void Motion_Sensor::addObserver(Observer* o) {
+    observers.push_back(o);
+}
+
+void Motion_Sensor::notifyObservers(const std::string& event) {
+    for (auto* o : observers)
+        o->update(event);
+}
+
 void Motion_Sensor::activate() {
-    //connect funtion
+
     setConnected(true);
     detectMotion(); // maybe call in thread?
 }
@@ -46,6 +60,7 @@ void Motion_Sensor::updateState(bool currentState) {
     if (currentState && !lastState && !rearmPending) {
         ++motionCount;
         motionDetected = true;
+        notifyObservers("Motion detected");
         lastDetected = std::time(nullptr);
         rearmPending = true;
         rearmUntil = std::chrono::steady_clock::now()

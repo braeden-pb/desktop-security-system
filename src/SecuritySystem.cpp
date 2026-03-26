@@ -5,6 +5,8 @@
 #include "UI.h"
 #include "Storage.h"
 #include "Alert.h"
+#include "Motion_Sensor.h"
+#include "Network.h"
 
 
 /**
@@ -19,8 +21,18 @@ SecuritySystem::SecuritySystem() {
     systemStatus = Status::disarmed;
     alarm = std::make_unique<Alarm>();
     config = std::make_unique<Config>();
+    network = std::make_unique<Network>();
+    motion_sensor = std::make_unique<Motion_Sensor>();
     //addObserver(mainUi.get());
-    addObserver(alarm.get());
+    addObserver(this);
+
+    if (network->connect("10.42.0.205", 5000)) {
+        std::cout << "Connected to Pi" << std::endl;
+    } else {
+        std::cerr << "Could not connect to Pi" << std::endl;
+    }
+
+
 
 
 }
@@ -62,6 +74,11 @@ UI *SecuritySystem::getUI() const{
 
 Config *SecuritySystem::getConfig() {
     return config.get();
+}
+
+void SecuritySystem::update(const std::string& event) {
+    if (event == "Motion detected")
+        sendCommand(System::Motion, Command::MotionDetected);
 }
 
 /**
@@ -139,6 +156,10 @@ void SecuritySystem::arm() {
     setStatus(Status::armed);
 }
 
+void SecuritySystem::activateHardware() {
+    motion_sensor->activate();
+}
+
 /**
  * @brief Disarms the security system.
  *
@@ -147,6 +168,16 @@ void SecuritySystem::arm() {
  */
 void SecuritySystem::disarm() {
     setStatus(Status::disarmed);
+}
+
+void SecuritySystem::sendCommand(System sys, Command cmd) {
+    if (!network->isConnected()) return;
+
+    PacketHeader header;
+    header.system      = sys;
+    header.command     = cmd;
+    header.payloadSize = 0;
+    network->send(header, {});
 }
 
 /**

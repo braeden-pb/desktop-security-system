@@ -127,6 +127,14 @@ target_link_libraries(AlarmTest PRIVATE GTest::gtest_main sfml-audio ${wxWidgets
 
 add_executable(ConfigTests tests/ConfigTests.cpp Config.cpp)
 
+add_executable(network_test_client
+        network_test_client.cpp
+        Network.cpp Network.h
+        ../Shared/Protocol.h
+)
+
+target_link_libraries(network_test_client PRIVATE ${wxWidgets_LIBRARIES})
+
 
 enable_testing()
 add_test(NAME AlarmTests COMMAND AlarmTest)

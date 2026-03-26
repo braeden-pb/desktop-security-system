@@ -9,7 +9,9 @@
 #include "Storage.h"
 #include <tuple>
 #include "Observer.h"
+#include "../Shared/Protocol.h"
 #include "Alert.h"
+
 
 enum class Status : int {
     armed,
@@ -21,8 +23,10 @@ class UI;
 class Storage;
 class Alarm;
 class Config;
+class Network;
+class Motion_Sensor;
 
-class SecuritySystem
+class SecuritySystem : public Observer
 {
 public:
     void addObserver(Observer* o);
@@ -35,8 +39,13 @@ public:
     void disarm();
     bool isArmed() const;
     Config* getConfig();
+
+    void update(const std::string &event);
+
+    void activateHardware();
     std::list<std::tuple<int,std::string, std::string>> getAllImages();
     bool validatePIN(const std::string& pin) const;
+    void sendCommand(System sys, Command cmd);
     Storage* getStorage() const;
     //getDeviceList
     void soundAlarm();
@@ -49,6 +58,8 @@ public:
 
 private:
     std::unique_ptr<Config> config;
+    std::unique_ptr<Network> network;
+    std::unique_ptr<Motion_Sensor> motion_sensor;
     //Devices object list
     std::vector<Observer*> observers;
     std::unique_ptr<Storage> mainStorage;

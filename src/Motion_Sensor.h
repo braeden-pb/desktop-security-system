@@ -9,23 +9,26 @@
 #include <string>
 #include <chrono>
 #include <ctime>
-#include "Network.h"
+#include "Observer.h"
+#include <vector>
 
 class Motion_Sensor : public Device {
     private:
         int sensitivity;
         bool motionDetected;
+        std::vector<Observer*> observers;
         std::time_t lastDetected;
         bool lastState;
         bool rearmPending;
         int motionCount;
         int rearmDelayMs;
-        Network* network;
         std::chrono::steady_clock::time_point rearmUntil;
 
     public:
-        Motion_Sensor(Network* network);
+        Motion_Sensor();
         ~Motion_Sensor();
+        void addObserver(Observer* o);
+        void notifyObservers(const std::string& event);
         std::string getName() const override;
         std::string getStatus() const override;
         bool connect(const std::string& ip, int port) override;
