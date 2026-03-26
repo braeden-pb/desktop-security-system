@@ -48,13 +48,22 @@ bool Network::isConnected() const {
     return connected_;
 }
 
-void Network::send(const PacketHeader &header, const std::vector<uint8_t> &payload) {
-    ::send(socket_, &header, sizeof(header), 0);
-
-    if (!payload.empty()) {
-        ::send(socket_, payload.data(), payload.size(), 0);
+void Network::sendRaw(const void* data, size_t size) {
+    size_t sent = 0;
+    const uint8_t* ptr = (const uint8_t*)data;
+    while (sent < size) {
+        int n = ::send(socket_, ptr + sent, size - sent, 0);
+        if (n <= 0) { connected_ = false; return; }
+        sent += n;
     }
+}
 
+
+void Network::send(const PacketHeader& header, const std::vector<uint8_t>& payload) {
+    sendRaw(&header, sizeof(header));
+    if (!payload.empty()) {
+        sendRaw(payload.data(), payload.size());
+    }
 }
 
 PacketHeader Network::receiveHeader() {

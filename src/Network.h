@@ -23,6 +23,9 @@ public:
     bool connect(const std::string& ip, int port);
     void disconnect();
     bool isConnected() const;
+
+    void sendRaw(const void *data, size_t size);
+
     void send(const PacketHeader& header, const std::vector<uint8_t>& payload);
     std::vector<uint8_t> receive();
     PacketHeader receiveHeader();
