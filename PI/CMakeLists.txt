@@ -58,3 +58,21 @@ target_link_libraries(pi-camera PRIVATE
 
 # Compiler warnings
 target_compile_options(pi-camera PRIVATE -Wall -Wextra)
+
+add_executable(camera-test
+        Camera_test.cpp
+        NetworkServer.cpp NetworkServer.h
+        Camera_PI.cpp Camera_PI.h
+)
+
+target_include_directories(camera-test PRIVATE
+        ${CMAKE_SOURCE_DIR}/../Shared
+        ${LIBCAMERA_INCLUDE_DIRS}
+)
+
+target_link_libraries(camera-test PRIVATE
+        camera
+        camera-base
+)
+
+target_compile_options(camera-test PRIVATE -Wall -Wextra)

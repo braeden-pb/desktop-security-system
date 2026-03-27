@@ -129,6 +129,70 @@ pi-camera/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/build
 .PHONY : pi-camera/fast
 
+#=============================================================================
+# Target rules for targets named camera-test
+
+# Build rule for target.
+camera-test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 camera-test
+.PHONY : camera-test
+
+# fast build rule for target.
+camera-test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/camera-test.dir/build.make CMakeFiles/camera-test.dir/build
+.PHONY : camera-test/fast
+
+Camera_PI.o: Camera_PI.cpp.o
+.PHONY : Camera_PI.o
+
+# target to build an object file
+Camera_PI.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/Camera_PI.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/camera-test.dir/build.make CMakeFiles/camera-test.dir/Camera_PI.cpp.o
+.PHONY : Camera_PI.cpp.o
+
+Camera_PI.i: Camera_PI.cpp.i
+.PHONY : Camera_PI.i
+
+# target to preprocess a source file
+Camera_PI.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/Camera_PI.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/camera-test.dir/build.make CMakeFiles/camera-test.dir/Camera_PI.cpp.i
+.PHONY : Camera_PI.cpp.i
+
+Camera_PI.s: Camera_PI.cpp.s
+.PHONY : Camera_PI.s
+
+# target to generate assembly for a file
+Camera_PI.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/Camera_PI.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/camera-test.dir/build.make CMakeFiles/camera-test.dir/Camera_PI.cpp.s
+.PHONY : Camera_PI.cpp.s
+
+Camera_test.o: Camera_test.cpp.o
+.PHONY : Camera_test.o
+
+# target to build an object file
+Camera_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/camera-test.dir/build.make CMakeFiles/camera-test.dir/Camera_test.cpp.o
+.PHONY : Camera_test.cpp.o
+
+Camera_test.i: Camera_test.cpp.i
+.PHONY : Camera_test.i
+
+# target to preprocess a source file
+Camera_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/camera-test.dir/build.make CMakeFiles/camera-test.dir/Camera_test.cpp.i
+.PHONY : Camera_test.cpp.i
+
+Camera_test.s: Camera_test.cpp.s
+.PHONY : Camera_test.s
+
+# target to generate assembly for a file
+Camera_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/camera-test.dir/build.make CMakeFiles/camera-test.dir/Camera_test.cpp.s
+.PHONY : Camera_test.cpp.s
+
 Motion_Sensor_PI.o: Motion_Sensor_PI.cpp.o
 .PHONY : Motion_Sensor_PI.o
 
@@ -159,6 +223,7 @@ NetworkServer.o: NetworkServer.cpp.o
 # target to build an object file
 NetworkServer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/NetworkServer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/camera-test.dir/build.make CMakeFiles/camera-test.dir/NetworkServer.cpp.o
 .PHONY : NetworkServer.cpp.o
 
 NetworkServer.i: NetworkServer.cpp.i
@@ -167,6 +232,7 @@ NetworkServer.i: NetworkServer.cpp.i
 # target to preprocess a source file
 NetworkServer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/NetworkServer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/camera-test.dir/build.make CMakeFiles/camera-test.dir/NetworkServer.cpp.i
 .PHONY : NetworkServer.cpp.i
 
 NetworkServer.s: NetworkServer.cpp.s
@@ -175,6 +241,7 @@ NetworkServer.s: NetworkServer.cpp.s
 # target to generate assembly for a file
 NetworkServer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/NetworkServer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/camera-test.dir/build.make CMakeFiles/camera-test.dir/NetworkServer.cpp.s
 .PHONY : NetworkServer.cpp.s
 
 main.o: main.cpp.o
@@ -201,6 +268,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+network_test.o: network_test.cpp.o
+.PHONY : network_test.o
+
+# target to build an object file
+network_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/network_test.cpp.o
+.PHONY : network_test.cpp.o
+
+network_test.i: network_test.cpp.i
+.PHONY : network_test.i
+
+# target to preprocess a source file
+network_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/network_test.cpp.i
+.PHONY : network_test.cpp.i
+
+network_test.s: network_test.cpp.s
+.PHONY : network_test.s
+
+# target to generate assembly for a file
+network_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/network_test.cpp.s
+.PHONY : network_test.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -209,7 +300,14 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... camera-test"
 	@echo "... pi-camera"
+	@echo "... Camera_PI.o"
+	@echo "... Camera_PI.i"
+	@echo "... Camera_PI.s"
+	@echo "... Camera_test.o"
+	@echo "... Camera_test.i"
+	@echo "... Camera_test.s"
 	@echo "... Motion_Sensor_PI.o"
 	@echo "... Motion_Sensor_PI.i"
 	@echo "... Motion_Sensor_PI.s"
@@ -219,6 +317,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... network_test.o"
+	@echo "... network_test.i"
+	@echo "... network_test.s"
 .PHONY : help
 
 

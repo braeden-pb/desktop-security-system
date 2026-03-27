@@ -10,6 +10,8 @@ Camera_PI::Camera_PI(NetworkServer &server) : recording(false),server(server) {
     initCamera();
 }
 
+Camera_PI::~Camera_PI(){}
+
 int Camera_PI::initCamera() {
     cm = std::make_unique<CameraManager>();
     cm->start();
