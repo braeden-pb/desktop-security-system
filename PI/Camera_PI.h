@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <ctime>
 #include <thread>
+#include <fstream>
 #include <sys/mman.h>
 #include "NetworkServer.h"
 
@@ -28,14 +29,14 @@ struct Media {
 
 class Camera_PI {
 public:
-    Camera_PI();
+    Camera_PI(NetworkServer &server);
     ~Camera_PI();
 
     std::string capturePhoto();
     void startRecording();
     void stopRecording();
     bool isRecording();
-    void streamVideo(NetworkServer &server);
+    void streamVideo();
 private:
     bool recording;
     std::shared_ptr<CameraManager>      cm;
@@ -44,6 +45,8 @@ private:
     FrameBufferAllocator               *allocator = nullptr;
     std::vector<std::unique_ptr<Request>> requests;
     std::unique_ptr<std::ofstream> videoFile;
+
+    NetworkServer &server;
 
     int initCamera();
     std::chrono::system_clock::time_point lastCaptureAt;

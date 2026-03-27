@@ -6,7 +6,7 @@
 
 
 
-Camera_PI::Camera_PI() : recording(false) {
+Camera_PI::Camera_PI(NetworkServer &server) : recording(false),server(server) {
     initCamera();
 }
 
@@ -104,7 +104,7 @@ std::string Camera_PI::capturePhoto() {
         return "";
     }
 
-    libcamera::Stream *stream = config->at(0).stream();
+    Stream *stream = config->at(0).stream();
 
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
@@ -151,11 +151,78 @@ std::string Camera_PI::capturePhoto() {
     camera->requestCompleted.disconnect();
     lastCaptureAt = std::chrono::system_clock::now();
     std::cout << "Photo saved to: " << outPath << std::endl;
+    std::ifstream file(outPath, std::ios::binary);
+    if (file.is_open()) {
+        std::vector<uint8_t> bytes;
+        bytes.assign(
+            std::istreambuf_iterator<char>(file),
+            std::istreambuf_iterator<char>()
+        );
+        PacketHeader header{};
+        header.system      = System::Camera;
+        header.command     = Command::TakePhoto;
+        header.payloadSize = static_cast<uint32_t>(bytes.size());
+        server.sendPacket(header, bytes);
+        std::cout << "Photo sent to PC (" << bytes.size() << " bytes)" << std::endl;
+    } else {
+        std::cerr << "Failed to read photo for sending." << std::endl;
+    }
+
+
     return outPath;
 }
 
 void Camera_PI::startRecording() {
+    if (recording) {
+        std::cout << "Already recording." << std::endl;
+        return;
+    }
+    if (!camera) {
+        std::cerr << "Camera not initialised." << std::endl;
+        return;
+    }
 
+    libcamera::Stream *stream = config->at(0).stream();
+
+    auto now = std::chrono::system_clock::now();
+    std::time_t t = std::chrono::system_clock::to_time_t(now);
+    std::tm tm = *std::localtime(&t);
+    std::ostringstream oss;
+    oss << "/tmp/video_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".mjpeg";
+    devicePath = oss.str();
+
+    videoFile = std::make_unique<std::ofstream>(devicePath, std::ios::binary);
+    if (!videoFile->is_open()) {
+        std::cerr << "Failed to open output file: " << devicePath << std::endl;
+        return;
+    }
+
+    camera->requestCompleted.connect(this, [this, stream](libcamera::Request *req) {
+        if (!recording || req->status() == libcamera::Request::RequestCancelled) return;
+
+        const libcamera::FrameBuffer *buf = req->buffers().at(stream);
+        for (const auto &plane : buf->planes()) {
+            void *mem = mmap(nullptr, plane.length, PROT_READ,
+                             MAP_SHARED, plane.fd.get(), 0);
+            if (mem != MAP_FAILED) {
+                videoFile->write(static_cast<const char *>(mem), plane.length);
+                munmap(mem, plane.length);
+            }
+        }
+
+        req->reuse(libcamera::Request::ReuseBuffers);
+        camera->queueRequest(req);
+    });
+
+    camera->start();
+    recording = true;
+
+    for (auto &req : requests) {
+        req->reuse(libcamera::Request::ReuseBuffers);
+        camera->queueRequest(req.get());
+    }
+
+    std::cout << "Recording started -> " << devicePath << std::endl;
 }
 
 void Camera_PI::stopRecording() {
@@ -178,7 +245,7 @@ void Camera_PI::stopRecording() {
     std::cout << "Recording stopped. File saved to: " << devicePath << std::endl;
 }
 
-void Camera_PI::streamVideo(NetworkServer &server) {
+void Camera_PI::streamVideo() {
     if (!camera) {
         std::cerr << "Camera not initialised." << std::endl;
         return;
@@ -186,7 +253,7 @@ void Camera_PI::streamVideo(NetworkServer &server) {
 
     Stream *stream = config->at(0).stream();
 
-    camera->requestCompleted.connect(this, [this, stream, &server](Request *req) {
+    camera->requestCompleted.connect(this, [this, stream](Request *req) {
         if (req->status() == Request::RequestCancelled) return;
 
         const FrameBuffer *buf = req->buffers().at(stream);
@@ -211,10 +278,6 @@ void Camera_PI::streamVideo(NetworkServer &server) {
 
     camera->stop();
     camera->requestCompleted.disconnect();
-}
-
-void Camera_PI::setResolution(std::string resolution) {
-
 }
 
 bool Camera_PI::isRecording() {

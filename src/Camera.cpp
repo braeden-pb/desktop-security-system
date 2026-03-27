@@ -4,25 +4,25 @@
 
 #include "Camera.h"
 
-Camera::Camera(Network &network) : recording(false) {}
+Camera::Camera(Network &network) : recording(false),network(network) {
+    network.onPacket(System::Camera, [this](Command cmd, const std::vector<uint8_t> &payload) {
+        handlePacket(cmd, payload);
+    });
+}
 
 Camera::~Camera() {}
 
 std::string Camera::capturePhoto() {
-    auto start = std::chrono::system_clock::now();
-    std::time_t t = std::chrono::system_clock::to_time_t(start);
-    std::string filename = "../saved_data/photo_" + std::to_string(t) + ".jpg";
-
-    std::string cmd = "libcamera-still -o " + filename + " --nopreview -t 1";
-    int result = system(cmd.c_str());
-    if (result != 0) {
-        std::cerr << "Camera capture failed" << std::endl;
+        PacketHeader header{};
+        header.system      = System::Camera;
+        header.command     = Command::TakePhoto;
+        header.payloadSize = 0;
+        network.send(header, {});
         return "";
     }
 
-    lastCapture = filename;
-    return filename;
-}
+
+
 
 void Camera::startRecording() {
     if (recording) return;
@@ -49,6 +49,6 @@ void Camera::stopRecording() {
     if (recordThread.joinable()) recordThread.join();
 }
 
-bool Camera::isRecording() {
+bool Camera::isRecording() const {
     return recording;
 }
