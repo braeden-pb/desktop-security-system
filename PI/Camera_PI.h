@@ -7,6 +7,19 @@
 
 #include <string>
 #include <chrono>
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <libcamera/libcamera/libcamera.h>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <ctime>
+#include <thread>
+#include <sys/mman.h>
+#include "NetworkServer.h"
+
+using namespace libcamera;
 
 struct Media {
     std::string filePath;
@@ -18,15 +31,21 @@ public:
     Camera_PI();
     ~Camera_PI();
 
-    Media capturePhoto();
+    std::string capturePhoto();
     void startRecording();
-    Media stopRecording();
-    void setResolution(const std::string& res);
-
+    void stopRecording();
+    bool isRecording();
+    void streamVideo(NetworkServer &server);
 private:
-    std::string resolution;
-    int fps;
-    bool isRecording;
+    bool recording;
+    std::shared_ptr<CameraManager>      cm;
+    std::shared_ptr<Camera>             camera;
+    std::unique_ptr<CameraConfiguration> config;
+    FrameBufferAllocator               *allocator = nullptr;
+    std::vector<std::unique_ptr<Request>> requests;
+    std::unique_ptr<std::ofstream> videoFile;
+
+    int initCamera();
     std::chrono::system_clock::time_point lastCaptureAt;
     std::string devicePath;
 };

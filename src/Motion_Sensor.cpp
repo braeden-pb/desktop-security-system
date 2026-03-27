@@ -16,10 +16,10 @@ std::string Motion_Sensor::getName() const {
     return "Motion_Sensor";
 }
 
-void Motion_Sensor::updateState(bool currentState) {
-    if (motionDetected)
-        notifyObservers("Motion detected");
-}
+// void Motion_Sensor::updateState(bool currentState) {
+//     if (motionDetected)
+//         notifyObservers("Motion detected");
+// }
 
 void Motion_Sensor::addObserver(Observer* o) {
     observers.push_back(o);

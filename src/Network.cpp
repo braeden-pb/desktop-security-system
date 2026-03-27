@@ -63,10 +63,15 @@ void Network::sendRaw(const void* data, size_t size) {
 
 
 void Network::send(const PacketHeader& header, const std::vector<uint8_t>& payload) {
+    if (!connected_) return;
     sendRaw(&header, sizeof(header));
     if (!payload.empty()) {
         sendRaw(payload.data(), payload.size());
     }
+}
+
+void Network::onPacket(System system, std::function<void(Command, const std::vector<uint8_t> &)> callback) {
+    handlers[system] = callback;
 }
 
 PacketHeader Network::receiveHeader() {
@@ -87,18 +92,36 @@ std::vector<uint8_t> Network::receive() {
     return payload;
 }
 
-void Network::startReceiving(std::function<void(PacketHeader)> callback) {
-    receiveThread = std::thread([this, callback]() {
-        while (connected_) {
-            PacketHeader header{};
-            int n = recv(socket_, &header, sizeof(header), MSG_WAITALL);
+void Network::startReceiving() {
+    receiveThread = std::thread(&Network::receiveLoop, this);
+}
+
+void Network::receiveLoop() {
+    while (connected_) {
+        // Read header
+        PacketHeader header{};
+        int n = recv(socket_, &header, sizeof(header), MSG_WAITALL);
+        if (n <= 0) {
+            connected_ = false;
+            std::cout << "Disconnected from Pi." << std::endl;
+            break;
+        }
+
+        std::vector<uint8_t> payload(header.payloadSize);
+        if (header.payloadSize > 0) {
+            n = recv(socket_, payload.data(), header.payloadSize, MSG_WAITALL);
             if (n <= 0) {
                 connected_ = false;
                 break;
             }
-            callback(header);
         }
-    });
+        auto it = handlers.find(header.system);
+        if (it != handlers.end())
+            it->second(header.command, payload);
+        else
+            std::cerr << "No handler registered for system: "
+                      << static_cast<int>(header.system) << std::endl;
+    }
 }
 
 void Network::stopReceiving() {

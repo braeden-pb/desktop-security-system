@@ -27,6 +27,7 @@ class NetworkServer {
         void onCommand(std::function<void(Command)> callback);
         bool isClientConnected() const { return clientConnected; }
         void sendPacket(const PacketHeader &header, const std::vector<uint8_t> &payload);
+        void sendFrame(const uint8_t *data, size_t length);
 
 
     private:

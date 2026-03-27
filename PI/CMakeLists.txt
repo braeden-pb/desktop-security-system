@@ -15,17 +15,18 @@ include(FetchContent)
 #FetchContent_MakeAvailable(opencv)
 
 # WiringPi (no CMakeLists.txt, manual build)
-FetchContent_Declare(
-        wiringpi
-        GIT_REPOSITORY https://github.com/WiringPi/WiringPi.git
-        GIT_TAG        3.10
-)
-find_library(WIRINGPI_LIB wiringPi REQUIRED)
-set(GPIO_LIB ${WIRINGPI_LIB})
+#FetchContent_Declare(
+#        wiringpi
+#        GIT_REPOSITORY https://github.com/WiringPi/WiringPi.git
+#        GIT_TAG        3.10
+#)
+#find_library(WIRINGPI_LIB wiringPi REQUIRED)
+#set(GPIO_LIB ${WIRINGPI_LIB})
 
 
-#find_package(PkgConfig REQUIRED)
-#pkg_check_modules(LIBCAMERA REQUIRED libcamera)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBCAMERA REQUIRED libcamera)
+link_directories(${LIBCAMERA_LIBRARY_DIRS})
 
 # Pi executable
 add_executable(pi-camera
@@ -41,6 +42,7 @@ add_executable(pi-camera
 # Include shared protocol
 target_include_directories(pi-camera PRIVATE
         ${CMAKE_SOURCE_DIR}/../Shared
+        ${LIBCAMERA_INCLUDE_DIRS}
 )
 
 # Link libraries
@@ -49,7 +51,9 @@ target_link_libraries(pi-camera PRIVATE
         #opencv_imgproc
         #opencv_highgui
         #opencv_videoio
-        wiringPi
+        #wiringPi
+        camera
+        camera-base
 )
 
 # Compiler warnings

@@ -78,6 +78,18 @@ void NetworkServer::sendPacket(const PacketHeader& header, const std::vector<uin
         sendRaw(payload.data(), payload.size());
 }
 
+void NetworkServer::sendFrame(const uint8_t *data, size_t length) {
+    if (!clientConnected) return;
+
+    PacketHeader header{};
+    header.system      = System::Camera;
+    header.command     = Command::Frame;
+    header.payloadSize = static_cast<uint32_t>(length);
+
+    std::vector<uint8_t> payload(data, data + length);
+    sendPacket(header, payload);
+}
+
 void NetworkServer::acceptLoop() {
     while(running) {
         clientFd = accept(serverFd, nullptr, nullptr);

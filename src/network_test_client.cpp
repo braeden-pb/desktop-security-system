@@ -9,7 +9,7 @@ int main() {
 
     std::cout << "Connecting to Pi..." << std::endl;
 
-    if (!client.connect("10.42.0.205", 5000)) {
+    if (!client.connect("192.168.2.174", 5000)) {
         std::cerr << "Failed to connect" << std::endl;
         return 1;
     }

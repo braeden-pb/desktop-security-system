@@ -14,6 +14,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <map>
+#include <iostream>
 #include "../Shared/Protocol.h"
 
 
@@ -26,12 +28,14 @@ public:
     void disconnect();
     bool isConnected() const;
 
-    void sendRaw(const void *data, size_t size);
 
     void send(const PacketHeader& header, const std::vector<uint8_t>& payload);
     std::vector<uint8_t> receive();
 
-    void startReceiving(std::function<void(PacketHeader)> callback);
+    void onPacket(System system,
+                  std::function<void(Command, const std::vector<uint8_t>&)> callback);
+
+    void startReceiving();
 
     void stopReceiving();
 
@@ -39,8 +43,12 @@ public:
 
 private:
     int socket_ = -1;
-    bool connected_ = false;
+    std::atomic<bool> connected_ = false;
     std::thread receiveThread;
+    void sendRaw(const void *data, size_t size);
+    void receiveLoop();
+    std::map<System, std::function<void(Command, const std::vector<uint8_t>&)>> handlers;
+
 
 };
 

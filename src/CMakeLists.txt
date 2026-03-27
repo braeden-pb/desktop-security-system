@@ -34,27 +34,21 @@ include(${wxWidgets_USE_FILE})
 
 add_executable(SecuritySystem
         main.cpp
-        SecuritySystem.cpp
-        SecuritySystem.h
-        UI.cpp
-        UI.h
-        Home_Panel.cpp
-        Home_Panel.h
+        SecuritySystem.cpp SecuritySystem.h
+        UI.cpp UI.h
+        Home_Panel.cpp Home_Panel.h
         Login_Panel.h Login_Panel.cpp
-        Config_Panel.cpp
-        Config_Panel.h
-        Storage_Panel.cpp
-        Storage_Panel.h
+        Config_Panel.cpp Config_Panel.h
+        Storage_Panel.cpp Storage_Panel.h
         Storage.cpp Storage.h
-        Image.h Image.cpp
+        Image.cpp Image.h
         File.cpp File.h
         Alarm.cpp Alarm.h
         Config.cpp
-        Device.cpp
-        Device.h
-        Network.cpp
-        Network.h
+        Device.cpp Device.h
+        Network.cpp Network.h
         ../Shared/Protocol.h
+        Motion_Sensor.cpp Motion_Sensor.h
 
 )
 
@@ -87,6 +81,7 @@ add_executable(SystemTests
         Home_Panel.cpp
         Login_Panel.cpp
         Storage_Panel.cpp
+
 )
 
 add_executable(AlertTest

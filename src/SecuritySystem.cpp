@@ -37,9 +37,6 @@ SecuritySystem::SecuritySystem() {
 
 
 
-}
-
-
 
 /**
  * @brief Constructs a SecuritySystem with optional headless mode.
@@ -162,10 +159,11 @@ void SecuritySystem::arm() {
 void SecuritySystem::activateHardware() {
     motion_sensor->addObserver(this);
     motion_sensor->activate();
+    //move into somewhere else?
     network->startReceiving([this](PacketHeader header) {
         if (header.system == System::Motion &&
             header.command == Command::MotionDetected) {
-            std::cerr << "Test" << std::endl;
+            std::cerr << "Motion Detected" << std::endl;
         }
     });
 }

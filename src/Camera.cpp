@@ -4,7 +4,7 @@
 
 #include "Camera.h"
 
-Camera::Camera() : recording(false) {}
+Camera::Camera(Network &network) : recording(false) {}
 
 Camera::~Camera() {}
 
