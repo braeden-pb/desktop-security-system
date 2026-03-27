@@ -1,10 +1,11 @@
-//
-// Created by braed on 3/26/2026.
-//
-
 #include "Camera.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <chrono>
+#include <filesystem>
 
-Camera::Camera(Network &network) : recording(false),network(network) {
+Camera::Camera(Network &network) : recording(false), network(network) {
     network.onPacket(System::Camera, [this](Command cmd, const std::vector<uint8_t> &payload) {
         handlePacket(cmd, payload);
     });
@@ -12,43 +13,102 @@ Camera::Camera(Network &network) : recording(false),network(network) {
 
 Camera::~Camera() {}
 
+// ── Commands → Pi ─────────────────────────────────────────────────────────────
+
 std::string Camera::capturePhoto() {
-        PacketHeader header{};
-        header.system      = System::Camera;
-        header.command     = Command::TakePhoto;
-        header.payloadSize = 0;
-        network.send(header, {});
-        return "";
-    }
-
-
-
+    PacketHeader header{};
+    header.system      = System::Camera;
+    header.command     = Command::TakePhoto;
+    header.payloadSize = 0;
+    network.send(header, {});
+    return lastPhoto; // will be populated when Pi responds
+}
 
 void Camera::startRecording() {
     if (recording) return;
-
+    PacketHeader header{};
+    header.system      = System::Camera;
+    header.command     = Command::StartClip;
+    header.payloadSize = 0;
+    network.send(header, {});
     recording = true;
-    recordThread = std::thread(&Camera::startRecording, this);
-}
-
-void Camera::recordingThread() {
-    auto now = std::chrono::system_clock::now();
-    std::time_t t = std::chrono::system_clock::to_time_t(now);
-    std::string filename = "../saved_data/video_" + std::to_string(t) + ".mp4";
-
-    std::string cmd = "libcamera-vid -o " + filename + " --nopreview -t 0";
-    system(cmd.c_str());
-    lastCapture = filename;
 }
 
 void Camera::stopRecording() {
-    if (recording) return;
-
+    if (!recording) return;  // was inverted
+    PacketHeader header{};
+    header.system      = System::Camera;
+    header.command     = Command::StopClip;
+    header.payloadSize = 0;
+    network.send(header, {});
     recording = false;
-    system("pkill libcamera-vid");
-    if (recordThread.joinable()) recordThread.join();
 }
 
 bool Camera::isRecording() const {
     return recording;
+}
+
+// ── Incoming packets from Pi ──────────────────────────────────────────────────
+
+void Camera::handlePacket(Command cmd, const std::vector<uint8_t> &payload) {
+    switch (cmd) {
+        case Command::Frame: {
+            {
+                std::lock_guard<std::mutex> lock(frameMutex);
+                latestFrame       = payload;
+                newFrameAvailable = true;
+            }
+            if (frameCallback)
+                frameCallback(payload);
+            break;
+        }
+        case Command::TakePhoto: {
+            if (payload.empty()) break;
+
+            std::filesystem::create_directories("../saved_data");
+
+            auto now = std::chrono::system_clock::now();
+            std::time_t t = std::chrono::system_clock::to_time_t(now);
+            std::ostringstream oss;
+            oss << "../saved_data/photo_" << t << ".jpg";
+            lastPhoto = oss.str();
+
+            std::ofstream file(lastPhoto, std::ios::binary);
+            file.write(reinterpret_cast<const char*>(payload.data()), payload.size());
+            file.close();
+
+            std::cout << "Photo saved to: " << lastPhoto << std::endl;
+
+            if (photoCallback)
+                photoCallback(lastPhoto);
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+// ── Stream access for UI ──────────────────────────────────────────────────────
+
+void Camera::onFrame(std::function<void(const std::vector<uint8_t>&)> callback) {
+    frameCallback = callback;
+}
+
+void Camera::onPhoto(std::function<void(const std::string&)> callback) {
+    photoCallback = callback;
+}
+
+std::vector<uint8_t> Camera::getLatestFrame() {
+    std::lock_guard<std::mutex> lock(frameMutex);
+    newFrameAvailable = false;
+    return latestFrame;
+}
+
+bool Camera::hasNewFrame() const {
+    std::lock_guard<std::mutex> lock(frameMutex);
+    return newFrameAvailable;
+}
+
+std::string Camera::lastPhotoPath() const {
+    return lastPhoto;
 }

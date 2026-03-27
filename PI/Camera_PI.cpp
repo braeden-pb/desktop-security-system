@@ -116,20 +116,57 @@ std::string Camera_PI::capturePhoto() {
     bool done = false;
 
     camera->requestCompleted.connect(this, [&](libcamera::Request *req) {
-        if (req->status() == libcamera::Request::RequestCancelled) return;
+    if (req->status() == libcamera::Request::RequestCancelled) return;
 
-        const libcamera::FrameBuffer *buf = req->buffers().at(stream);
-        for (const auto &plane : buf->planes()) {
-            void *mem = mmap(nullptr, plane.length, PROT_READ,
-                             MAP_SHARED, plane.fd.get(), 0);
-            if (mem != MAP_FAILED) {
-                std::ofstream ofs(outPath, std::ios::binary);
-                ofs.write(static_cast<const char *>(mem), plane.length);
-                munmap(mem, plane.length);
+    const libcamera::FrameBuffer *buf = req->buffers().at(stream);
+    for (const auto &plane : buf->planes()) {
+        void *mem = mmap(nullptr, plane.length, PROT_READ,
+                         MAP_SHARED, plane.fd.get(), 0);
+        if (mem != MAP_FAILED) {
+            const uint8_t *data = static_cast<const uint8_t *>(mem);
+            size_t length = plane.length;
+
+            // Find JPEG start marker 0xFF 0xD8
+            size_t offset = 0;
+            for (size_t i = 0; i + 1 < length; i++) {
+                if (data[i] == 0xFF && data[i+1] == 0xD8) {
+                    offset = i;
+                    break;
+                }
             }
+
+            // Find JPEG end marker 0xFF 0xD9
+            size_t end = length;
+            for (size_t i = length - 2; i > offset; i--) {
+                if (data[i] == 0xFF && data[i+1] == 0xD9) {
+                    end = i + 2;
+                    break;
+                }
+            }
+
+            std::ofstream ofs(outPath, std::ios::binary);
+            ofs.write(reinterpret_cast<const char*>(data + offset), end - offset);
+            munmap(mem, plane.length);
         }
-        done = true;
-    });
+    }
+    done = true;
+});
+
+    // camera->requestCompleted.connect(this, [&](libcamera::Request *req) {
+    //     if (req->status() == libcamera::Request::RequestCancelled) return;
+    //
+    //     const libcamera::FrameBuffer *buf = req->buffers().at(stream);
+    //     for (const auto &plane : buf->planes()) {
+    //         void *mem = mmap(nullptr, plane.length, PROT_READ,
+    //                          MAP_SHARED, plane.fd.get(), 0);
+    //         if (mem != MAP_FAILED) {
+    //             std::ofstream ofs(outPath, std::ios::binary);
+    //             ofs.write(static_cast<const char *>(mem), plane.length);
+    //             munmap(mem, plane.length);
+    //         }
+    //     }
+    //     done = true;
+    // });
 
     camera->start();
     requests[0]->reuse(libcamera::Request::ReuseBuffers);

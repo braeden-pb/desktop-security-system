@@ -132,6 +132,16 @@ add_executable(network_test_client
 
 target_link_libraries(network_test_client PRIVATE ${wxWidgets_LIBRARIES})
 
+add_executable(Camera-Test
+        camera_test_PC.cpp
+        Camera.cpp Camera.h
+        Network.cpp Network.h
+        ../Shared/Protocol.h
+)
+
+target_link_libraries(Camera-Test PRIVATE ${wxWidgets_LIBRARIES})
+
+
 
 enable_testing()
 add_test(NAME AlarmTests COMMAND AlarmTest)
