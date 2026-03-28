@@ -6,6 +6,7 @@
 #define GROUP55_MOTION_SENSOR_PI_H
 
 #include <wiringPi.h>
+#include "NetworkServer.h"
 #include <mutex>
 #include <thread>
 #include <atomic>
@@ -13,8 +14,6 @@
 #include <unistd.h>
 #include <thread>
 #include <mutex>
-
-class NetworkS;
 
 class Motion_Sensor_PI {
     public:
@@ -30,12 +29,14 @@ class Motion_Sensor_PI {
 
 
 private:
+    std::atomic<bool> motionPending = false;
+    time_t lastSent = 0;
     void detectMotion();
     void onMotion();
 
     std::atomic<bool> active;
     std::atomic<bool> motionDetected;
-    Network &network;
+    NetworkServer& network;
     int sensitivity;
     void setSensitivity(int sensitivity);
     int motionSleep;

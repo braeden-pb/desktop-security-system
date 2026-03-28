@@ -22,7 +22,7 @@ int main() {
     NetworkServer server(5000);
     server.start();
 
-    Motion_Sensor_PI motion(5, 10);
+    Motion_Sensor_PI motion(5, 10, server);
     Camera_PI camera(server);
     motion.activate();
 
@@ -43,15 +43,12 @@ int main() {
 
     std::thread sensorThread([&]() {
         while (running) {
-            if (motion.isMotionDetected()) {
-                PacketHeader header{};
-                header.system      = System::Motion;
-                header.command     = Command::MotionDetected;
-                header.payloadSize = 0;
-                server.sendPacket(header, {});
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
+       std::this_thread::sleep_for(std::chrono::milliseconds(100));
+   }
+
+   motion.deactivate();
+   server.stop();
+   return 0;
     });
 
     while (running) {
