@@ -6,11 +6,11 @@
 #include "SecuritySystem.h"
 #include <iostream>
 
-Alert::Alert(Event event, std::string email, SecuritySystem& system)
-    : event(event), email(email), system(system) {}
+Alert::Alert(Event event, SecuritySystem& system)
+    : event(event),system(system) {}
 
 void Alert::sendAlert() {
-    std::cout << "Alert sent to " << email << " at " << event.getTime() << std::endl;
+    system.triggerAlert(event.getType());
 }
 
 Event Alert::getEvent() {

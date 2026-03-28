@@ -33,8 +33,7 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     statusLabel = new wxStaticText(this, wxID_ANY, "Status : Disarmed");
     wxBitmap placeholder(400, 300);
     cameraView = new wxStaticBitmap(this, wxID_ANY, placeholder);
-    cameraView->SetMinSize(wxSize(400, 300));
-    cameraView->SetBackgroundColour(wxColour(30, 30, 30));
+    loadPlaceholder();
     actionBtn = new wxToggleButton(this, wxID_ANY, "ARM SYSTEM");
     alarmBtn = new wxToggleButton(this,wxID_ANY, "Sound Alarm");
     alarmBtn->SetFont(buttonFont);
@@ -81,7 +80,6 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
 
     panelSizer->AddStretchSpacer(1);
 
-
     m_system->getCamera()->startStream();
     m_system->getCamera()->onFrame([this](const std::vector<uint8_t>& jpeg) {
         // Store latest frame — callback is on network thread
@@ -102,8 +100,16 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     alarmBtn->Bind(wxEVT_TOGGLEBUTTON,&Home_Panel::onAlarmButtonPressed,this);
     settingsBtn->Bind(wxEVT_BUTTON,&Home_Panel::onConfigButtonPressed,this);
 
-
+    wxButton* testBtn = new wxButton(this, wxID_ANY, "Test Alert");
+    testBtn->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) {
+        std::string time = "2026-03-28 03:00";
+        Event e(time, "Motion detected");
+        Alert alert(e, *m_system);
+        alert.sendAlert();
+    });
+    
 }
+
 
 /**
  * @brief Handles the ARM/DISARM toggle button press.
@@ -146,7 +152,54 @@ void Home_Panel::onLogout(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Login_ID);
 }
 
+void Home_Panel::loadPlaceholder() {
+    wxMemoryDC dc;
+    wxBitmap bmp(400, 300);
+    dc.SelectObject(bmp);
+    dc.SetBackground(wxBrush(wxColour(30, 30, 30)));
+    dc.Clear();
+
+    // White text centered
+    dc.SetTextForeground(*wxWHITE);
+    dc.SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+
+    wxString msg = "No Camera Connected";
+    wxSize textSize = dc.GetTextExtent(msg);
+    int x = (400 - textSize.x) / 2;
+    int y = (300 - textSize.y) / 2;
+    dc.DrawText(msg, x, y);
+
+
+    dc.SelectObject(wxNullBitmap);
+    cameraView->SetBitmap(bmp);
+    cameraView->Refresh();
+    cameraView->SetBackgroundColour(wxColour(30, 30, 30));
+    cameraView->SetMinSize(wxSize(400, 300));
+
+}
+
 void Home_Panel::updateFrame(wxTimerEvent&) {
+
+    if (!cameraConnected) {
+        // Check if connection was established since last check
+        if (m_system->isConnected()) {
+            cameraConnected = true;
+            m_system->getCamera()->startStream();
+            m_system->getCamera()->onFrame([this](const std::vector<uint8_t>& jpeg) {
+                std::lock_guard<std::mutex> lock(frameMutex);
+                pendingFrame = jpeg;
+            });
+        }
+        return;
+    }
+
+    // If we lost connection mid-stream
+    if (!m_system->isConnected()) {
+        cameraConnected = false;
+        loadPlaceholder();
+        return;
+    }
+
     std::vector<uint8_t> frameToShow;
     {
         std::lock_guard<std::mutex> lock(frameMutex);
@@ -216,3 +269,5 @@ Home_Panel::~Home_Panel() {
     frameTimer->Stop();
     m_system->getCamera()->stopStream();
 }
+
+

@@ -14,11 +14,11 @@ class SecuritySystem;
 class Alert : public Observer {
 private:
     Event event;
-    std::string email;
+    //std::string email;
     SecuritySystem& system;
 
 public:
-    Alert(Event event, std::string email, SecuritySystem& system);
+    Alert(Event event,SecuritySystem& system);
     void motionDetected();
     void sendAlert();
     Event getEvent();

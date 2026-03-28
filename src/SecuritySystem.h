@@ -54,7 +54,11 @@ public:
     bool getIsAlarmActive() const;
     void turnOffAlarm() const;
     UI* getUI() const;
+    bool isConnected() const;
+    void triggerAlert(const std::string& type);
+    void setUI(UI* ui);
     Status systemStatus;
+
 
 
 private:
@@ -68,6 +72,8 @@ private:
     std::unique_ptr<Alarm> alarm;
     void setStatus(Status status);
     void initializeSystem();
+    UI* m_ui = nullptr;
+
 
 };
 

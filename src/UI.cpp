@@ -111,4 +111,9 @@ Storage_Panel* UI::getStoragePanel() const {
     return storagePage;
 }
 
+void UI::showAlert(const std::string& message)
+    {
+    wxMessageBox(message, "Alert", wxOK | wxICON_WARNING, this);
+    }
+
 UI::~UI() {}

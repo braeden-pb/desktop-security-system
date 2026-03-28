@@ -12,10 +12,11 @@
 #include "Login_Panel.h"
 #include "Storage_Panel.h"
 #include "Config_Panel.h"
+#include "Observer.h"
 
 class SecuritySystem;
 
-class UI : public wxFrame {
+class UI : public wxFrame,public Observer{
     public:
     UI(SecuritySystem* system);
     ~UI();
@@ -30,6 +31,8 @@ class UI : public wxFrame {
     PageID GetPageID() const;
     Login_Panel* getLoginPanel();
     Storage_Panel* getStoragePanel() const;
+    void update(const std::string& event) override;
+    void showAlert(const std::string& message);
 
 
     private:

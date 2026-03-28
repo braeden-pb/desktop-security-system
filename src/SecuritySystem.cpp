@@ -31,7 +31,7 @@ SecuritySystem::SecuritySystem() {
     alarm = std::make_unique<Alarm>();
     config = std::make_unique<Config>();
     motion_sensor = std::make_unique<Motion_Sensor>();
-    //addObserver(mainUi.get());
+    addObserver(mainUi.get());
     addObserver(alarm.get());
     addObserver(this);
 
@@ -79,6 +79,10 @@ Config *SecuritySystem::getConfig() {
 
 Camera *SecuritySystem::getCamera() const {
     return camera.get();
+}
+
+bool SecuritySystem::isConnected() const {
+    return network && network->isConnected();
 }
 
 void SecuritySystem::update(const std::string& event) {
@@ -230,6 +234,16 @@ void SecuritySystem::notifyObservers(const std::string& event) {
 
 void SecuritySystem::soundAlert() {
     notifyObservers("Motion detected");
+}
+
+void SecuritySystem::setUI(UI* ui) {
+    m_ui = ui;
+}
+
+void SecuritySystem::triggerAlert(const std::string& type) {
+    if (m_ui) {
+        m_ui->showAlert("Alert: " + type);
+    }
 }
 
 

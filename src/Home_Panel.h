@@ -44,8 +44,10 @@ private:
     wxTimer* frameTimer;
     std::vector<uint8_t> pendingFrame;
     std::mutex frameMutex;
+    bool cameraConnected = false;
 
     void updateFrame(wxTimerEvent& event);
+    void loadPlaceholder();
 
     /**
     * @brief Handles the Config button press, navigating to the Config panel.
