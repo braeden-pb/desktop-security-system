@@ -90,6 +90,10 @@ void NetworkServer::sendFrame(const uint8_t *data, size_t length) {
     sendPacket(header, payload);
 }
 
+void NetworkServer::onDisconnect(std::function<void()> callback) {
+    disconnectCallback = callback;
+}
+
 void NetworkServer::acceptLoop() {
     while(running) {
         clientFd = accept(serverFd, nullptr, nullptr);
@@ -98,7 +102,8 @@ void NetworkServer::acceptLoop() {
         std::cout << "Client connected!" << std::endl;
         receiveThread = std::thread(&NetworkServer::receiveLoop, this);
         receiveThread.join();
-    }
+        std::cout << "Client disconnected. Waiting for reconnect..." << std::endl;
+        if (disconnectCallback) disconnectCallback();
 }
 
 void NetworkServer::receiveLoop() {

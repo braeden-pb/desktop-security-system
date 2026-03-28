@@ -11,9 +11,11 @@ Camera::Camera(Network &network) : recording(false), network(network) {
     });
 }
 
-Camera::~Camera() {}
+Camera::~Camera() {
+    if (streaming) stopStream();
+    if (recording) stopRecording();
+}
 
-// ── Commands → Pi ─────────────────────────────────────────────────────────────
 
 std::string Camera::capturePhoto() {
     PacketHeader header{};
@@ -22,6 +24,30 @@ std::string Camera::capturePhoto() {
     header.payloadSize = 0;
     network.send(header, {});
     return lastPhoto; // will be populated when Pi responds
+}
+
+void Camera::startStream() {
+    if (streaming) return;
+    PacketHeader header{};
+    header.system      = System::Camera;
+    header.command     = Command::StartStream;
+    header.payloadSize = 0;
+    network.send(header, {});
+    streaming = true;
+}
+
+void Camera::stopStream() {
+    if (!streaming) return;
+    PacketHeader header{};
+    header.system      = System::Camera;
+    header.command     = Command::StopStream;
+    header.payloadSize = 0;
+    network.send(header, {});
+    streaming = false;
+}
+
+bool Camera::isStreaming() const {
+    return streaming;
 }
 
 void Camera::startRecording() {

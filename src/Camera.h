@@ -18,14 +18,6 @@
 
 class Network;
 
-#include <string>
-#include <vector>
-#include <mutex>
-#include <thread>
-#include <functional>
-#include "../Shared/Protocol.h"
-#include "Network.h"
-
 class Camera {
 public:
     Camera(Network &network);
@@ -34,6 +26,9 @@ public:
     std::string capturePhoto();
     void startRecording();
     void stopRecording();
+    void startStream();
+    void stopStream();
+    bool isStreaming() const;
     bool isRecording() const;
 
     void onFrame(std::function<void(const std::vector<uint8_t>&)> callback);
@@ -47,6 +42,7 @@ private:
 
     Network &network;
     bool recording;
+    std::atomic<bool> streaming{false};
     std::string lastPhoto;
     std::thread recordThread;
 

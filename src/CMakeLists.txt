@@ -32,6 +32,7 @@ FetchContent_MakeAvailable(googletest)
 find_package(wxWidgets REQUIRED COMPONENTS core base media)
 include(${wxWidgets_USE_FILE})
 
+
 add_executable(SecuritySystem
         main.cpp
         SecuritySystem.cpp SecuritySystem.h
@@ -139,7 +140,8 @@ add_executable(Camera-Test
         ../Shared/Protocol.h
 )
 
-target_link_libraries(Camera-Test PRIVATE ${wxWidgets_LIBRARIES})
+find_package(OpenCV REQUIRED)
+target_link_libraries(Camera-Test PRIVATE ${wxWidgets_LIBRARIES} ${OpenCV_LIBS})
 
 
 

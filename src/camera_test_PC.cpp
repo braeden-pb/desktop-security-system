@@ -3,51 +3,56 @@
 //
 
 // pc_test.cpp
+#include "Network.h"
+#include "Camera.h"
+#include <opencv2/opencv.hpp>
 #include <iostream>
-#include <vector>
-#include <fstream>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include "../Shared/Protocol.h"
 
 int main() {
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    Network network;
 
-    sockaddr_in addr{};
-    addr.sin_family = AF_INET;
-    addr.sin_port   = htons(8080);
-    inet_pton(AF_INET, "192.168.2.174", &addr.sin_addr);
-
-    if (connect(sock, (sockaddr *)&addr, sizeof(addr)) < 0) {
-        std::cerr << "Failed to connect." << std::endl;
+    if (!network.connect("192.168.2.174", 8080)) {  // replace with your Pi's IP
+        std::cerr << "Failed to connect to Pi." << std::endl;
         return 1;
     }
-    std::cout << "Connected to Pi." << std::endl;
+    std::cout << "Connected!" << std::endl;
 
-    int fileCount = 0;
-    while (true) {
-        // Read header
-        PacketHeader header{};
-        int n = recv(sock, &header, sizeof(header), MSG_WAITALL);
-        if (n <= 0) break;
+    Camera camera(network);
+    network.startReceiving();
 
-        // Read payload
-        std::vector<uint8_t> payload(header.payloadSize);
-        if (header.payloadSize > 0)
-            recv(sock, payload.data(), header.payloadSize, MSG_WAITALL);
+    // Display frames as they arrive
+    camera.onFrame([](const std::vector<uint8_t>& jpeg) {
+        // Decode JPEG bytes directly into an OpenCV image
+        cv::Mat frame = cv::imdecode(jpeg, cv::IMREAD_COLOR);
+        if (frame.empty()) return;
+        cv::imshow("Pi Stream", frame);
+        cv::waitKey(1);  // 1ms wait — keeps the window responsive
+    });
 
-        if (header.command == Command::TakePhoto) {
-            std::string filename = "photo_" + std::to_string(fileCount++) + ".jpg";
-            std::ofstream f(filename, std::ios::binary);
-            f.write(reinterpret_cast<const char*>(payload.data()), payload.size());
-            std::cout << "Photo received → " << filename
-                      << " (" << payload.size() << " bytes)" << std::endl;
-        } else if (header.command == Command::Frame) {
-            std::cout << "Frame received: " << payload.size() << " bytes" << std::endl;
+    // Save photos when they arrive
+    camera.onPhoto([](const std::string& path) {
+        std::cout << "Photo saved to: " << path << std::endl;
+        cv::Mat img = cv::imread(path);
+        if (!img.empty()) {
+            cv::imshow("Last Photo", img);
+            cv::waitKey(1);
         }
+    });
+
+    // Start the stream
+    camera.startStream();
+
+    // Simple keyboard controls
+    std::cout << "Controls: [p] photo  [r] record 5s  [q] quit" << std::endl;
+    while (true) {
+        char key = cv::waitKey(30);  // check for keypress every 30ms
+        if (key == 'q') break;
+        if (key == 'p') camera.capturePhoto();
+        if (key == 'r') camera.recordForSeconds(5);
     }
 
-    close(sock);
+    camera.stopStream();
+    network.stopReceiving();
+    network.disconnect();
     return 0;
 }

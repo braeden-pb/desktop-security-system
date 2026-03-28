@@ -8,10 +8,9 @@
 #include <thread>
 #include <chrono>
 #include <csignal>
+#include "Camera_PI.h"
 
 std::atomic<bool> running(true);
-
-
 
 void signalHandler(int) {
     running = false;
@@ -19,16 +18,33 @@ void signalHandler(int) {
 
 int main() {
     signal(SIGINT, signalHandler);
+
     NetworkServer server(5000);
     server.start();
 
-    Motion_Sensor_PI *motion = new Motion_Sensor_PI(5,10);
-    motion->activate();
+    Motion_Sensor_PI motion(5, 10);
+    Camera_PI camera(server);
+    motion.activate();
+
+    server.onCommand([&camera](Command cmd) {
+        switch (cmd) {
+            case Command::StartStream: camera.startStreaming(); break;
+            case Command::StopStream:  camera.stopStreaming();  break;
+            case Command::TakePhoto:   camera.capturePhoto();   break;
+            case Command::StartClip:   camera.startRecording(); break;
+            case Command::StopClip:    camera.stopRecording();  break;
+            default: break;
+        }
+    });
+
+    server.onDisconnect([&camera]() {
+        camera.stopStreaming();
+    });
 
     std::thread sensorThread([&]() {
-        while (motion->isActive()) {
-            if (motion->isMotionDetected()) {
-                PacketHeader header;
+        while (running) {
+            if (motion.isMotionDetected()) {
+                PacketHeader header{};
                 header.system      = System::Motion;
                 header.command     = Command::MotionDetected;
                 header.payloadSize = 0;
@@ -39,8 +55,7 @@ int main() {
     });
 
     sensorThread.join();
-    motion->deactivate();
+    motion.deactivate();
     server.stop();
     return 0;
-
 }

@@ -36,7 +36,10 @@ public:
     void startRecording();
     void stopRecording();
     bool isRecording();
-    void streamVideo();
+    void startStreaming();
+    void stopStreaming();
+    std::atomic<bool> streaming{false};
+    std::thread streamThread;
 private:
     bool recording;
     std::shared_ptr<CameraManager>      cm;

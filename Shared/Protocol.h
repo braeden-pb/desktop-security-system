@@ -18,6 +18,8 @@ enum class Command : uint8_t {
     StartClip       = 0x02,
     StopClip        = 0x03,
     Frame           = 0x04,
+    StartStream     = 0x05,
+    StopStream      = 0x06,
 
     Enable          = 0x10,
     Disable         = 0x11,

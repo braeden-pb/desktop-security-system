@@ -10,7 +10,9 @@ Camera_PI::Camera_PI(NetworkServer &server) : recording(false),server(server) {
     initCamera();
 }
 
-Camera_PI::~Camera_PI(){}
+Camera_PI::~Camera_PI() {
+    delete allocator;
+}
 
 int Camera_PI::initCamera() {
     cm = std::make_unique<CameraManager>();
@@ -38,6 +40,7 @@ int Camera_PI::initCamera() {
     config = camera->generateConfiguration( { StreamRole::Viewfinder } );
     if (!config) {
         std::cerr << "Failed to generate camera configuration." << std::endl;
+        camera->release();
         return EXIT_FAILURE;
     }
 
@@ -46,15 +49,16 @@ int Camera_PI::initCamera() {
     streamCfg.pixelFormat = formats::MJPEG;
     streamCfg.size        = { 1280, 720 };
     streamCfg.bufferCount = 4;
-    camera->configure(config.get());
 
     if (config->validate() == CameraConfiguration::Invalid) {
         std::cerr << "Camera configuration invalid." << std::endl;
+        camera->release();
         return EXIT_FAILURE;
     }
 
     if (camera->configure(config.get()) < 0) {
         std::cerr << "Failed to configure camera." << std::endl;
+        camera->release();
         return EXIT_FAILURE;
     }
 
@@ -66,6 +70,7 @@ int Camera_PI::initCamera() {
         int ret = allocator->allocate(cfg.stream());
         if (ret < 0) {
             std::cerr << "Can't allocate buffers" << std::endl;
+            camera->release();
             return EXIT_FAILURE;
         }
 
@@ -79,10 +84,12 @@ int Camera_PI::initCamera() {
         std::unique_ptr<Request> request = camera->createRequest();
         if (!request) {
             std::cerr << "Failed to create request." << std::endl;
+            camera->release();
             return EXIT_FAILURE;
         }
         if (request->addBuffer(stream, buffer.get()) < 0) {
             std::cerr << "Failed to add buffer to request." << std::endl;
+            camera->release();
             return EXIT_FAILURE;
         }
         requests.push_back(std::move(request));
@@ -284,24 +291,24 @@ void Camera_PI::stopRecording() {
     std::cout << "Recording stopped. File saved to: " << devicePath << std::endl;
 }
 
-void Camera_PI::streamVideo() {
-    if (!camera) {
-        std::cerr << "Camera not initialised." << std::endl;
-        return;
-    }
+oid Camera_PI::startStreaming() {
+    if (streaming) return;
 
     Stream *stream = config->at(0).stream();
 
     camera->requestCompleted.connect(this, [this, stream](Request *req) {
-        if (req->status() == Request::RequestCancelled) return;
+        if (!streaming || req->status() == Request::RequestCancelled) return;
 
         const FrameBuffer *buf = req->buffers().at(stream);
         const FrameBuffer::Plane &plane = buf->planes()[0];
 
+        // Use bytesused instead of plane.length (fixes corrupted frames)
+        size_t used = buf->metadata().planes()[0].bytesused;
+
         void *mem = mmap(nullptr, plane.length, PROT_READ,
                          MAP_SHARED, plane.fd.get(), 0);
         if (mem != MAP_FAILED) {
-            server.sendFrame(static_cast<const uint8_t *>(mem), plane.length);
+            server.sendFrame(static_cast<const uint8_t *>(mem), used);
             munmap(mem, plane.length);
         }
 
@@ -310,11 +317,15 @@ void Camera_PI::streamVideo() {
     });
 
     camera->start();
+    streaming = true;
+
     for (auto &r : requests)
         camera->queueRequest(r.get());
+}
 
-    std::cin.get();
-
+void Camera_PI::stopStreaming() {
+    if (!streaming) return;
+    streaming = false;
     camera->stop();
     camera->requestCompleted.disconnect();
 }

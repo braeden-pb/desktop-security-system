@@ -28,6 +28,7 @@ class NetworkServer {
         bool isClientConnected() const { return clientConnected; }
         void sendPacket(const PacketHeader &header, const std::vector<uint8_t> &payload);
         void sendFrame(const uint8_t *data, size_t length);
+        void onDisconnect(std::function<void()> callback);
 
 
     private:
@@ -38,6 +39,7 @@ class NetworkServer {
         std::string ip;
         int serverFd = -1;
         int clientFd = -1;
+        std::function<void()> disconnectCallback;
         std::thread acceptThread;
         std::thread receiveThread;
         std::function<void(Command)> commandCallback;
