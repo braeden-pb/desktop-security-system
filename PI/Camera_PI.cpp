@@ -275,51 +275,58 @@ void Camera_PI::stopRecording() {
 void Camera_PI::startStreaming() {
     if (streaming) return;
 
+    camera->stop();
+    camera->requestCompleted.disconnect();
+
     Stream *stream = config->at(0).stream();
 
     camera->requestCompleted.connect(this, [this, stream](Request *req) {
-    if (!streaming) return;
-    if (req->status() == Request::RequestCancelled) return;
+        // Check BOTH flags — streaming might have been cleared mid-callback
+        if (!streaming) return;
+        if (req->status() == Request::RequestCancelled) return;
 
-    const FrameBuffer *buf = req->buffers().at(stream);
-    const FrameBuffer::Plane &plane = buf->planes()[0];
-    size_t used = buf->metadata().planes()[0].bytesused;
+        const FrameBuffer *buf = req->buffers().at(stream);
+        const FrameBuffer::Plane &plane = buf->planes()[0];
 
-    void *mem = mmap(nullptr, plane.length, PROT_READ,
-                     MAP_SHARED, plane.fd.get(), 0);
-    if (mem != MAP_FAILED) {
-        // Wrap raw YUYV bytes in a cv::Mat and convert to BGR
-        cv::Mat yuyv(720, 1280, CV_8UC2, mem);
-        cv::Mat bgr;
-        cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
+        void *mem = mmap(nullptr, plane.length, PROT_READ,
+                         MAP_SHARED, plane.fd.get(), 0);
+        if (mem != MAP_FAILED) {
+            cv::Mat yuyv(720, 1280, CV_8UC2, mem);
+            cv::Mat bgr;
+            cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
 
-        // Encode to JPEG
-        std::vector<uint8_t> encoded;
-        std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 80};
-        cv::imencode(".jpg", bgr, encoded, params);
+            std::vector<uint8_t> encoded;
+            std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 80};
+            cv::imencode(".jpg", bgr, encoded, params);
+            server.sendFrame(encoded.data(), encoded.size());
 
-        server.sendFrame(encoded.data(), encoded.size());
-        munmap(mem, plane.length);
-    }
+            munmap(mem, plane.length);
+        }
 
-    if (streaming) {
+        // Re-check streaming flag right before requeueing
+        // This is the critical guard — never requeue if we're stopping
+        if (!streaming) return;
         req->reuse(Request::ReuseBuffers);
         camera->queueRequest(req);
-    }
-});
+    });
+
+    for (auto &r : requests)
+        r->reuse(libcamera::Request::ReuseBuffers);
 
     camera->start();
     streaming = true;
 
     for (auto &r : requests)
         camera->queueRequest(r.get());
+
+    std::cout << "Streaming started." << std::endl;
 }
 
 void Camera_PI::stopStreaming() {
     if (!streaming) return;
+    camera->requestCompleted.disconnect();
     streaming = false;
     camera->stop();
-    camera->requestCompleted.disconnect();
     for (auto &r : requests) {
         r->reuse(libcamera::Request::ReuseBuffers);
     }
