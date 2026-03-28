@@ -104,6 +104,7 @@ void NetworkServer::acceptLoop() {
         receiveThread.join();
         std::cout << "Client disconnected. Waiting for reconnect..." << std::endl;
         if (disconnectCallback) disconnectCallback();
+	}
 }
 
 void NetworkServer::receiveLoop() {
