@@ -116,8 +116,6 @@ std::string Camera_PI::capturePhoto() {
     bool wasStreaming = streaming;
     if (wasStreaming) stopStreaming();
 
-    Stream *stream = config->at(0).stream();
-
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
     std::tm tm = *std::localtime(&t);
@@ -125,44 +123,53 @@ std::string Camera_PI::capturePhoto() {
     oss << "/tmp/photo_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".jpg";
     std::string outPath = oss.str();
 
+
+    int warmupFrames = 5;
+    int frameCount = 0;
     bool done = false;
+    std::vector<uint8_t> encodedPhoto;
+    Stream *stream = config->at(0).stream();
 
     camera->requestCompleted.connect(this, [&](libcamera::Request *req) {
-    if (req->status() == libcamera::Request::RequestCancelled) return;
+        if (req->status() == libcamera::Request::RequestCancelled) return;
 
-    const libcamera::FrameBuffer *buf = req->buffers().at(stream);
-    for (const auto &plane : buf->planes()) {
-        void *mem = mmap(nullptr, plane.length, PROT_READ,
-                 MAP_SHARED, plane.fd.get(), 0);
-if (mem != MAP_FAILED) {
-    cv::Mat yuyv(720, 1280, CV_8UC2, mem);
-    cv::Mat bgr;
-    cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
-
-    std::vector<uint8_t> encoded;
-    cv::imencode(".jpg", bgr, encoded);
-
-    // Save to disk
-    std::ofstream ofs(outPath, std::ios::binary);
-    ofs.write(reinterpret_cast<const char*>(encoded.data()), encoded.size());
-
-    munmap(mem, plane.length);
+        frameCount++;
+        if (frameCount <= warmupFrames) {
+            req->reuse(libcamera::Request::ReuseBuffers);
+            camera->queueRequest(req);
+            return;
         }
-    }
-    done = true;
-});
+
+        const libcamera::FrameBuffer *buf = req->buffers().at(stream);
+        const libcamera::FrameBuffer::Plane &plane = buf->planes()[0];
+
+        void *mem = mmap(nullptr, plane.length, PROT_READ,
+                         MAP_SHARED, plane.fd.get(), 0);
+        if (mem != MAP_FAILED) {
+            cv::Mat yuyv(720, 1280, CV_8UC2, mem);
+            cv::Mat bgr;
+            cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
+            cv::imencode(".jpg", bgr, encodedPhoto);
+            munmap(mem, plane.length);
+        }
+        done = true;
+    });
+
+    for (auto &r : requests)
+        r->reuse(libcamera::Request::ReuseBuffers);
 
     camera->start();
-    requests[0]->reuse(libcamera::Request::ReuseBuffers);
-    camera->queueRequest(requests[0].get());
+    for (auto &r : requests)
+        camera->queueRequest(r.get());
 
     const auto timeout = std::chrono::seconds(5);
-    const auto t0      = std::chrono::steady_clock::now();
+    const auto t0 = std::chrono::steady_clock::now();
     while (!done) {
         if (std::chrono::steady_clock::now() - t0 > timeout) {
             std::cerr << "Photo capture timed out." << std::endl;
             camera->stop();
             camera->requestCompleted.disconnect();
+            if (wasStreaming) startStreaming();
             return "";
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -171,25 +178,21 @@ if (mem != MAP_FAILED) {
     camera->stop();
     camera->requestCompleted.disconnect();
     lastCaptureAt = std::chrono::system_clock::now();
-    std::cout << "Photo saved to: " << outPath << std::endl;
-    std::ifstream file(outPath, std::ios::binary);
-    if (file.is_open()) {
-        std::vector<uint8_t> bytes;
-        bytes.assign(
-            std::istreambuf_iterator<char>(file),
-            std::istreambuf_iterator<char>()
-        );
-        PacketHeader header{};
-        header.system      = System::Camera;
-        header.command     = Command::TakePhoto;
-        header.payloadSize = static_cast<uint32_t>(bytes.size());
-        server.sendPacket(header, bytes);
-        std::cout << "Photo sent to PC (" << bytes.size() << " bytes)" << std::endl;
-    } else {
-        std::cerr << "Failed to read photo for sending." << std::endl;
-    }
 
+    std::ofstream ofs(outPath, std::ios::binary);
+    ofs.write(reinterpret_cast<const char*>(encodedPhoto.data()), encodedPhoto.size());
+    ofs.close();
+
+    PacketHeader header{};
+    header.system      = System::Camera;
+    header.command     = Command::TakePhoto;
+    header.payloadSize = static_cast<uint32_t>(encodedPhoto.size());
+    server.sendPacket(header, encodedPhoto);
+    std::cout << "Photo sent to PC (" << encodedPhoto.size() << " bytes)" << std::endl;
+
+    // Resume streaming if it was active
     if (wasStreaming) startStreaming();
+
     return outPath;
 }
 
@@ -314,6 +317,10 @@ void Camera_PI::stopStreaming() {
     streaming = false;
     camera->stop();
     camera->requestCompleted.disconnect();
+    for (auto &r : requests) {
+        r->reuse(libcamera::Request::ReuseBuffers);
+    }
+    std::cout << "Streaming stopped." << std::endl;
 }
 
 bool Camera_PI::isRecording() {
