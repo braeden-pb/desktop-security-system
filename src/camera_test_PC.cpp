@@ -7,11 +7,18 @@
 #include "Camera.h"
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <mutex>
+
+#include "Network.h"
+#include "Camera.h"
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <mutex>
 
 int main() {
     Network network;
 
-    if (!network.connect("192.168.2.174", 8080)) {  // replace with your Pi's IP
+    if (!network.connect("192.168.2.174", 5000)) {
         std::cerr << "Failed to connect to Pi." << std::endl;
         return 1;
     }
@@ -20,35 +27,62 @@ int main() {
     Camera camera(network);
     network.startReceiving();
 
-    // Display frames as they arrive
-    camera.onFrame([](const std::vector<uint8_t>& jpeg) {
-        // Decode JPEG bytes directly into an OpenCV image
-        cv::Mat frame = cv::imdecode(jpeg, cv::IMREAD_COLOR);
-        if (frame.empty()) return;
-        cv::imshow("Pi Stream", frame);
-        cv::waitKey(1);  // 1ms wait — keeps the window responsive
+    // Shared frame buffer between network thread and main thread
+    std::vector<uint8_t> pendingFrame;
+    std::string pendingPhoto;
+    std::mutex frameMutex;
+    std::mutex photoMutex;
+
+    // Network thread — just stores the latest frame
+    camera.onFrame([&](const std::vector<uint8_t>& jpeg) {
+        std::lock_guard<std::mutex> lock(frameMutex);
+        pendingFrame = jpeg;
     });
 
-    // Save photos when they arrive
-    camera.onPhoto([](const std::string& path) {
+    // Network thread — just stores the latest photo path
+    camera.onPhoto([&](const std::string& path) {
+        std::lock_guard<std::mutex> lock(photoMutex);
+        pendingPhoto = path;
         std::cout << "Photo saved to: " << path << std::endl;
-        cv::Mat img = cv::imread(path);
-        if (!img.empty()) {
-            cv::imshow("Last Photo", img);
-            cv::waitKey(1);
-        }
     });
 
-    // Start the stream
     camera.startStream();
 
-    // Simple keyboard controls
-    std::cout << "Controls: [p] photo  [r] record 5s  [q] quit" << std::endl;
+    std::cout << "Controls: [p] photo  [q] quit" << std::endl;
+
     while (true) {
-        char key = cv::waitKey(30);  // check for keypress every 30ms
+        // Grab the latest frame if one arrived
+        std::vector<uint8_t> frameToShow;
+        {
+            std::lock_guard<std::mutex> lock(frameMutex);
+            if (!pendingFrame.empty())
+                frameToShow = std::move(pendingFrame);
+        }
+
+        // Decode and display on main thread
+        if (!frameToShow.empty()) {
+            cv::Mat frame = cv::imdecode(frameToShow, cv::IMREAD_COLOR);
+            if (!frame.empty())
+                cv::imshow("Pi Stream", frame);
+        }
+
+        // Show photo if one arrived
+        std::string photoToShow;
+        {
+            std::lock_guard<std::mutex> lock(photoMutex);
+            if (!pendingPhoto.empty())
+                photoToShow = std::move(pendingPhoto);
+        }
+        if (!photoToShow.empty()) {
+            cv::Mat img = cv::imread(photoToShow);
+            if (!img.empty())
+                cv::imshow("Last Photo", img);
+        }
+
+        // Process key on main thread
+        char key = cv::waitKey(30);
         if (key == 'q') break;
         if (key == 'p') camera.capturePhoto();
-        if (key == 'r') camera.recordForSeconds(5);
     }
 
     camera.stopStream();

@@ -28,6 +28,7 @@ std::string Camera::capturePhoto() {
 
 void Camera::startStream() {
     if (streaming) return;
+    std::cout << "Sending StartStream command..." << std::endl;
     PacketHeader header{};
     header.system      = System::Camera;
     header.command     = Command::StartStream;
@@ -74,11 +75,12 @@ bool Camera::isRecording() const {
     return recording;
 }
 
-// ── Incoming packets from Pi ──────────────────────────────────────────────────
 
 void Camera::handlePacket(Command cmd, const std::vector<uint8_t> &payload) {
+    std::cout << "Packet received, command: " << static_cast<int>(cmd) << std::endl;
     switch (cmd) {
         case Command::Frame: {
+            std::cout << "Frame packet: " << payload.size() << " bytes" << std::endl;
             {
                 std::lock_guard<std::mutex> lock(frameMutex);
                 latestFrame       = payload;
@@ -89,6 +91,7 @@ void Camera::handlePacket(Command cmd, const std::vector<uint8_t> &payload) {
             break;
         }
         case Command::TakePhoto: {
+            std::cout << "Photo packet: " << payload.size() << " bytes" << std::endl;
             if (payload.empty()) break;
 
             std::filesystem::create_directories("../saved_data");
@@ -100,6 +103,10 @@ void Camera::handlePacket(Command cmd, const std::vector<uint8_t> &payload) {
             lastPhoto = oss.str();
 
             std::ofstream file(lastPhoto, std::ios::binary);
+            if (!file.is_open()) {
+                std::cerr << "Failed to open file for writing: " << lastPhoto << std::endl;
+                break;
+            }
             file.write(reinterpret_cast<const char*>(payload.data()), payload.size());
             file.close();
 
@@ -110,11 +117,11 @@ void Camera::handlePacket(Command cmd, const std::vector<uint8_t> &payload) {
             break;
         }
         default:
+            std::cout << "Unhandled command: " << static_cast<int>(cmd) << std::endl;
             break;
     }
 }
 
-// ── Stream access for UI ──────────────────────────────────────────────────────
 
 void Camera::onFrame(std::function<void(const std::vector<uint8_t>&)> callback) {
     frameCallback = callback;
