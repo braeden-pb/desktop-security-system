@@ -11,6 +11,7 @@
 #include <wx/mediactrl.h>
 
 class Video : public File {
+
 private:
     std::string videoLength;
     bool isPlaying = false;
