@@ -113,6 +113,9 @@ std::string Camera_PI::capturePhoto() {
         return "";
     }
 
+    camera->stop();
+    camera->requestCompleted.disconnect();
+
     bool wasStreaming = streaming;
     if (wasStreaming) stopStreaming();
 
