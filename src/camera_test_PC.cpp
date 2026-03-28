@@ -9,11 +9,7 @@
 #include <iostream>
 #include <mutex>
 
-#include "Network.h"
-#include "Camera.h"
-#include <opencv2/opencv.hpp>
-#include <iostream>
-#include <mutex>
+
 
 int main() {
     Network network;

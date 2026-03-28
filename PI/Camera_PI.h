@@ -12,8 +12,10 @@
 #include <memory>
 #include <libcamera/libcamera/libcamera.h>
 #include <fstream>
+#include <opencv2/opencv.hpp>
 #include <sstream>
 #include <iomanip>
+#
 #include <ctime>
 #include <thread>
 #include <fstream>

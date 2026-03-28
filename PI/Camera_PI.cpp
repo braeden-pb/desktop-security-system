@@ -130,32 +130,20 @@ std::string Camera_PI::capturePhoto() {
     const libcamera::FrameBuffer *buf = req->buffers().at(stream);
     for (const auto &plane : buf->planes()) {
         void *mem = mmap(nullptr, plane.length, PROT_READ,
-                         MAP_SHARED, plane.fd.get(), 0);
-        if (mem != MAP_FAILED) {
-            const uint8_t *data = static_cast<const uint8_t *>(mem);
-            size_t length = plane.length;
+                 MAP_SHARED, plane.fd.get(), 0);
+if (mem != MAP_FAILED) {
+    cv::Mat yuyv(720, 1280, CV_8UC2, mem);
+    cv::Mat bgr;
+    cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
 
-            // Find JPEG start marker 0xFF 0xD8
-            size_t offset = 0;
-            for (size_t i = 0; i + 1 < length; i++) {
-                if (data[i] == 0xFF && data[i+1] == 0xD8) {
-                    offset = i;
-                    break;
-                }
-            }
+    std::vector<uint8_t> encoded;
+    cv::imencode(".jpg", bgr, encoded);
 
-            // Find JPEG end marker 0xFF 0xD9
-            size_t end = length;
-            for (size_t i = length - 2; i > offset; i--) {
-                if (data[i] == 0xFF && data[i+1] == 0xD9) {
-                    end = i + 2;
-                    break;
-                }
-            }
+    // Save to disk
+    std::ofstream ofs(outPath, std::ios::binary);
+    ofs.write(reinterpret_cast<const char*>(encoded.data()), encoded.size());
 
-            std::ofstream ofs(outPath, std::ios::binary);
-            ofs.write(reinterpret_cast<const char*>(data + offset), end - offset);
-            munmap(mem, plane.length);
+    munmap(mem, plane.length);
         }
     }
     done = true;
@@ -291,30 +279,41 @@ void Camera_PI::stopRecording() {
     std::cout << "Recording stopped. File saved to: " << devicePath << std::endl;
 }
 
-oid Camera_PI::startStreaming() {
+void Camera_PI::startStreaming() {
     if (streaming) return;
 
     Stream *stream = config->at(0).stream();
 
     camera->requestCompleted.connect(this, [this, stream](Request *req) {
-        if (!streaming || req->status() == Request::RequestCancelled) return;
+    if (!streaming) return;
+    if (req->status() == Request::RequestCancelled) return;
 
-        const FrameBuffer *buf = req->buffers().at(stream);
-        const FrameBuffer::Plane &plane = buf->planes()[0];
+    const FrameBuffer *buf = req->buffers().at(stream);
+    const FrameBuffer::Plane &plane = buf->planes()[0];
+    size_t used = buf->metadata().planes()[0].bytesused;
 
-        // Use bytesused instead of plane.length (fixes corrupted frames)
-        size_t used = buf->metadata().planes()[0].bytesused;
+    void *mem = mmap(nullptr, plane.length, PROT_READ,
+                     MAP_SHARED, plane.fd.get(), 0);
+    if (mem != MAP_FAILED) {
+        // Wrap raw YUYV bytes in a cv::Mat and convert to BGR
+        cv::Mat yuyv(720, 1280, CV_8UC2, mem);
+        cv::Mat bgr;
+        cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
 
-        void *mem = mmap(nullptr, plane.length, PROT_READ,
-                         MAP_SHARED, plane.fd.get(), 0);
-        if (mem != MAP_FAILED) {
-            server.sendFrame(static_cast<const uint8_t *>(mem), used);
-            munmap(mem, plane.length);
-        }
+        // Encode to JPEG
+        std::vector<uint8_t> encoded;
+        std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 80};
+        cv::imencode(".jpg", bgr, encoded, params);
 
+        server.sendFrame(encoded.data(), encoded.size());
+        munmap(mem, plane.length);
+    }
+
+    if (streaming) {
         req->reuse(Request::ReuseBuffers);
         camera->queueRequest(req);
-    });
+    }
+});
 
     camera->start();
     streaming = true;

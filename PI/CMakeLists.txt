@@ -25,8 +25,9 @@ include(FetchContent)
 
 
 find_package(PkgConfig REQUIRED)
+find_package(OpenCV REQUIRED)
 pkg_check_modules(LIBCAMERA REQUIRED libcamera)
-link_directories(${LIBCAMERA_LIBRARY_DIRS})
+link_directories(${LIBCAMERA_LIBRARY_DIRS} ${OpenCV_LIBS})
 
 # Pi executable
 add_executable(pi-camera
@@ -43,6 +44,7 @@ add_executable(pi-camera
 target_include_directories(pi-camera PRIVATE
         ${CMAKE_SOURCE_DIR}/../Shared
         ${LIBCAMERA_INCLUDE_DIRS}
+        ${OpenCV_INCLUDE_DIRS}
 )
 
 # Link libraries
@@ -54,6 +56,7 @@ target_link_libraries(pi-camera PRIVATE
         #wiringPi
         camera
         camera-base
+        ${OpenCV_LIBS}
 )
 
 # Compiler warnings
@@ -68,11 +71,13 @@ add_executable(camera-test
 target_include_directories(camera-test PRIVATE
         ${CMAKE_SOURCE_DIR}/../Shared
         ${LIBCAMERA_INCLUDE_DIRS}
+        ${OpenCV_INCLUDE_DIRS}
 )
 
 target_link_libraries(camera-test PRIVATE
         camera
         camera-base
+        ${OpenCV_LIBS}
 )
 
 target_compile_options(camera-test PRIVATE -Wall -Wextra)
