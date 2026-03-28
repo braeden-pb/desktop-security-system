@@ -7,6 +7,7 @@
 
 #include <wx/wx.h>
 #include <list>
+#include <wx/mediactrl.h>
 
 class UI;
 class SecuritySystem;
@@ -69,6 +70,9 @@ private:
      * @param event The wxCommandEvent triggered by the back home button.
      */
     void onBackHome(wxCommandEvent& event);
+
+    void openVideo(const wxString& path);
+    void isVideoFile(const wxString& path);
 
 };
 
