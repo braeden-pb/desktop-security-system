@@ -15,9 +15,14 @@ Alarm::Alarm()
  * sound type set to "wav", and an empty last-activated timestamp.
  */
 bool Alarm::loadSound(sf::SoundBuffer& buffer) {
-    std::string soundPath = "../sounds/alarm.wav";
-    std::cout << "Loading Sound From: " << soundPath << std::endl;
-    return buffer.loadFromFile(soundPath);
+    std::string path = std::string(SOUNDS_DIR) + "alarm.wav";
+    std::cout << "Loading Sound From: " << path << std::endl;
+
+    if (!buffer.loadFromFile(path)) {
+        std::cerr << "Sound file not found, skipping audio" << std::endl;
+        return false;  // was "return;" before — wrong for a bool function
+    }
+    return true;
 }
 
 /**
@@ -33,7 +38,6 @@ bool Alarm::loadSound(sf::SoundBuffer& buffer) {
 void Alarm::activate() {
     isActive = true;
     std::cout << "Alarm activated!" << std::endl;
-
 
     if (!loadSound(buffer)) {
         std::cout << "Failed to load sound." << std::endl;

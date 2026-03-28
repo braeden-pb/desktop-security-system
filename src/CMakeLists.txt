@@ -45,6 +45,8 @@ add_executable(SecuritySystem
         Image.cpp Image.h
         File.cpp File.h
         Alarm.cpp Alarm.h
+        Alert.cpp Alert.h
+        Event.cpp Event.h
         Config.cpp
         Device.cpp Device.h
         Network.cpp Network.h
@@ -148,6 +150,10 @@ add_executable(Camera-Test
 )
 
 target_link_libraries(Camera-Test PRIVATE ${wxWidgets_LIBRARIES} ${OpenCV_LIBS})
+
+target_compile_definitions(SecuritySystem PRIVATE
+        SOUNDS_DIR="${CMAKE_SOURCE_DIR}/sounds/"
+)
 
 
 

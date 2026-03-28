@@ -25,8 +25,19 @@ SecuritySystem::SecuritySystem() {
         std::cerr << "Could not connect to Pi" << std::endl;
     }
     network->startReceiving();
+    network->onPacket(System::Motion, [this](Command cmd, const std::vector<uint8_t>& payload) {
+        if (cmd == Command::MotionDetected) {
+            wxTheApp->CallAfter([this]() {  // must be on UI thread
+                std::string time = "now";   // replace with real timestamp if you have one
+                Event e(time, "Motion detected");
+                Alert alert(e, *this);
+                alert.sendAlert();
+            });
+        }
+    });
     camera = std::make_unique<Camera>(*network);
     mainUi = std::make_unique<UI>(this);
+    setUI(mainUi.get());
     systemStatus = Status::disarmed;
     alarm = std::make_unique<Alarm>();
     config = std::make_unique<Config>();
@@ -241,8 +252,12 @@ void SecuritySystem::setUI(UI* ui) {
 }
 
 void SecuritySystem::triggerAlert(const std::string& type) {
+    std::cout << "[DEBUG] triggerAlert called: " << type << std::endl;
     if (m_ui) {
+        std::cout << "[DEBUG] m_ui is set, calling showAlert" << std::endl;
         m_ui->showAlert("Alert: " + type);
+    } else {
+        std::cout << "[DEBUG] m_ui is NULL - setUI was never called" << std::endl;
     }
 }
 

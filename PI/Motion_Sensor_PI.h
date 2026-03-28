@@ -14,9 +14,11 @@
 #include <thread>
 #include <mutex>
 
+class NetworkS;
+
 class Motion_Sensor_PI {
     public:
-    Motion_Sensor_PI(int sensitivity, int motionSleep);
+    Motion_Sensor_PI(int sensitivity, int motionSleep,NetworkServer &network);
     ~Motion_Sensor_PI();
     static void isrHandler();
     void activate();
@@ -33,6 +35,7 @@ private:
 
     std::atomic<bool> active;
     std::atomic<bool> motionDetected;
+    Network &network;
     int sensitivity;
     void setSensitivity(int sensitivity);
     int motionSleep;

@@ -72,7 +72,7 @@ private:
     void onBackHome(wxCommandEvent& event);
 
     void openVideo(const wxString& path);
-    void isVideoFile(const wxString& path);
+    bool isVideoFile(const wxString& path);
 
 };
 

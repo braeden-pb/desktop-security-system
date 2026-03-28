@@ -24,6 +24,7 @@ public:
     Event getEvent();
     void discard();
     void update(const std::string& eventMsg) override;
+    virtual ~Alert() = default;
 };
 
 #endif //GROUP55_ALERT_H

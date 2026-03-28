@@ -137,7 +137,7 @@ void Storage_Panel::loadImages() {
         wxStaticBitmap* thumb = new wxStaticBitmap(thumbContainer, wxID_ANY, thumbnail);
         thumb->SetPosition(wxPoint(0, 0));
         thumb->SetSize(wxSize(250, 250));
-        thumb->Bind(wxEVT_LEFT_DOWN, [this, path](wxMouseEvent&) {if (isVideoFile(path))
+        thumb->Bind(wxEVT_LEFT_DOWN, [this, path](wxMouseEvent&) { if (isVideoFile(path))
             openVideo(path);
         else
             OpenFullImage(path);
@@ -302,7 +302,7 @@ bool Storage_Panel::isVideoFile(const wxString& path) {
            lower.EndsWith(".h264") || lower.EndsWith(".mjpeg");
 }
 
-void Storage_Panel::OpenVideo(const wxString& path) {
+void Storage_Panel::openVideo(const wxString& path) {
     wxFrame* frame = new wxFrame(nullptr, wxID_ANY, "Video Player",
                                   wxDefaultPosition, wxSize(900, 600));
     frame->SetBackgroundColour(*wxBLACK);

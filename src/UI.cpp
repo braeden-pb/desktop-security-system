@@ -116,4 +116,8 @@ void UI::showAlert(const std::string& message)
     wxMessageBox(message, "Alert", wxOK | wxICON_WARNING, this);
     }
 
+void UI::update(const std::string& event) {
+    //showAlert(event);
+}
+
 UI::~UI() {}

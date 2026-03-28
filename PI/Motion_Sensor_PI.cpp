@@ -4,11 +4,13 @@
 
 #include "Motion_Sensor_PI.h"
 
+#include "../src/Network.h"
+
 
 const int PIR_PIN = 17;
 Motion_Sensor_PI* Motion_Sensor_PI::instance_ = nullptr;
 
-Motion_Sensor_PI::Motion_Sensor_PI(int sensitivity, int motionSleep) : active(false),motionDetected(false), sensitivity(sensitivity), motionSleep(motionSleep){
+Motion_Sensor_PI::Motion_Sensor_PI(int sensitivity, int motionSleep,Network &network) : active(false),motionDetected(false), sensitivity(sensitivity), motionSleep(motionSleep),network(network){
     instance_ = this;
     if (wiringPiSetupGpio() == -1) {
         throw std::runtime_error("Failed to initialize WiringPi");
@@ -33,7 +35,9 @@ void Motion_Sensor_PI::detectMotion() {
 
 void Motion_Sensor_PI::onMotion() {
     motionDetected = true;
-    std::cout << "Motion detected!\n";
+
+    network.send()
+
 }
 
 bool Motion_Sensor_PI::isMotionDetected() {
