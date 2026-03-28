@@ -32,6 +32,7 @@ SecuritySystem::SecuritySystem() {
     config = std::make_unique<Config>();
     motion_sensor = std::make_unique<Motion_Sensor>();
     //addObserver(mainUi.get());
+    addObserver(alarm.get());
     addObserver(this);
 
 

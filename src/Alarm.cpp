@@ -74,7 +74,6 @@ void Alarm::testAlarm() {
     activate();
 }
 
-
 /**
  * @brief Triggers a test of the alarm sound.
  *
