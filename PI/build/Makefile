@@ -268,30 +268,6 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-network_test.o: network_test.cpp.o
-.PHONY : network_test.o
-
-# target to build an object file
-network_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/network_test.cpp.o
-.PHONY : network_test.cpp.o
-
-network_test.i: network_test.cpp.i
-.PHONY : network_test.i
-
-# target to preprocess a source file
-network_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/network_test.cpp.i
-.PHONY : network_test.cpp.i
-
-network_test.s: network_test.cpp.s
-.PHONY : network_test.s
-
-# target to generate assembly for a file
-network_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi-camera.dir/build.make CMakeFiles/pi-camera.dir/network_test.cpp.s
-.PHONY : network_test.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -317,9 +293,6 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... network_test.o"
-	@echo "... network_test.i"
-	@echo "... network_test.s"
 .PHONY : help
 
 
