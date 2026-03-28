@@ -20,7 +20,7 @@ Network::~Network() {
 }
 
 bool Network::connect(const std::string &ip, int port) {
-    socket_ = socket(AF_INET, SOCK_STREAM, 0);
+    socket_ = ::socket(AF_INET, SOCK_STREAM, 0);
     if (socket_ < 0) {
         return false;
     }

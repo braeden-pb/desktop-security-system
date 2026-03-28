@@ -187,8 +187,8 @@ std::string Camera_PI::capturePhoto() {
     ofs.close();
 
     PacketHeader header{};
-    header.system      = System::Camera;
-    header.command     = Command::TakePhoto;
+    header.system = System::Camera;
+    header.command = Command::TakePhoto;
     header.payloadSize = static_cast<uint32_t>(encodedPhoto.size());
     server.sendPacket(header, encodedPhoto);
     std::cout << "Photo sent to PC (" << encodedPhoto.size() << " bytes)" << std::endl;
@@ -303,8 +303,6 @@ void Camera_PI::startStreaming() {
             munmap(mem, plane.length);
         }
 
-        // Re-check streaming flag right before requeueing
-        // This is the critical guard — never requeue if we're stopping
         if (!streaming) return;
         req->reuse(Request::ReuseBuffers);
         camera->queueRequest(req);

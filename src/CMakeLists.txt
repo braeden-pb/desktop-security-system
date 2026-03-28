@@ -30,8 +30,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 find_package(wxWidgets REQUIRED COMPONENTS core base media)
+find_package(OpenCV REQUIRED)
 include(${wxWidgets_USE_FILE})
-
 
 add_executable(SecuritySystem
         main.cpp
@@ -48,9 +48,17 @@ add_executable(SecuritySystem
         Config.cpp
         Device.cpp Device.h
         Network.cpp Network.h
+        Camera.cpp Camera.h
         ../Shared/Protocol.h
         Motion_Sensor.cpp Motion_Sensor.h
 
+)
+
+target_include_directories(SecuritySystem PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(SecuritySystem PRIVATE
+        ${wxWidgets_LIBRARIES}
+        sfml-audio
+        ${OpenCV_LIBS}
 )
 
 add_executable(StorageTests
@@ -112,7 +120,6 @@ add_executable(VideoTests
 )
 target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
-target_link_libraries(SecuritySystem PRIVATE ${wxWidgets_LIBRARIES} sfml-audio)
 
 # Alarm User Story Acceptance Test
 add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h
@@ -140,7 +147,6 @@ add_executable(Camera-Test
         ../Shared/Protocol.h
 )
 
-find_package(OpenCV REQUIRED)
 target_link_libraries(Camera-Test PRIVATE ${wxWidgets_LIBRARIES} ${OpenCV_LIBS})
 
 

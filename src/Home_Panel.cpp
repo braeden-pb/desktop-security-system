@@ -4,6 +4,7 @@
 
 #include "Home_Panel.h"
 
+#include "Camera.h"
 #include "SecuritySystem.h"
 #include "Storage_Panel.h"
 #include "UI.h"
@@ -30,9 +31,10 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
 
     auto* leftColumn = new wxBoxSizer(wxVERTICAL);
     statusLabel = new wxStaticText(this, wxID_ANY, "Status : Disarmed");
-    auto* cameraPlaceholder = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(400, 300));
-    cameraPlaceholder->SetMinSize(wxSize(200, 150));
-    cameraPlaceholder->SetBackgroundColour(wxColour(30, 30, 30)); // Dark grey placeholder
+    wxBitmap placeholder(400, 300);
+    cameraView = new wxStaticBitmap(this, wxID_ANY, placeholder);
+    cameraView->SetMinSize(wxSize(400, 300));
+    cameraView->SetBackgroundColour(wxColour(30, 30, 30));
     actionBtn = new wxToggleButton(this, wxID_ANY, "ARM SYSTEM");
     alarmBtn = new wxToggleButton(this,wxID_ANY, "Sound Alarm");
     alarmBtn->SetFont(buttonFont);
@@ -41,7 +43,7 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
 
 
     leftColumn->Add(statusLabel,0,wxEXPAND);
-    leftColumn->Add(cameraPlaceholder, 3, wxEXPAND | wxBOTTOM, 20); // Camera gets more space
+    leftColumn->Add(cameraView, 3, wxEXPAND | wxBOTTOM, 20);
     leftColumn->Add(actionBtn, 1, wxEXPAND);
     leftColumn->Add(alarmBtn,1,wxEXPAND);
 
@@ -80,7 +82,17 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     panelSizer->AddStretchSpacer(1);
 
 
+    m_system->getCamera()->startStream();
+    m_system->getCamera()->onFrame([this](const std::vector<uint8_t>& jpeg) {
+        // Store latest frame — callback is on network thread
+        std::lock_guard<std::mutex> lock(frameMutex);
+        pendingFrame = jpeg;
+    });
 
+    // Timer polls for new frames on the main/UI thread
+    frameTimer = new wxTimer(this);
+    Bind(wxEVT_TIMER, &Home_Panel::updateFrame, this);
+    frameTimer->Start(33);
 
     this->SetSizer(panelSizer);
 
@@ -134,7 +146,31 @@ void Home_Panel::onLogout(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Login_ID);
 }
 
+void Home_Panel::updateFrame(wxTimerEvent&) {
+    std::vector<uint8_t> frameToShow;
+    {
+        std::lock_guard<std::mutex> lock(frameMutex);
+        if (pendingFrame.empty()) return;
+        frameToShow = std::move(pendingFrame);
+    }
 
+    // Decode JPEG bytes
+    cv::Mat frame = cv::imdecode(frameToShow, cv::IMREAD_COLOR);
+    if (frame.empty()) return;
+
+    // Convert BGR to RGB for wxImage
+    cv::Mat rgb;
+    cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
+
+    // Resize to fit the display
+    wxSize displaySize = cameraView->GetSize();
+    cv::resize(rgb, rgb, cv::Size(displaySize.x, displaySize.y));
+
+    // Convert to wxBitmap and display
+    wxImage img(rgb.cols, rgb.rows, rgb.data, true);
+    cameraView->SetBitmap(wxBitmap(img));
+    cameraView->Refresh();
+}
 
 
 /**
@@ -176,4 +212,7 @@ void Home_Panel::onAlarmButtonPressed(wxCommandEvent &event) {
 /**
  * @brief Destructor for Home_Panel.
  */
-Home_Panel::~Home_Panel() {}
+Home_Panel::~Home_Panel() {
+    frameTimer->Stop();
+    m_system->getCamera()->stopStream();
+}

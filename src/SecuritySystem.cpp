@@ -5,6 +5,7 @@
 #include "UI.h"
 #include "Storage.h"
 #include "Alert.h"
+#include "Camera.h"
 #include "Motion_Sensor.h"
 #include "Network.h"
 
@@ -17,26 +18,26 @@
  */
 SecuritySystem::SecuritySystem() {
     mainStorage = std::make_unique<Storage>("../saved_data/");
-    mainUi = std::make_unique<UI>(this);
-    systemStatus = Status::disarmed;
-    alarm = std::make_unique<Alarm>();
-    config = std::make_unique<Config>();
     network = std::make_unique<Network>();
-    motion_sensor = std::make_unique<Motion_Sensor>();
-    //addObserver(mainUi.get());
-    addObserver(this);
-
-    if (network->connect("10.42.0.205", 5000)) {
+    if (network->connect("192.168.2.174", 5000)) {
         std::cout << "Connected to Pi" << std::endl;
     } else {
         std::cerr << "Could not connect to Pi" << std::endl;
     }
+    network->startReceiving();
+    camera = std::make_unique<Camera>(*network);
+    mainUi = std::make_unique<UI>(this);
+    systemStatus = Status::disarmed;
+    alarm = std::make_unique<Alarm>();
+    config = std::make_unique<Config>();
+    motion_sensor = std::make_unique<Motion_Sensor>();
+    //addObserver(mainUi.get());
+    addObserver(this);
+
+
+
 
 }
-
-
-
-
 
 /**
  * @brief Constructs a SecuritySystem with optional headless mode.
@@ -73,6 +74,10 @@ UI *SecuritySystem::getUI() const{
 
 Config *SecuritySystem::getConfig() {
     return config.get();
+}
+
+Camera *SecuritySystem::getCamera() const {
+    return camera.get();
 }
 
 void SecuritySystem::update(const std::string& event) {
@@ -159,13 +164,6 @@ void SecuritySystem::arm() {
 void SecuritySystem::activateHardware() {
     motion_sensor->addObserver(this);
     motion_sensor->activate();
-    //move into somewhere else?
-    network->startReceiving([this](PacketHeader header) {
-        if (header.system == System::Motion &&
-            header.command == Command::MotionDetected) {
-            std::cerr << "Motion Detected" << std::endl;
-        }
-    });
 }
 
 /**

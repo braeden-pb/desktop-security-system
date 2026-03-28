@@ -25,6 +25,7 @@ class Alarm;
 class Config;
 class Network;
 class Motion_Sensor;
+class Camera;
 
 class SecuritySystem : public Observer
 {
@@ -47,7 +48,7 @@ public:
     bool validatePIN(const std::string& pin) const;
     void sendCommand(System sys, Command cmd);
     Storage* getStorage() const;
-    //getDeviceList
+    Camera* getCamera() const;
     void soundAlarm();
     void soundAlert();
     bool getIsAlarmActive() const;
@@ -60,7 +61,7 @@ private:
     std::unique_ptr<Config> config;
     std::unique_ptr<Network> network;
     std::unique_ptr<Motion_Sensor> motion_sensor;
-    //Devices object list
+    std::unique_ptr<Camera> camera;
     std::vector<Observer*> observers;
     std::unique_ptr<Storage> mainStorage;
     std::unique_ptr<UI> mainUi;

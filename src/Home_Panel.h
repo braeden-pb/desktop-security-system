@@ -5,8 +5,10 @@
 #ifndef GROUP55_HOME_PANEL_H
 #define GROUP55_HOME_PANEL_H
 
+#include <mutex>
 #include <wx/wx.h>
 #include <wx/tglbtn.h>
+#include <opencv2/opencv.hpp>
 
 
 class UI;
@@ -38,6 +40,12 @@ private:
     wxToggleButton* actionBtn;     ///< The ARM/DISARM toggle button
     wxStaticText* statusLabel;     ///< Displays the current system status
     wxToggleButton* alarmBtn;
+    wxStaticBitmap* cameraView;
+    wxTimer* frameTimer;
+    std::vector<uint8_t> pendingFrame;
+    std::mutex frameMutex;
+
+    void updateFrame(wxTimerEvent& event);
 
     /**
     * @brief Handles the Config button press, navigating to the Config panel.
