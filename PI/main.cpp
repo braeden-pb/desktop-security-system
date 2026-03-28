@@ -54,6 +54,11 @@ int main() {
         }
     });
 
+    while (running) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    }
+
     sensorThread.join();
     motion.deactivate();
     server.stop();

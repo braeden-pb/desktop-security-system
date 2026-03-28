@@ -46,9 +46,21 @@ bool NetworkServer::start() {
 }
 
 void NetworkServer::stop() {
+    if (!running) return;
     running = false;
-    if (clientFd >= 0) close(clientFd);
-    if (serverFd >= 0) close(serverFd);
+
+    if (serverFd >= 0) {
+        shutdown(serverFd, SHUT_RDWR);  // more forceful than just close
+        close(serverFd);
+        serverFd = -1;
+    }
+
+    if (clientFd >= 0) {
+        shutdown(clientFd, SHUT_RDWR);
+        close(clientFd);
+        clientFd = -1;
+    }
+
     if (acceptThread.joinable()) acceptThread.join();
     if (receiveThread.joinable()) receiveThread.join();
 }
@@ -97,7 +109,12 @@ void NetworkServer::onDisconnect(std::function<void()> callback) {
 void NetworkServer::acceptLoop() {
     while(running) {
         clientFd = accept(serverFd, nullptr, nullptr);
-        if (clientFd < 0) continue;
+        if (clientFd < 0) {
+            if (!running) {
+                break;
+            }
+            continue;
+        }
         clientConnected = true;
         std::cout << "Client connected!" << std::endl;
         receiveThread = std::thread(&NetworkServer::receiveLoop, this);
