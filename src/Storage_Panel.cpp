@@ -123,7 +123,13 @@ void Storage_Panel::loadImages() {
     for (const auto& [id,time,path] : imageList) {
         wxBitmap thumbnail = loadThumbnail(path);
         if (!thumbnail.IsOk()) {
-            continue;
+            if (!isVideoFile(path)) continue;
+            thumbnail = wxBitmap(250, 250);
+            wxMemoryDC dc(thumbnail);
+            dc.SetBackground(wxBrush(wxColour(30, 30, 30)));
+            dc.Clear();
+            dc.SetTextForeground(*wxWHITE);
+            dc.DrawText("Video", wxPoint(90, 120));
         }
 
         wxBoxSizer* itemSizer = new wxBoxSizer(wxVERTICAL);
@@ -303,42 +309,7 @@ bool Storage_Panel::isVideoFile(const wxString& path) {
 }
 
 void Storage_Panel::openVideo(const wxString& path) {
-    wxFrame* frame = new wxFrame(nullptr, wxID_ANY, "Video Player",
-                                  wxDefaultPosition, wxSize(900, 600));
-    frame->SetBackgroundColour(*wxBLACK);
-
-    wxPanel* panel = new wxPanel(frame, wxID_ANY);
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-
-    wxMediaCtrl* player = new wxMediaCtrl(panel, wxID_ANY);
-
-    wxBoxSizer* controlSizer = new wxBoxSizer(wxHORIZONTAL);
-    wxButton* playBtn  = new wxButton(panel, wxID_ANY, "Play");
-    wxButton* pauseBtn = new wxButton(panel, wxID_ANY, "Pause");
-    wxButton* closeBtn = new wxButton(panel, wxID_ANY, "Close");
-
-    controlSizer->Add(playBtn,  0, wxALL, 5);
-    controlSizer->Add(pauseBtn, 0, wxALL, 5);
-    controlSizer->AddStretchSpacer(1);
-    controlSizer->Add(closeBtn, 0, wxALL, 5);
-
-    sizer->Add(player,       1, wxEXPAND);
-    sizer->Add(controlSizer, 0, wxEXPAND);
-    panel->SetSizer(sizer);
-
-    // load and play once ready
-    player->Bind(wxEVT_MEDIA_LOADED, [player](wxMediaEvent&) {
-        player->Play();
-    });
-    player->Load(path);
-
-    playBtn->Bind(wxEVT_BUTTON,  [player](wxCommandEvent&) { player->Play();  });
-    pauseBtn->Bind(wxEVT_BUTTON, [player](wxCommandEvent&) { player->Pause(); });
-    closeBtn->Bind(wxEVT_BUTTON, [frame](wxCommandEvent&)  { frame->Destroy(); });
-
-    frame->Bind(wxEVT_CLOSE_WINDOW, [frame](wxCloseEvent&) { frame->Destroy(); });
-
-    frame->Show();
+    wxExecute("vlc \"" + path + "\"");
 }
 
 /**
