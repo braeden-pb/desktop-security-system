@@ -113,6 +113,9 @@ std::string Camera_PI::capturePhoto() {
         return "";
     }
 
+    bool wasStreaming = streaming;
+    if (wasStreaming) stopStreaming();
+
     Stream *stream = config->at(0).stream();
 
     auto now = std::chrono::system_clock::now();
@@ -148,22 +151,6 @@ if (mem != MAP_FAILED) {
     }
     done = true;
 });
-
-    // camera->requestCompleted.connect(this, [&](libcamera::Request *req) {
-    //     if (req->status() == libcamera::Request::RequestCancelled) return;
-    //
-    //     const libcamera::FrameBuffer *buf = req->buffers().at(stream);
-    //     for (const auto &plane : buf->planes()) {
-    //         void *mem = mmap(nullptr, plane.length, PROT_READ,
-    //                          MAP_SHARED, plane.fd.get(), 0);
-    //         if (mem != MAP_FAILED) {
-    //             std::ofstream ofs(outPath, std::ios::binary);
-    //             ofs.write(static_cast<const char *>(mem), plane.length);
-    //             munmap(mem, plane.length);
-    //         }
-    //     }
-    //     done = true;
-    // });
 
     camera->start();
     requests[0]->reuse(libcamera::Request::ReuseBuffers);
@@ -202,7 +189,7 @@ if (mem != MAP_FAILED) {
         std::cerr << "Failed to read photo for sending." << std::endl;
     }
 
-
+    if (wasStreaming) startStreaming();
     return outPath;
 }
 
