@@ -209,7 +209,10 @@ void Camera_PI::startRecording() {
         return;
     }
 
-    libcamera::Stream *stream = config->at(0).stream();
+    camera->stop();
+    camera->requestCompleted.disconnect();
+
+    Stream *stream = config->at(0).stream();
 
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
@@ -241,8 +244,9 @@ void Camera_PI::startRecording() {
         camera->queueRequest(req);
     });
 
-    camera->start();
     recording = true;
+    camera->start();
+
 
     for (auto &req : requests) {
         req->reuse(libcamera::Request::ReuseBuffers);

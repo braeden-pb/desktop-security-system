@@ -6,7 +6,7 @@
 
 #include "NetworkServer.h"
 
-
+Motion_Sensor_PI* Motion_Sensor_PI::instance_ = nullptr;
 const int PIR_PIN = 17;
 Motion_Sensor_PI::Motion_Sensor_PI(int sensitivity, int motionSleep, NetworkServer& network)
     : active(false), motionDetected(false), sensitivity(sensitivity),
