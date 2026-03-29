@@ -46,7 +46,7 @@ menuBar(new wxMenuBar())
 
     SetSizer(mainSizer);
 
-    this->SetMinSize(wxSize(600, 400));
+    this->SetMinSize(wxSize(600, 600));
 
     Centre();
 

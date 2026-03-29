@@ -58,13 +58,14 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(ui) {
     galleryPanel->Bind(wxEVT_SIZE, &Storage_Panel::OnGalleryResize, this);
 
     outerSizer->Add(galleryPanel, 1, wxEXPAND | wxALL, 20);
-    this->SetSizer(outerSizer);
 
     errorLabel = new wxStaticText(this, wxID_ANY, "");
-    outerSizer->AddStretchSpacer(1);
+    //outerSizer->AddStretchSpacer(1);
     outerSizer->Add(errorLabel, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 50);
     errorLabel->Hide();
     homeBtn->Bind(wxEVT_BUTTON,&Storage_Panel::onBackHome,this);
+
+    this->SetSizer(outerSizer);
 
 }
 
@@ -109,8 +110,6 @@ wxBitmap Storage_Panel::loadThumbnail(const wxString& path) {
 void Storage_Panel::loadImages() {
     errorLabel->Show(false);
     gridSizer->Clear(true);
-    galleryPanel->FitInside();
-    galleryPanel->Layout();
 
 
     auto imageList = m_system->getAllImages();
@@ -189,6 +188,9 @@ void Storage_Panel::loadImages() {
         gridSizer->Add(itemPanel, 1, wxEXPAND | wxALL, 5);
     }
     galleryPanel->FitInside();
+    galleryPanel->Layout();
+    outerSizer->Layout();
+    this->Layout();
 }
 
 /**
@@ -218,6 +220,7 @@ void Storage_Panel::OnGalleryResize(wxSizeEvent& event) {
 
 
     gridSizer->SetCols(cols);
+    galleryPanel->FitInside();
     galleryPanel->Layout();
     event.Skip();
 }
@@ -309,7 +312,7 @@ bool Storage_Panel::isVideoFile(const wxString& path) {
 }
 
 void Storage_Panel::openVideo(const wxString& path) {
-    wxExecute("vlc \"" + path + "\"");
+    wxExecute("vlc \"" + path + "\"", wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
 }
 
 /**

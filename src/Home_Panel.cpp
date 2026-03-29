@@ -100,13 +100,13 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     alarmBtn->Bind(wxEVT_TOGGLEBUTTON,&Home_Panel::onAlarmButtonPressed,this);
     settingsBtn->Bind(wxEVT_BUTTON,&Home_Panel::onConfigButtonPressed,this);
 
-    wxButton* testBtn = new wxButton(this, wxID_ANY, "Test Alert");
-    testBtn->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) {
-        std::string time = "2026-03-28 03:00";
-        Event e(time, "Motion detected");
-        Alert alert(e, *m_system);
-        alert.sendAlert();
-    });
+    // wxButton* testBtn = new wxButton(this, wxID_ANY, "Test Alert");
+    // testBtn->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) {
+    //     std::string time = "2026-03-28 03:00";
+    //     Event e(time, "Motion detected");
+    //     Alert alert(e, *m_system);
+    //     alert.sendAlert();
+    // });
     
 }
 
@@ -174,7 +174,7 @@ void Home_Panel::loadPlaceholder() {
     cameraView->SetBitmap(bmp);
     cameraView->Refresh();
     cameraView->SetBackgroundColour(wxColour(30, 30, 30));
-    cameraView->SetMinSize(wxSize(400, 300));
+    cameraView->SetMinSize(wxSize(400, 400));
 
 }
 
