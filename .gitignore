@@ -5,7 +5,7 @@
 *.user
 
 # Build directories
-cmake-build-*/
+cmake-build-*/   # ← this covers cmake-build-debug/ and cmake-build-release/ already
 /build/
 
 # Compiled binaries and logs
@@ -22,7 +22,7 @@ install_manifest.txt
 src/CTestTestfile.cmake
 
 # GoogleTest / FetchContent cache
-_deps/
+_deps/           # ← only need this once
 
 # Compiled shared/static libraries
 *.a
@@ -34,14 +34,10 @@ _deps/
 # macOS junk
 .DS_Store
 
-# VSCode (in case teammates use it)
+# VSCode
 .vscode/
 
-_deps/
-cmake-build-debug/
-cmake-build-release/
-
-# Specific fetched libs showing up
+# Fetched lib sources (FetchContent)
 flac-src/
 ogg-src/
 vorbis-src/
