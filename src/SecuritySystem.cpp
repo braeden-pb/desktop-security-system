@@ -21,27 +21,28 @@ SecuritySystem::SecuritySystem() {
     network = std::make_unique<Network>();
     if (network->connect("192.168.2.174", 5000)) {
         std::cout << "Connected to Pi" << std::endl;
+        network->startReceiving();
+        network->onPacket(System::Motion, [this](Command cmd, const std::vector<uint8_t>& payload) {
+        if (cmd == Command::MotionDetected && isArmed()) {
+            static time_t lastAlert = 0;
+            time_t now = time(nullptr);
+            if (difftime(now, lastAlert) < 5.0) return;  // ignore if too soon
+            lastAlert = now;
+
+            wxTheApp->CallAfter([this]() {
+                if (mainUi->GetPageID() == UI::PageID::Login_ID) return;
+                std::time_t t = std::time(nullptr);
+                std::string time = std::ctime(&t);
+                Event e(time, "Motion detected");
+                Alert alert(e, *this);
+                alert.sendAlert();
+            });
+        }
+    });
     } else {
         std::cerr << "Could not connect to Pi" << std::endl;
     }
-    network->startReceiving();
-    network->onPacket(System::Motion, [this](Command cmd, const std::vector<uint8_t>& payload) {
-    if (cmd == Command::MotionDetected && isArmed()) {
-        static time_t lastAlert = 0;
-        time_t now = time(nullptr);
-        if (difftime(now, lastAlert) < 5.0) return;  // ignore if too soon
-        lastAlert = now;
 
-        wxTheApp->CallAfter([this]() {
-            if (mainUi->GetPageID() == UI::PageID::Login_ID) return;
-            std::time_t t = std::time(nullptr);
-            std::string time = std::ctime(&t);
-            Event e(time, "Motion detected");
-            Alert alert(e, *this);
-            alert.sendAlert();
-        });
-    }
-});
     camera = std::make_unique<Camera>(*network);
     mainUi = std::make_unique<UI>(this);
     setUI(mainUi.get());

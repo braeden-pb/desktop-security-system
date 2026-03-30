@@ -147,7 +147,6 @@ void Config_Panel::onChangeAlarm(wxCommandEvent &event) {
     sounds.Add("Siren");
     sounds.Add("Buzzer");
     sounds.Add("Alert Tone");
-    sounds.Add("Custom...");
     wxChoice* soundChoice = new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, sounds);
     soundChoice->SetSelection(0);
     mainSizer->Add(soundChoice, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);

@@ -36,3 +36,12 @@ _deps/
 
 # VSCode (in case teammates use it)
 .vscode/
+
+_deps/
+cmake-build-debug/
+cmake-build-release/
+
+# Specific fetched libs showing up
+flac-src/
+ogg-src/
+vorbis-src/

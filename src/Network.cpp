@@ -25,17 +25,34 @@ bool Network::connect(const std::string &ip, int port) {
         return false;
     }
 
+    int flags = fcntl(socket_, F_GETFL, 0);
+    fcntl(socket_, F_SETFL, flags | O_NONBLOCK);
+
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_port   = htons(port);
     inet_pton(AF_INET, ip.c_str(), &addr.sin_addr);
-    if (::connect(socket_, (sockaddr*)&addr, sizeof(addr)) < 0) {
-        close(socket_);
-        socket_ = -1;
-        return false;  // Pi not reachable or not listening
+    ::connect(socket_, (sockaddr*)&addr, sizeof(addr));
+
+    fd_set fdset;
+    FD_ZERO(&fdset);
+    FD_SET(socket_, &fdset);
+    timeval tv{3, 0};
+
+    if (select(socket_ + 1, nullptr, &fdset, nullptr, &tv) == 1) {
+        int err;
+        socklen_t len = sizeof(err);
+        getsockopt(socket_, SOL_SOCKET, SO_ERROR, &err, &len);
+        if (err == 0) {
+            fcntl(socket_, F_SETFL, flags);
+            connected_ = true;
+            return true;
+        }
     }
-    connected_ = true;
-    return true;
+
+    close(socket_);
+    socket_ = -1;
+    return false;
 }
 
 void Network::disconnect() {

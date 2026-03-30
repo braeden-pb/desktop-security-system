@@ -14,6 +14,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/select.h>
 #include <map>
 #include <iostream>
 #include "../Shared/Protocol.h"
