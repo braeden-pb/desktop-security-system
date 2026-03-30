@@ -122,3 +122,8 @@ bool Storage::hasTimeStamp(int imageID) const {
 
     return false;
 }
+
+bool Storage::isVideoFile(const std::string path) {
+    return path.ends_with(".mp4") || path.ends_with(".avi") ||
+           path.ends_with(".h264") || path.ends_with(".mov");
+}

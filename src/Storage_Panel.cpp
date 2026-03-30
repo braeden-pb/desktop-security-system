@@ -121,8 +121,9 @@ void Storage_Panel::loadImages() {
     }
     for (const auto& [id,time,path] : imageList) {
         wxBitmap thumbnail = loadThumbnail(path);
+        std::string lowerPath{wxString(path).Lower()};
         if (!thumbnail.IsOk()) {
-            if (!isVideoFile(path)) continue;
+            if (!m_system->getStorage()->isVideoFile(lowerPath)) continue;
             thumbnail = wxBitmap(250, 250);
             wxMemoryDC dc(thumbnail);
             dc.SetBackground(wxBrush(wxColour(30, 30, 30)));
@@ -142,7 +143,7 @@ void Storage_Panel::loadImages() {
         wxStaticBitmap* thumb = new wxStaticBitmap(thumbContainer, wxID_ANY, thumbnail);
         thumb->SetPosition(wxPoint(0, 0));
         thumb->SetSize(wxSize(250, 250));
-        thumb->Bind(wxEVT_LEFT_DOWN, [this, path](wxMouseEvent&) { if (isVideoFile(path))
+        thumb->Bind(wxEVT_LEFT_DOWN, [this,path,lowerPath](wxMouseEvent&) { if (m_system->getStorage()->isVideoFile(lowerPath))
             openVideo(path);
         else
             OpenFullImage(path);
@@ -305,11 +306,7 @@ void Storage_Panel::OpenFullImage(const wxString& path) {
     frame->Layout();
 }
 
-bool Storage_Panel::isVideoFile(const wxString& path) {
-    wxString lower = path.Lower();
-    return lower.EndsWith(".mp4") || lower.EndsWith(".avi") ||
-           lower.EndsWith(".h264") || lower.EndsWith(".mjpeg");
-}
+
 
 void Storage_Panel::openVideo(const wxString& path) {
     wxExecute("vlc \"" + path + "\"", wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
