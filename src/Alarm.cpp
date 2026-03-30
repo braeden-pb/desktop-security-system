@@ -5,15 +5,16 @@
 #include <chrono>
 #include <filesystem>
 
-Alarm::Alarm()
-    : isActive(false), volume(10), soundType("wav"), lastActivatedAt("") {}
-
 /**
  * @brief Constructs an Alarm object with default settings.
  *
  * Initializes the alarm as inactive, with a volume of 10,
  * sound type set to "wav", and an empty last-activated timestamp.
  */
+Alarm::Alarm(Network &network)
+    : isActive(false), volume(10), soundType("wav"), lastActivatedAt(""),network(network) {}
+
+
 bool Alarm::loadSound(sf::SoundBuffer& buffer) {
     std::string path = std::string(SOUNDS_DIR) + "alarm.wav";
     std::cout << "Loading Sound From: " << path << std::endl;
@@ -39,13 +40,15 @@ void Alarm::activate() {
     isActive = true;
     std::cout << "Alarm activated!" << std::endl;
 
-    if (!loadSound(buffer)) {
-        std::cout << "Failed to load sound." << std::endl;
-        return;
-    }
-    sound.emplace(buffer);
-    sound->setLooping(true);
-    sound->play();
+    std::string soundOption = "";
+
+    PacketHeader header{};
+    header.system      = System::Speaker;
+    header.command     = Command::soundAlarm;
+    header.payloadSize = static_cast<uint32_t>(soundOption.size());
+    std::vector<uint8_t> payload(soundOption.begin(), soundOption.end());
+    network.send(header, payload);
+
 }
 
 
@@ -60,7 +63,12 @@ void Alarm::activate() {
  * @note The sound will loop continuously until @ref deactivate() is called.
  */void Alarm::deactivate() {
     isActive = false;
-    sound->stop();
+    PacketHeader header{};
+    header.system      = System::Speaker;
+    header.command     = Command::soundAlarm;
+    header.payloadSize = 0;
+
+    network.send(header, {});
     std::cout << "Alarm deactivated." << std::endl;
 }
 
@@ -90,6 +98,7 @@ void Alarm::testAlarm() {
 bool Alarm::getStatus() const {
     return isActive;
 }
+
 void Alarm::update(const std::string& event) {
     if (event == "Alarm triggered") {
         activate();

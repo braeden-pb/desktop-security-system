@@ -8,6 +8,7 @@
 #include <string>
 #include <SFML/Audio.hpp>
 #include "Observer.h"
+#include "Network.h"
 
 
 class Alarm : public Observer{
@@ -20,9 +21,13 @@ private:
     sf::SoundBuffer buffer;
     std::optional<sf::Sound> sound;
 
+    Network &network;
+
+
 public:
     // Constructor
-    Alarm();
+    Alarm(Network &network);
+    ~Alarm();
 
     // Activates the alarm indefinitely
     void activate();
@@ -31,13 +36,13 @@ public:
     // Deactivates the alarm
     void deactivate();
 
-    // Tests the alarm sound
-    void testAlarm();
-
     // Returns the current alarm status
     bool getStatus() const;
 
     void update(const std::string& event) override;
+
+
+
 };
 
 #endif // GROUP55_ALARM_H

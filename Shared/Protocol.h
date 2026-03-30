@@ -11,6 +11,7 @@
 enum class System : uint8_t {
     Camera = 0x01,
     Motion = 0x02,
+    Speaker = 0x03,
 };
 
 enum class Command : uint8_t {
