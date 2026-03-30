@@ -21,6 +21,9 @@ enum class Command : uint8_t {
     StartStream     = 0x05,
     StopStream      = 0x06,
 
+    soundAlarm      = 0x07,
+    disableAlarm    = 0x08,
+
     Enable          = 0x10,
     Disable         = 0x11,
     MotionDetected  = 0x12,

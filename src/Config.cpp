@@ -23,9 +23,7 @@ Config::Config() {
         photosPer = 1;
         password = "123";
         authorizedFaces.clear();
-        writeToFile();
     }
-
 }
 
 /**
@@ -44,7 +42,7 @@ Config::~Config() {
     *
     * @return The motion sensitivity value.
     */
-int Config::getSensitivity() const {
+int Config::getSensitivity() {
     return motionSensitivity;
 }
 
@@ -69,7 +67,7 @@ void Config::setSensitivity(int sensitivity) {
      *
      * @return The capture mode value.
      */
-bool Config::getCaptureMode() const {
+bool Config::getCaptureMode() {
     return captureMode;
 }
 
@@ -94,7 +92,7 @@ void Config::setCaptureMode(bool mode) {
      *
      * @return The clip seconds value.
      */
-int Config::getSeconds() const {
+int Config::getSeconds() {
     return clipSeconds;
 }
 
@@ -120,7 +118,7 @@ void Config::setSeconds(int seconds) {
      *
      * @return The photos per value.
      */
-int Config::getPhotosPer() const {
+int Config::getPhotosPer() {
     return photosPer;
 }
 
@@ -254,10 +252,8 @@ void Config::resetAuthorizedFaces() {
      * @brief Stores current config values to file to be read from later.
      *
      * @details
-     * Creates or overwrites a file named "config.txt". The first line of this file will contain the
-     * value of motionSensitivty. Second line contains captureMode, either 1 or 0. Third line contains
-     * clipSeconds. Fourth line contains photosPer, and fifth contains password. After this, each following line contains one entry
-     * from the list of authorized faces, until the entire list is written out. Afterwards, closes the file.
+     * Creates or overwrites a file named "config.json". Creates this file with a json format such
+     * to store all of the instance variables of the config object. Afterwards, closes the file.
      * If the writing to file is unsuccessful, returns false. Otherwise, returns true upon successful file
      * writing.
      *
@@ -265,21 +261,29 @@ void Config::resetAuthorizedFaces() {
      */
 bool Config::writeToFile() {
     try {
-        ofstream configFile("config.txt");
+        ofstream configFile("config.json");
 
-        configFile << motionSensitivity << endl;
-        configFile << captureMode << endl;
-        configFile << clipSeconds << endl;
-        configFile << photosPer << endl;
-        configFile << password << endl;
+        configFile << "{\n";
+        configFile << "\t\"motionSensitivity\": \"" << motionSensitivity << "\"," << endl;
+        configFile << "\t\"captureMode\": \"" << captureMode << "\"," << endl;
+        configFile << "\t\"clipSeconds\": \"" << clipSeconds << "\"," << endl;
+        configFile << "\t\"photosPer\": \"" << photosPer << "\"," << endl;
+        configFile << "\t\"password\": \"" << password << "\"," << endl;
+
+        configFile << "\t\"authorizedFaces\": [\n";
 
         for (int i = 0; i < authorizedFaces.size(); i++) { //Add each entry from the list to the file in a different line.
-            configFile << authorizedFaces[i] << endl;
+            if (i != (authorizedFaces.size() - 1))
+                configFile << "\t\t\"" << authorizedFaces[i] << "\"," << endl;
+            else
+                configFile << "\t\t\"" << authorizedFaces[i] << "\"" << endl;
         }
+
+        configFile << "\t]\n";
+        configFile << "}";
 
         configFile.close();
     } catch (...) { //If any error is caught, return false.
-        std::cout << "Failed to open file";
         return false;
     }
 
@@ -290,42 +294,66 @@ bool Config::writeToFile() {
      * @brief Reads value for all config variables from file.
      *
      * @details
-     * Checks the "config.txt" file that is created by the writeToFile method. Reads out each of
+     * Checks the "config.json" file that is created by the writeToFile method. Reads out each of
      * the lines in order to set the instance variables for this config object. Order is the same as in
      * the writeToFile method, ending with a comprehensive list of all the entries in the
      * AuthorizedFaces list. If the file does not exist, or the file's format is wrong,
      * or reading of the file otherwise fails, returns false. Returns true upon successful
-     * file reading.
+     * file reading. Appropriately parses json format.
      *
      * @return A boolean true if the file was read without error, false otherwise.
      */
 bool Config::readFromFile() {
     try {
         string inText;
-        ifstream configFile("config.txt");
+        ifstream configFile("config.json");
 
         getline(configFile, inText);
+
+        getline(configFile, inText);
+        auto start = inText.find("\"", inText.find(":")) + 1;
+        auto end = inText.find("\"", start);
+        inText = inText.substr(start, end - start);
         this->motionSensitivity = stoi(inText);
 
+
         getline(configFile, inText);
+        start = inText.find("\"", inText.find(":")) + 1;
+        end = inText.find("\"", start);
+        inText = inText.substr(start, end - start);
         if (inText == "1")
             captureMode = true;
         else
             captureMode = false;
 
         getline(configFile, inText);
+        start = inText.find("\"", inText.find(":")) + 1;
+        end = inText.find("\"", start);
+        inText = inText.substr(start, end - start);
         this->clipSeconds = stoi(inText);
 
         getline(configFile, inText);
+        start = inText.find("\"", inText.find(":")) + 1;
+        end = inText.find("\"", start);
+        inText = inText.substr(start, end - start);
         this->photosPer = stoi(inText);
 
         getline(configFile, inText);
+        start = inText.find("\"", inText.find(":")) + 1;
+        end = inText.find("\"", start);
+        inText = inText.substr(start, end - start);
         this->password = inText;
 
-        authorizedFaces.clear(); //Clear authorized faces list before refilling it
-        while (getline (configFile, inText)) {
-            this->addAuthorizedFace(inText);
+        getline(configFile, inText);
 
+        authorizedFaces.clear(); //Clear authorized faces list before refilling it
+        while (getline (configFile, inText) && inText != "\t]") {
+            inText.erase(0, inText.find_first_not_of(" \t"));
+            inText.erase(inText.find_last_not_of(" \t") + 1);
+            if (!inText.empty() && inText.front() == '"') inText.erase(0, 1);
+            if (!inText.empty() && inText.back() == ',') inText.pop_back();
+            if (!inText.empty() && inText.back() == '"') inText.pop_back();
+            this->addAuthorizedFace(inText);
         }
     } catch (...) { //If any error occurs, return false.
         return false;
