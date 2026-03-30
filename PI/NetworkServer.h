@@ -24,7 +24,7 @@ class NetworkServer {
         void stop();
         std::string getIP();
         int getPort();
-        void onCommand(std::function<void(Command)> callback);
+        void onCommand(std::function<void(Command, const std::vector<uint8_t>&)> callback);        std::atomic<bool> running{false};
         bool isClientConnected() const { return clientConnected; }
         void sendPacket(const PacketHeader &header, const std::vector<uint8_t> &payload);
         void sendFrame(const uint8_t *data, size_t length);
@@ -42,8 +42,7 @@ class NetworkServer {
         std::function<void()> disconnectCallback;
         std::thread acceptThread;
         std::thread receiveThread;
-        std::function<void(Command)> commandCallback;
-        std::atomic<bool> running{false};
+        std::function<void(Command, const std::vector<uint8_t>&)> commandCallback;
         std::atomic<bool> clientConnected{false};
 
 };

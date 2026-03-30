@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 class Config {
@@ -30,6 +31,8 @@ public:
     bool isAuthorizedFace(string face);
     void resetAuthorizedFaces();
     bool writeToFile();
+    string getSound();
+    void setSound(string alarmSound);
 
 private:
     /**
@@ -62,6 +65,8 @@ private:
      */
     vector<string> authorizedFaces;
     bool readFromFile();
+
+    string alarmSound;
 };
 
 

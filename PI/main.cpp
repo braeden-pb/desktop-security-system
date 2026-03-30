@@ -9,6 +9,7 @@
 #include <chrono>
 #include <csignal>
 #include "Camera_PI.h"
+#include "Alarm_PI.h"
 
 std::atomic<bool> running(true);
 
@@ -24,15 +25,19 @@ int main() {
 
     Motion_Sensor_PI motion(5, 10, server);
     Camera_PI camera(server);
+    Alarm_PI alarm(server);
+
     motion.activate();
 
-    server.onCommand([&camera](Command cmd) {
+    server.onCommand([&camera,&alarm](Command cmd,const std::vector<uint8_t>& payload) {
         switch (cmd) {
             case Command::StartStream: camera.startStreaming(); break;
             case Command::StopStream:  camera.stopStreaming();  break;
             case Command::TakePhoto:   camera.capturePhoto();   break;
             case Command::StartClip:   camera.startRecording(); break;
             case Command::StopClip:    camera.stopRecording();  break;
+            case Command::disableAlarm: alarm.disableAlarm();    break;
+            case Command::soundAlarm:   alarm.soundAlarm();    break;
             default: break;
         }
     });
@@ -47,6 +52,7 @@ int main() {
    }
 
    motion.deactivate();
+        alarm.disableAlarm();
    server.stop();
    return 0;
     });

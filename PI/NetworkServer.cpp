@@ -134,9 +134,18 @@ void NetworkServer::receiveLoop() {
             break;
         }
 
+        std::vector<uint8_t> payload(header.payloadSize);
+        if (header.payloadSize > 0) {
+            n = recv(clientFd, payload.data(), header.payloadSize, MSG_WAITALL);
+            if (n <= 0) {
+                clientConnected = false;
+                break;
+            }
+        }
+
         // Fire the callback with the command
         if (commandCallback) {
-            commandCallback(header.command);
+            commandCallback(header.command,payload);
         }
     }
 }

@@ -16,6 +16,7 @@ using namespace std;
 Config::Config() {
     if (readFromFile() == false) { //Attempt to read values from file
         //If the file cannot be read from, specify this and then set default values for all variables.
+
         std::cout << "Failed to read from file.";
         motionSensitivity = 0;
         captureMode = false;
@@ -23,6 +24,8 @@ Config::Config() {
         photosPer = 1;
         password = "123";
         authorizedFaces.clear();
+        alarmSound = "alarm.wav";
+        writeToFile();
     }
 }
 
@@ -262,6 +265,10 @@ void Config::resetAuthorizedFaces() {
 bool Config::writeToFile() {
     try {
         ofstream configFile("config.json");
+        if (!configFile.is_open()) {
+            std::cerr << "test" << std::endl;
+            return false;
+        }
 
         configFile << "{\n";
         configFile << "\t\"motionSensitivity\": \"" << motionSensitivity << "\"," << endl;
@@ -270,7 +277,9 @@ bool Config::writeToFile() {
         configFile << "\t\"photosPer\": \"" << photosPer << "\"," << endl;
         configFile << "\t\"password\": \"" << password << "\"," << endl;
 
+
         configFile << "\t\"authorizedFaces\": [\n";
+
 
         for (int i = 0; i < authorizedFaces.size(); i++) { //Add each entry from the list to the file in a different line.
             if (i != (authorizedFaces.size() - 1))
@@ -278,6 +287,8 @@ bool Config::writeToFile() {
             else
                 configFile << "\t\t\"" << authorizedFaces[i] << "\"" << endl;
         }
+
+        configFile << "\t\"sound\": \"" << alarmSound << "\"," << endl;
 
         configFile << "\t]\n";
         configFile << "}";
@@ -360,4 +371,12 @@ bool Config::readFromFile() {
     }
 
     return true; //Return true if no errors
+}
+
+string Config::getSound() {
+    return alarmSound;
+}
+
+void Config::setSound(string sound) {
+    alarmSound = sound;
 }

@@ -13,8 +13,8 @@ include(FetchContent)
 #        GIT_REPOSITORY https://github.com/WiringPi/WiringPi.git
 #        GIT_TAG        3.10
 #)
-find_library(WIRINGPI_LIB wiringPi REQUIRED)
-set(GPIO_LIB ${WIRINGPI_LIB})
+#find_library(WIRINGPI_LIB wiringPi REQUIRED)
+#set(GPIO_LIB ${WIRINGPI_LIB})
 
 
 find_package(PkgConfig REQUIRED)
@@ -29,6 +29,7 @@ add_executable(pi-camera
         Motion_Sensor_PI.cpp Motion_Sensor_PI.h
         Camera_PI.cpp
         Camera_PI.h
+        Alarm_PI.cpp Alarm_PI.h
 )
 
 # Include shared protocol
@@ -36,6 +37,7 @@ target_include_directories(pi-camera PRIVATE
         ${CMAKE_SOURCE_DIR}/../Shared
         ${LIBCAMERA_INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
+
 )
 
 # Link libraries
@@ -44,7 +46,7 @@ target_link_libraries(pi-camera PRIVATE
         #opencv_imgproc
         #opencv_highgui
         #opencv_videoio
-        wiringPi
+        #wiringPi
         camera
         camera-base
         ${OpenCV_LIBS}

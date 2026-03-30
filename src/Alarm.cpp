@@ -14,6 +14,8 @@
 Alarm::Alarm(Network &network)
     : isActive(false), volume(10), soundType("wav"), lastActivatedAt(""),network(network) {}
 
+Alarm::~Alarm() {}
+
 
 bool Alarm::loadSound(sf::SoundBuffer& buffer) {
     std::string path = std::string(SOUNDS_DIR) + "alarm.wav";
@@ -40,7 +42,7 @@ void Alarm::activate() {
     isActive = true;
     std::cout << "Alarm activated!" << std::endl;
 
-    std::string soundOption = "";
+    std::string soundOption = "beep";
 
     PacketHeader header{};
     header.system      = System::Speaker;
@@ -81,10 +83,10 @@ void Alarm::activate() {
  * @pre The alarm must have been previously activated via @ref activate().
  */
 
-void Alarm::testAlarm() {
-    std::cout << "Testing alarm..." << std::endl;
-    activate();
-}
+// void Alarm::testAlarm() {
+//     std::cout << "Testing alarm..." << std::endl;
+//     activate();
+// }
 
 /**
  * @brief Triggers a test of the alarm sound.
