@@ -19,11 +19,12 @@
 SecuritySystem::SecuritySystem() {
     mainStorage = std::make_unique<Storage>("../saved_data/");
     network = std::make_unique<Network>();
-    if (network->connect("192.168.2.174", 5000)) {
+    if (network->connect("10.42.0.205", 5000)) {
         std::cout << "Connected to Pi" << std::endl;
         network->startReceiving();
         network->onPacket(System::Motion, [this](Command cmd, const std::vector<uint8_t>& payload) {
         if (cmd == Command::MotionDetected && isArmed()) {
+            motion_sensor->onMotion();
             static time_t lastAlert = 0;
             time_t now = time(nullptr);
             if (difftime(now, lastAlert) < 5.0) return;  // ignore if too soon
@@ -47,8 +48,8 @@ SecuritySystem::SecuritySystem() {
     mainUi = std::make_unique<UI>(this);
     setUI(mainUi.get());
     systemStatus = Status::disarmed;
-    alarm = std::make_unique<Alarm>(*network);
-    config = std::make_unique<Config>();
+    alarm = std::make_unique<Alarm>(*network,*config);
+    config = std::make_unique<Config>(*network);
     motion_sensor = std::make_unique<Motion_Sensor>();
     addObserver(mainUi.get());
     addObserver(alarm.get());
@@ -186,6 +187,7 @@ void SecuritySystem::arm() {
 
 void SecuritySystem::activateHardware() {
     motion_sensor->addObserver(this);
+    motion_sensor->addObserver(alarm.get());
     motion_sensor->activate();
 }
 

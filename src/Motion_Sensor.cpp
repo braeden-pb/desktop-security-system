@@ -57,23 +57,18 @@ void Motion_Sensor::disconnect() {
 }
 
 void Motion_Sensor::updateState(bool currentState) {
-    if (currentState && !lastState && !rearmPending) {
+    if (currentState) {
         ++motionCount;
         motionDetected = true;
         notifyObservers("Motion detected");
         lastDetected = std::time(nullptr);
-        rearmPending = true;
-        rearmUntil = std::chrono::steady_clock::now()
-                     + std::chrono::milliseconds(rearmDelayMs);
     }
 
     if (!currentState && lastState) {
         motionDetected = false;
     }
 
-    if (rearmPending && std::chrono::steady_clock::now() >= rearmUntil) {
-        rearmPending = false;
-    }
+
 
     lastState = currentState;
 }
@@ -85,8 +80,7 @@ bool Motion_Sensor::detectMotion() {
 
 void Motion_Sensor::onMotion() {
     std::cout << motionCount << std::endl;
-    //Do UI Logic
-    updateState(lastState);
+    updateState(true);
 }
 
 void Motion_Sensor::updateStatus() {

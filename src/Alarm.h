@@ -10,11 +10,11 @@
 #include "Observer.h"
 #include "Network.h"
 
+class Config;
 
 class Alarm : public Observer{
 private:
     bool isActive;                 // shows whether the alarm is currently active
-    int volume;                    // alarm volume level
     std::string soundType;         // type of sound the alarm produces
     std::string lastActivatedAt;   // timestamp of the last activation
 
@@ -23,10 +23,12 @@ private:
 
     Network &network;
 
+    Config &config;
+
 
 public:
     // Constructor
-    Alarm(Network &network);
+    Alarm(Network &network,Config &config);
     ~Alarm();
 
     // Activates the alarm indefinitely
