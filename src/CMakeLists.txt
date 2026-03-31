@@ -138,7 +138,8 @@ target_include_directories(AlertTest PRIVATE ${OpenCV_INCLUDE_DIRS})
 
 target_link_libraries(AlertTest GTest::gtest_main ${wxWidgets_LIBRARIES} sfml-audio ${OpenCV_LIBS})
 
-add_executable(AlarmTest tests/AlarmTest.cpp
+add_executable(AlarmTest
+        tests/AlarmTest.cpp
         Alarm.cpp Alarm.h
         Observer.h
         Motion_Sensor.cpp Motion_Sensor.h
@@ -189,6 +190,12 @@ add_executable(NetworkTests
 )
 target_link_libraries(NetworkTests GTest::gtest_main)
 
+add_executable(EventTests
+        tests/EventTests.cpp
+        Event.cpp
+)
+target_link_libraries(EventTests GTest::gtest_main)
+
 target_compile_definitions(SecuritySystem PRIVATE
         SOUNDS_DIR="${CMAKE_SOURCE_DIR}/sounds/"
 )
@@ -209,12 +216,13 @@ enable_testing()
 add_test(NAME AlertTest COMMAND AlertTest)
 add_test(NAME AlarmTests COMMAND AlarmTest)
 add_test(NAME CameraTests COMMAND CameraTests)
+add_test(NAME ConfigTests COMMAND ConfigTests)
 #add_test(NAME DeviceTests COMMAND DeviceTests) #Maybe delete
+add_test(NAME EventTests COMMAND EventTests)
+add_test(NAME FileTests COMMAND FileTests)
+add_test(NAME ImageTests COMMAND ImageTests)
 add_test(NAME MotionSensorTests COMMAND MotionSensorTests)
 add_test(NAME NetworkTests COMMAND NetworkTests)
 add_test(NAME StorageTests COMMAND StorageTests)
 add_test(NAME SystemTests COMMAND SystemTests)
-add_test(NAME FileTests COMMAND FileTests)
-add_test(NAME ImageTests COMMAND ImageTests)
-add_test(NAME ConfigTests COMMAND ConfigTests)
 

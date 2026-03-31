@@ -7,29 +7,22 @@
 #include "../Network.h"
 #include "../Config.h"
 
-class SilentAlarm : public Alarm {
-public:
-    SilentAlarm(Network& network, Config& config) : Alarm(network, config) {}
-protected:
-    bool loadSound(sf::SoundBuffer&) override { return true; }
-};
-
+// Remove SilentAlarm entirely and just use Alarm directly
 class AlarmTest : public ::testing::Test {
 protected:
     void SetUp() override {
         network = new Network();
         config = new Config(*network);
-        alarm = new SilentAlarm(*network, *config);
+        alarm = new Alarm(*network, *config);
     }
-
     void TearDown() override {
         delete alarm;
-        delete network;
         delete config;
+        delete network;
     }
     Network* network;
     Config* config;
-    SilentAlarm* alarm;
+    Alarm* alarm;
 };
 
 TEST_F(AlarmTest, DefaultStatusIsInactive) {
