@@ -29,8 +29,11 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+
 find_package(wxWidgets REQUIRED COMPONENTS core base media)
 find_package(OpenCV REQUIRED)
+
+
 include(${wxWidgets_USE_FILE})
 
 add_executable(SecuritySystem
@@ -92,7 +95,14 @@ add_executable(SystemTests
         Home_Panel.cpp
         Login_Panel.cpp
         Storage_Panel.cpp
-
+        Network.cpp
+        Camera.cpp
+        Config.cpp
+        Motion_Sensor.cpp
+        Alert.cpp
+        Event.cpp
+        Device.cpp
+        Config_Panel.cpp
 )
 
 add_executable(AlertTest
@@ -109,6 +119,7 @@ target_link_libraries(SystemTests
         sfml-audio
         sfml-system
         ${wxWidgets_LIBRARIES}
+        ${OpenCV_LIBS}
 )
 
 target_link_libraries(FileTests GTest::gtest_main ${wxWidgets_LIBRARIES})
@@ -152,6 +163,14 @@ add_executable(Camera-Test
 target_link_libraries(Camera-Test PRIVATE ${wxWidgets_LIBRARIES} ${OpenCV_LIBS})
 
 target_compile_definitions(SecuritySystem PRIVATE
+        SOUNDS_DIR="${CMAKE_SOURCE_DIR}/sounds/"
+)
+
+target_compile_definitions(SystemTests PRIVATE
+        SOUNDS_DIR="${CMAKE_SOURCE_DIR}/sounds/"
+)
+
+target_compile_definitions(AlarmTest PRIVATE
         SOUNDS_DIR="${CMAKE_SOURCE_DIR}/sounds/"
 )
 

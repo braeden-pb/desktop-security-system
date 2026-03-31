@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "Config.h"
+#include "../Config.h"
 #include <fstream>
 
 /**

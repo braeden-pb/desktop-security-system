@@ -53,10 +53,6 @@ SecuritySystem::SecuritySystem() {
     addObserver(mainUi.get());
     addObserver(alarm.get());
     addObserver(this);
-
-
-
-
 }
 
 /**
@@ -72,10 +68,13 @@ SecuritySystem::SecuritySystem() {
  */
 SecuritySystem::SecuritySystem(bool headless) {
     mainStorage = std::make_unique<Storage>("../saved_data/");
-    if (!headless) mainStorage = std::make_unique<Storage>("../saved_data/");
     systemStatus = Status::disarmed;
-    //alarm = std::make_unique<Alarm>();
+    config = std::make_unique<Config>();
+    network = std::make_unique<Network>();
+    alarm = std::make_unique<Alarm>(*network);
+    motion_sensor = std::make_unique<Motion_Sensor>();
     addObserver(alarm.get());
+    addObserver(this);
 }
 
 /**
