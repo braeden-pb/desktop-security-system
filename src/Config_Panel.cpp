@@ -143,12 +143,19 @@ void Config_Panel::onChangeAlarm(wxCommandEvent &event) {
 
     mainSizer->Add(new wxStaticText(&dlg, wxID_ANY, "Alarm Sound:"), 0, wxLEFT|wxRIGHT|wxTOP, 15);
     wxArrayString sounds;
-    sounds.Add("Alarm Tone");
+    sounds.Add("Alarm");
     sounds.Add("Beep");
     sounds.Add("Siren");
     sounds.Add("Buzzer");
     wxChoice* soundChoice = new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, sounds);
-    soundChoice->SetSelection(0);
+    int selection = 0;
+    std::string currentSound = m_system->getConfig()->getSound();
+    if (currentSound == "alarm") {selection = 0;}
+    else if (currentSound == "beep") {selection = 1;}
+    else if (currentSound == "siren") {selection = 2;}
+    else if (currentSound == "buzzer") {selection = 3;}
+
+    soundChoice->SetSelection(selection);
     mainSizer->Add(soundChoice, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
 
 
@@ -186,7 +193,7 @@ void Config_Panel::onChangeAlarm(wxCommandEvent &event) {
         wxString    sound    = soundChoice->GetString(soundChoice->GetCurrentSelection());
         int         duration = durationSpin->GetValue();
 
-        m_system->getConfig()->setSound(sound.ToStdString());
+        m_system->getConfig()->setSound(sound.Lower().ToStdString());
         m_system->getConfig()->setMaxAlarmDuration(duration);
 
         wxMessageBox("Alarm settings saved!", "Success", wxOK|wxICON_INFORMATION);

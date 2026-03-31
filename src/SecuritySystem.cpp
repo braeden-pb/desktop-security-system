@@ -48,8 +48,8 @@ SecuritySystem::SecuritySystem() {
     mainUi = std::make_unique<UI>(this);
     setUI(mainUi.get());
     systemStatus = Status::disarmed;
-    alarm = std::make_unique<Alarm>(*network,*config);
     config = std::make_unique<Config>(*network);
+    alarm = std::make_unique<Alarm>(*network,*config);
     motion_sensor = std::make_unique<Motion_Sensor>();
     addObserver(mainUi.get());
     addObserver(alarm.get());

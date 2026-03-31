@@ -19,16 +19,6 @@ Alarm::Alarm(Network &network,Config &config)
 Alarm::~Alarm() {}
 
 
-bool Alarm::loadSound(sf::SoundBuffer& buffer) {
-    std::string path = std::string(SOUNDS_DIR) + "alarm.wav";
-    std::cout << "Loading Sound From: " << path << std::endl;
-
-    if (!buffer.loadFromFile(path)) {
-        std::cerr << "Sound file not found, skipping audio" << std::endl;
-        return false;  // was "return;" before — wrong for a bool function
-    }
-    return true;
-}
 
 /**
  * @brief Loads the alarm sound from disk into the provided buffer.
@@ -41,10 +31,12 @@ bool Alarm::loadSound(sf::SoundBuffer& buffer) {
  * @return false if the file could not be found or loaded.
  */
 void Alarm::activate() {
+    if (isActive) return;
     isActive = true;
     std::cout << "Alarm activated!" << std::endl;
 
     std::string soundOption = config.getSound();
+
 
     PacketHeader header{};
     header.system      = System::Speaker;
@@ -72,6 +64,7 @@ void Alarm::activate() {
  *
  * @note The sound will loop continuously until @ref deactivate() is called.
  */void Alarm::deactivate() {
+    if (!isActive) return;
     isActive = false;
     PacketHeader header{};
     header.system      = System::Speaker;
@@ -96,11 +89,14 @@ bool Alarm::getStatus() const {
 }
 
 void Alarm::update(const std::string& event) {
-    std::cout << event << std::endl;
     if (event == "Alarm triggered") {
         activate();
     }
-    if (event == "Motion detected") {
+    if (event == "Motion detected" && config.getAlarmOnMotion()) {
         activate();
+        std::thread([this]() {
+            std::this_thread::sleep_for(std::chrono::seconds(config.getMaxAlarmDuration()));
+            deactivate();
+        }).detach();
     }
 }
