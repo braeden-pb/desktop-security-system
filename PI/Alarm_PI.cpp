@@ -14,27 +14,26 @@ Alarm_PI::~Alarm_PI() {
 
 void Alarm_PI::soundAlarm(std::string soundOption) {
     sound = soundOption;
-    alarmPlaying = true;
-    std::string cmd = "while true; do aplay -D hw:2,0 ../sounds/" + sound + ".wav || break; done &";
-    int result = system(cmd.c_str());
-    if (result != 0) {
-        std::cerr << "Failed to start alarm, error: " << result << std::endl;
-        alarmPlaying = false;
+    pid_t pid = fork();
+    if (pid == 0) {
+        execl("/usr/bin/aplay", "aplay", "-D", "plughw:2,0",
+              ("../sounds/" + sound + ".wav").c_str(), nullptr);
+        exit(0);
     }
+    // Save pid to kill later
+    alarmPid = pid;
+    alarmPlaying = true;
 }
 
 
 
 
 void Alarm_PI::disableAlarm() {
-    std::string cmd = "pkill -f \"aplay.*" + sound + "\"";
-    system(cmd.c_str());
-    // Also kill any lingering shell loops
-    system("pkill -f 'while true'");
-    //int result = system(("pkill -f " + "../sounds" + sound + ".wav").c_str());
-    // if (result != 0) {
-    //     std::cerr << "Failed to stop alarm sound, error code: " << result << std::endl;
-    // }
+    if (sound.empty()) return;
+     if (alarmPid > 0) {
+        kill(alarmPid, SIGKILL);
+        alarmPid = -1;
+    }
     alarmPlaying = false;
 
 }

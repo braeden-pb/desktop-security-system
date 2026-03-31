@@ -6,6 +6,9 @@
 #define GROUP55_ALARM_PI_H
 #include <string>
 #include "NetworkServer.h"
+#include <unistd.h>   
+#include <signal.h>   
+#include <sys/wait.h>
 class Alarm_PI {
 
 public:
@@ -19,6 +22,7 @@ private:
     bool alarmPlaying;
     std::string sound;
     NetworkServer &server;
+    pid_t alarmPid = -1;
 
 
 };
