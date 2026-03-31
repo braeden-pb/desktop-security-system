@@ -49,7 +49,6 @@ add_executable(SecuritySystem
         File.cpp File.h
         Alarm.cpp Alarm.h
         Alert.cpp Alert.h
-        Event.cpp Event.h
         Config.cpp
         Device.cpp Device.h
         Network.cpp Network.h
@@ -100,7 +99,6 @@ add_executable(SystemTests
         Config.cpp
         Motion_Sensor.cpp
         Alert.cpp
-        Event.cpp
         Device.cpp
         Config_Panel.cpp
 )
@@ -108,7 +106,6 @@ add_executable(SystemTests
 add_executable(AlertTest
         tests/AlertTest.cpp
         Alert.cpp
-        Event.cpp
         SecuritySystem.cpp
 )
 
@@ -126,24 +123,23 @@ target_link_libraries(FileTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
 target_link_libraries(ImageTests GTest::gtest_main ${wxWidgets_LIBRARIES})
 
-add_executable(VideoTests
-        tests/VideoTests.cpp
-        Video.cpp
-        File.cpp
-)
-target_link_libraries(VideoTests GTest::gtest_main ${wxWidgets_LIBRARIES})
-
-
-# Alarm User Story Acceptance Test
-add_executable(AlarmTest tests/AlarmTest.cpp Alarm.cpp Alarm.h
+add_executable(AlarmTest tests/AlarmTest.cpp
+        Alarm.cpp Alarm.h
         Observer.h
-        Motion_Sensor.cpp
-        Motion_Sensor.h
-        Camera.cpp
-        Camera.h)
+        Motion_Sensor.cpp Motion_Sensor.h
+        Camera.cpp Camera.h
+        Network.cpp Network.h
+        Device.cpp Device.h
+        ../Shared/Protocol.h)
+
 target_link_libraries(AlarmTest PRIVATE GTest::gtest_main sfml-audio ${wxWidgets_LIBRARIES})
 
-add_executable(ConfigTests tests/ConfigTests.cpp Config.cpp)
+add_executable(ConfigTests
+        tests/ConfigTests.cpp
+        Config.cpp
+)
+
+target_link_libraries(ConfigTests GTest::gtest_main)
 
 add_executable(network_test_client
         network_test_client.cpp
@@ -179,7 +175,6 @@ target_compile_definitions(AlarmTest PRIVATE
 enable_testing()
 add_test(NAME AlarmTests COMMAND AlarmTest)
 add_test(NAME StorageTests COMMAND StorageTests)
-add_test(NAME VideoTests COMMAND VideoTests)
 add_test(NAME SystemTests COMMAND SystemTests)
 add_test(NAME FileTests COMMAND FileTests)
 add_test(NAME ImageTests COMMAND ImageTests)
