@@ -83,20 +83,6 @@ void Alarm::activate() {
 }
 
 /**
- * @brief Deactivates the alarm and stops audio playback.
- *
- * Sets the alarm state to inactive and immediately stops
- * any currently playing alarm sound.
- *
- * @pre The alarm must have been previously activated via @ref activate().
- */
-
-// void Alarm::testAlarm() {
-//     std::cout << "Testing alarm..." << std::endl;
-//     activate();
-// }
-
-/**
  * @brief Triggers a test of the alarm sound.
  *
  * Calls @ref activate() to verify that audio playback

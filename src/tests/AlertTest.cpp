@@ -1,5 +1,4 @@
 #include "Alert.h"
-#include "Event.h"
 #include "SecuritySystem.h"
 #include <iostream>
 

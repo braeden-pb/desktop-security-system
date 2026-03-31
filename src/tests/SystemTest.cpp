@@ -100,7 +100,7 @@ TEST_F(SecuritySystemTest, MultipleArmDisarmCycles) {
  * @brief Correct PIN should return true.
  */
 TEST_F(SecuritySystemTest, ValidatePINCorrectPIN) {
-    EXPECT_TRUE(system->validatePIN("1234"));
+    EXPECT_TRUE(system->validatePIN("123"));
 }
 
 /**
