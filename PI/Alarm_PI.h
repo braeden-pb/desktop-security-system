@@ -12,7 +12,7 @@ public:
     Alarm_PI(NetworkServer &server);
     ~Alarm_PI();
     void init();
-    void soundAlarm();
+    void soundAlarm(std::string soundOption);
     void disableAlarm();
 
 private:

@@ -19,7 +19,7 @@
 SecuritySystem::SecuritySystem() {
     mainStorage = std::make_unique<Storage>("../saved_data/");
     network = std::make_unique<Network>();
-    if (network->connect("10.42.0.205", 5000)) {
+    if (network->connect("192.168.2.174", 5000)) {
         std::cout << "Connected to Pi" << std::endl;
         network->startReceiving();
         network->onPacket(System::Motion, [this](Command cmd, const std::vector<uint8_t>& payload) {

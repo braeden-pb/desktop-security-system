@@ -37,7 +37,7 @@ int main() {
             case Command::StartClip:   camera.startRecording(); break;
             case Command::StopClip:    camera.stopRecording();  break;
             case Command::disableAlarm: alarm.disableAlarm();    break;
-            case Command::soundAlarm:   alarm.soundAlarm();    break;
+            case Command::soundAlarm:   alarm.soundAlarm(std::string(payload.begin(), payload.end())); break;
             default: break;
         }
     });
