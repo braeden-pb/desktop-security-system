@@ -24,7 +24,7 @@ Config::Config(Network &network) : network(network) {
         photosPer = 1;
         password = "123";
         authorizedFaces.clear();
-        alarmSound = "alarm.wav";
+        alarmSound = "alarm";
         maxAlarmDuration = 60;
         alarmOnMotion = false;
         writeToFile();

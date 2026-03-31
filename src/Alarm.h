@@ -33,8 +33,6 @@ public:
 
     // Activates the alarm indefinitely
     void activate();
-
-    virtual bool loadSound(sf::SoundBuffer& buffer);  // bool not sf::SoundBuffer
     // Deactivates the alarm
     void deactivate();
 
