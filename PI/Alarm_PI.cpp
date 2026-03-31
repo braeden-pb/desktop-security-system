@@ -34,7 +34,7 @@ Alarm_PI::~Alarm_PI() {
 void Alarm_PI::soundAlarm(std::string soundOption) {
     sound = soundOption;
     alarmPlaying = true;
-    std::string cmd = "aplay -D hw:2,0 --loops=0 ../sounds/" + sound + ".wav &";
+    std::string cmd = "while true; do aplay -D hw:2,0 /pi/sounds/" + sound + ".wav || break; done &";
     int result = system(cmd.c_str());
     if (result != 0) {
         std::cerr << "Failed to start alarm, error: " << result << std::endl;
