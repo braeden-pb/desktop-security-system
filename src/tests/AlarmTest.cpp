@@ -1,10 +1,15 @@
+//
+// Created by Braeden Patierno-Barker on 3/31/2026.
+//
+
 #include <gtest/gtest.h>
 #include "../Alarm.h"
 #include "../Network.h"
+#include "../Config.h"
 
 class SilentAlarm : public Alarm {
 public:
-    SilentAlarm(Network& network) : Alarm(network) {}
+    SilentAlarm(Network& network, Config& config) : Alarm(network, config) {}
 protected:
     bool loadSound(sf::SoundBuffer&) override { return true; }
 };
@@ -13,13 +18,17 @@ class AlarmTest : public ::testing::Test {
 protected:
     void SetUp() override {
         network = new Network();
-        alarm = new SilentAlarm(*network);
+        config = new Config(*network);
+        alarm = new SilentAlarm(*network, *config);
     }
+
     void TearDown() override {
         delete alarm;
         delete network;
+        delete config;
     }
     Network* network;
+    Config* config;
     SilentAlarm* alarm;
 };
 
