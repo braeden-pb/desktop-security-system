@@ -65,7 +65,7 @@ void NetworkServer::stop() {
     if (receiveThread.joinable()) receiveThread.join();
 }
 
-void NetworkServer::onCommand(std::function<void(Command)> callback) {
+void NetworkServer::onCommand(std::function<void(Command,const std::vector<uint8_t>&)> callback) {
     commandCallback = callback;
 }
 
