@@ -1,6 +1,15 @@
-//
-// Created by evan on 2026-03-21.
-//
+/**
+ * @file main.cpp
+ * @brief Entry point for the Raspberry Pi security system application.
+ *
+ * Initializes and coordinates the NetworkServer, Motion_Sensor_PI, Camera_PI,
+ * and Alarm_PI subsystems. Listens for commands from a connected PC client and
+ * dispatches them to the appropriate hardware component. Runs until a SIGINT
+ * signal (Ctrl+C) is received.
+ *
+ * @author evan, Micheal a Baeden
+ * @date 2026-03-21
+ */
 
 #include "Motion_Sensor_PI.h"
 #include "NetworkServer.h"
@@ -11,11 +20,45 @@
 #include "Camera_PI.h"
 #include "Alarm_PI.h"
 
+/**
+ * @brief Atomic flag indicating whether the application should keep running.
+ *
+ * Set to false by the signal handler to trigger a graceful shutdown across
+ * all threads.
+ */
 std::atomic<bool> running(true);
+
+/**
+ * @brief Signal handler for SIGINT (Ctrl+C).
+ *
+ * Sets the global running flag to false, causing the main loop and the
+ * sensor thread to exit cleanly.
+ *
+ * @param Signal number (unused).
+ */
 
 void signalHandler(int) {
     running = false;
 }
+
+/**
+ * @brief Application entry point.
+ *
+ * Performs the following startup sequence:
+ * -# Registers the SIGINT signal handler for graceful shutdown.
+ * -# Starts the NetworkServer on port 5000.
+ * -# Constructs and activates the motion sensor, camera, and alarm subsystems.
+ * -# Registers a command callback on the server that dispatches incoming PC
+ *    commands (stream start/stop, photo, clip, alarm) to the correct subsystem.
+ * -# Registers a disconnect callback that stops the camera stream when the
+ *    client disconnects.
+ * -# Spawns a background sensor thread that polls the running flag and performs
+ *    cleanup (deactivate motion sensor, disable alarm, stop server) on exit.
+ * -# Blocks the main thread until running is set to false, then joins the
+ *    sensor thread and performs a final cleanup.
+ *
+ * @return 0 on clean exit.
+ */
 
 int main() {
     signal(SIGINT, signalHandler);
