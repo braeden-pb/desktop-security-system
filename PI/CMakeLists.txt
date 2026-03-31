@@ -13,8 +13,8 @@ include(FetchContent)
 #        GIT_REPOSITORY https://github.com/WiringPi/WiringPi.git
 #        GIT_TAG        3.10
 #)
-#find_library(WIRINGPI_LIB wiringPi REQUIRED)
-#set(GPIO_LIB ${WIRINGPI_LIB})
+find_library(WIRINGPI_LIB wiringPi REQUIRED)
+set(GPIO_LIB ${WIRINGPI_LIB})
 
 
 find_package(PkgConfig REQUIRED)
@@ -46,7 +46,7 @@ target_link_libraries(pi-camera PRIVATE
         #opencv_imgproc
         #opencv_highgui
         #opencv_videoio
-        #wiringPi
+        wiringPi
         camera
         camera-base
         ${OpenCV_LIBS}
