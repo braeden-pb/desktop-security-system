@@ -25,6 +25,8 @@ Config::Config() {
         password = "123";
         authorizedFaces.clear();
         alarmSound = "alarm.wav";
+        maxAlarmDuration = 60;
+        alarmOnMotion = false;
         writeToFile();
     }
 }
@@ -162,6 +164,30 @@ void Config::setPassword(string password) {
     this->password = password;
 }
 
+string Config::getSound() {
+    return alarmSound;
+}
+
+void Config::setSound(string sound) {
+    alarmSound = sound;
+}
+
+int Config::getMaxAlarmDuration() {
+    return maxAlarmDuration;
+}
+
+void Config::setMaxAlarmDuration(int maxAlarmDuration) {
+    this->maxAlarmDuration = maxAlarmDuration;
+}
+
+bool Config::getAlarmOnMotion() {
+    return alarmOnMotion;
+}
+
+void Config::setAlarmOnMotion(bool alarmOnMotion) {
+    this->alarmOnMotion = alarmOnMotion;
+}
+
 /**
    * @brief Returns the full list of authorized faces.
    *
@@ -288,9 +314,11 @@ bool Config::writeToFile() {
                 configFile << "\t\t\"" << authorizedFaces[i] << "\"" << endl;
         }
 
-        configFile << "\t\"sound\": \"" << alarmSound << "\"," << endl;
 
-        configFile << "\t]\n";
+        configFile << "\t],\n";
+        configFile << "\t\"sound\": \"" << alarmSound << "\"," << endl;
+        configFile << "\t\"MaxDuration\": \"" << maxAlarmDuration << "\"," << endl;
+        configFile << "\t\"AlarmOnMotion\": \"" << alarmOnMotion << "\"," << endl;
         configFile << "}";
 
         configFile.close();
@@ -366,6 +394,24 @@ bool Config::readFromFile() {
             if (!inText.empty() && inText.back() == '"') inText.pop_back();
             this->addAuthorizedFace(inText);
         }
+        getline(configFile, inText);
+        start = inText.find("\"", inText.find(":")) + 1;
+        end = inText.find("\"", start);
+        inText = inText.substr(start, end - start);
+        this->alarmSound = inText;
+
+        getline(configFile, inText);
+        start = inText.find("\"", inText.find(":")) + 1;
+        end = inText.find("\"", start);
+        inText = inText.substr(start, end - start);
+        this->maxAlarmDuration = stoi(inText);
+
+        getline(configFile, inText);
+        start = inText.find("\"", inText.find(":")) + 1;
+        end = inText.find("\"", start);
+        inText = inText.substr(start, end - start);
+        this->alarmOnMotion = stoi(inText);
+
     } catch (...) { //If any error occurs, return false.
         return false;
     }
@@ -373,10 +419,3 @@ bool Config::readFromFile() {
     return true; //Return true if no errors
 }
 
-string Config::getSound() {
-    return alarmSound;
-}
-
-void Config::setSound(string sound) {
-    alarmSound = sound;
-}

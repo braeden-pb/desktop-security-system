@@ -33,6 +33,10 @@ public:
     bool writeToFile();
     string getSound();
     void setSound(string alarmSound);
+    int getMaxAlarmDuration();
+    void setMaxAlarmDuration(int maxAlarmDuration);
+    bool getAlarmOnMotion();
+    void setAlarmOnMotion(bool alarmOnMotion);
 
 private:
     /**
@@ -67,6 +71,10 @@ private:
     bool readFromFile();
 
     string alarmSound;
+
+    int maxAlarmDuration;
+
+    bool alarmOnMotion;
 };
 
 

@@ -143,33 +143,20 @@ void Config_Panel::onChangeAlarm(wxCommandEvent &event) {
 
     mainSizer->Add(new wxStaticText(&dlg, wxID_ANY, "Alarm Sound:"), 0, wxLEFT|wxRIGHT|wxTOP, 15);
     wxArrayString sounds;
+    sounds.Add("Alarm Tone");
     sounds.Add("Beep");
     sounds.Add("Siren");
     sounds.Add("Buzzer");
-    sounds.Add("Alarm Tone");
     wxChoice* soundChoice = new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, sounds);
     soundChoice->SetSelection(0);
     mainSizer->Add(soundChoice, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
 
-    mainSizer->Add(new wxStaticText(&dlg, wxID_ANY, "Base Volume:"), 0, wxLEFT|wxRIGHT|wxTOP, 15);
-    wxBoxSizer* volumeSizer = new wxBoxSizer(wxHORIZONTAL);
-    wxSlider* volumeSlider = new wxSlider(&dlg, wxID_ANY, 50, 0, 100,
-                                          wxDefaultPosition, wxDefaultSize,
-                                          wxSL_HORIZONTAL);
-    wxStaticText* volumeLabel = new wxStaticText(&dlg, wxID_ANY, "50%",
-                                                  wxDefaultPosition, wxSize(35, -1));
-    volumeSizer->Add(volumeSlider, 1, wxEXPAND|wxRIGHT, 5);
-    volumeSizer->Add(volumeLabel, 0, wxALIGN_CENTER_VERTICAL);
-    mainSizer->Add(volumeSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
-
-    volumeSlider->Bind(wxEVT_SLIDER, [&](wxCommandEvent&) {
-        volumeLabel->SetLabel(wxString::Format("%d%%", volumeSlider->GetValue()));
-    });
 
     mainSizer->Add(new wxStaticText(&dlg, wxID_ANY, "Max Duration (seconds):"), 0, wxLEFT|wxRIGHT|wxTOP, 15);
     wxSpinCtrl* durationSpin = new wxSpinCtrl(&dlg, wxID_ANY, "30",
                                                wxDefaultPosition, wxDefaultSize,
                                                wxSP_ARROW_KEYS, 5, 300, 30);
+    durationSpin->SetValue(m_system->getConfig()->getMaxAlarmDuration());
     mainSizer->Add(durationSpin, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
     mainSizer->Add(new wxStaticText(&dlg, wxID_ANY, "Min: 5s     Max: 300s"),
                    0, wxLEFT|wxRIGHT, 15);
@@ -196,13 +183,11 @@ void Config_Panel::onChangeAlarm(wxCommandEvent &event) {
     });
 
     if (dlg.ShowModal() == wxID_OK) {
-        int     sound    = soundChoice->GetSelection();
-        int     volume   = volumeSlider->GetValue();
-        int     duration = durationSpin->GetValue();
+        wxString    sound    = soundChoice->GetString(soundChoice->GetCurrentSelection());
+        int         duration = durationSpin->GetValue();
 
-        // m_system->SetAlarmSound(sound);
-        // m_system->SetAlarmVolume(volume);
-        // m_system->SetAlarmDuration(duration);
+        m_system->getConfig()->setSound(sound.ToStdString());
+        m_system->getConfig()->setMaxAlarmDuration(duration);
 
         wxMessageBox("Alarm settings saved!", "Success", wxOK|wxICON_INFORMATION);
         changesMade=true;
@@ -300,6 +285,10 @@ void Config_Panel::onChangeMotion(wxCommandEvent &event) {
     wxDialog dlg(this, wxID_ANY, "Motion Sensitivity", wxDefaultPosition, wxDefaultSize);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
+    wxCheckBox* alarmOnMotion = new wxCheckBox(&dlg, wxID_ANY, "Sound alarm on motion detection");
+    alarmOnMotion->SetValue(m_system->getConfig()->getAlarmOnMotion());
+    mainSizer->Add(alarmOnMotion, 0, wxLEFT|wxRIGHT|wxTOP, 15);
+
     wxStaticBoxSizer* sensitivitySizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Motion Sensitivity");
 
     wxBoxSizer* sliderRowSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -346,6 +335,7 @@ void Config_Panel::onChangeMotion(wxCommandEvent &event) {
 
     if (dlg.ShowModal() == wxID_OK) {
         m_system->getConfig()->setSensitivity(slider->GetValue());
+        m_system->getConfig()->setAlarmOnMotion(alarmOnMotion->GetValue());
         wxMessageBox("Motion sensitivity saved!", "Success", wxOK|wxICON_INFORMATION);
         changesMade = true;
     }
