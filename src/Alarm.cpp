@@ -5,14 +5,16 @@
 #include <chrono>
 #include <filesystem>
 
+#include "Config.h"
+
 /**
  * @brief Constructs an Alarm object with default settings.
  *
  * Initializes the alarm as inactive, with a volume of 10,
  * sound type set to "wav", and an empty last-activated timestamp.
  */
-Alarm::Alarm(Network &network)
-    : isActive(false), volume(10), soundType("wav"), lastActivatedAt(""),network(network) {}
+Alarm::Alarm(Network &network,Config &config)
+    : isActive(false), soundType("wav"), lastActivatedAt(""),network(network),config(config) {}
 
 Alarm::~Alarm() {}
 
@@ -50,6 +52,12 @@ void Alarm::activate() {
     header.payloadSize = static_cast<uint32_t>(soundOption.size());
     std::vector<uint8_t> payload(soundOption.begin(), soundOption.end());
     network.send(header, payload);
+
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    lastActivatedAt = oss.str();
 
 }
 
@@ -102,7 +110,11 @@ bool Alarm::getStatus() const {
 }
 
 void Alarm::update(const std::string& event) {
+    std::cout << event << std::endl;
     if (event == "Alarm triggered") {
+        activate();
+    }
+    if (event == "Motion detected") {
         activate();
     }
 }

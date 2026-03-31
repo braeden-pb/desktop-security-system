@@ -13,7 +13,7 @@ using namespace std;
     * using the saved values. If the file does not exist or cannot be read, sends a message to specify this
     * and then initiates config object using simple default values.
     */
-Config::Config() {
+Config::Config(Network &network) : network(network) {
     if (readFromFile() == false) { //Attempt to read values from file
         //If the file cannot be read from, specify this and then set default values for all variables.
 

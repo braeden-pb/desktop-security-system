@@ -9,11 +9,12 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include "Network.h"
 using namespace std;
 
 class Config {
 public:
-    Config();
+    Config(Network &network);
     ~Config();
     int getSensitivity();
     void setSensitivity(int sensitivity);
@@ -68,7 +69,10 @@ private:
      * Stores a list of strings representing all the authorized faces for the security system.
      */
     vector<string> authorizedFaces;
+
     bool readFromFile();
+
+    Network &network;
 
     string alarmSound;
 
