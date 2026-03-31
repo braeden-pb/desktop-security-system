@@ -1,33 +1,35 @@
-#include "Alert.h"
-#include "SecuritySystem.h"
-#include <iostream>
+#include <gtest/gtest.h>
+#include "../Alert.h"
+#include "../SecuritySystem.h"
 
-class TestUI : public IAlertCallback {
-public:
-    void onAlert(const std::string& email, const std::string& time) override {
-        std::cout << "UI received alert: " << email << " at " << time << std::endl;
+class AlertTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        system = new SecuritySystem(true);
+        alert = new Alert(*system);
     }
+
+    void TearDown() override {
+        delete alert;
+        delete system;
+    }
+
+    SecuritySystem* system;
+    Alert* alert;
 };
 
-int main() {
-    SecuritySystem system;
-    Event event("2026-03-06 15:00");
-    Alert alert(event, "test@email.com", system);
+TEST_F(AlertTest, SendAlertWithoutCrash) {
+    EXPECT_NO_THROW(alert->sendAlert());
+}
 
-    // test WITHOUT callback
-    std::cout << "Testing sendAlert() without UI..." << std::endl;
-    alert.sendAlert();
+TEST_F(AlertTest, DiscardRunsWithoutCrash) {
+    EXPECT_NO_THROW(alert->discard());
+}
 
-    // test WITH callback
-    TestUI ui;
-    alert.setUICallback(&ui);
-    std::cout << "Testing sendAlert() with UI..." << std::endl;
-    alert.sendAlert();
+TEST_F(AlertTest, MotionDetectedRunsWithoutCrash) {
+    EXPECT_NO_THROW(alert->motionDetected());
+}
 
-    std::cout << "Testing getEvent()" << std::endl;
-    Event e = alert.getEvent();
-    std::cout << e.getTime() << std::endl;
-
-    std::cout << "Testing discard()" << std::endl;
-    alert.discard();
+TEST_F(AlertTest, UpdateRunsWithoutCrash) {
+    EXPECT_NO_THROW(alert->update("Motion detected"));
 }

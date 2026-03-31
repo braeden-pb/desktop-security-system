@@ -17,6 +17,7 @@ protected:
 
 // 1. Test saving config file variables to file and then creating new config with these values
 TEST_F(ConfigTests, ReadFile) {
+    remove("config.json"); // add this
     configBase.setCaptureMode(true);
     configBase.setPassword("basepassword");
     configBase.setPhotosPer(90);
@@ -42,12 +43,13 @@ TEST_F(ConfigTests, ReadFile) {
 
 // 2. Test creating new config with default values
 TEST_F(ConfigTests, Defaults) {
-    remove("config.txt");
+    remove("config.json");
     Config configTest;
 
     EXPECT_EQ(configTest.getPassword(), "123");
 }
 
+// 3. Test saving config values to file
 // 3. Test saving config values to file
 TEST_F(ConfigTests, Saving) {
     configBase.setCaptureMode(false);
@@ -59,29 +61,19 @@ TEST_F(ConfigTests, Saving) {
     configBase.addAuthorizedFace("face2");
     configBase.writeToFile();
 
-    ifstream fileRead("config.txt");
-    string inText;
-
-    getline(fileRead, inText);
-
-    EXPECT_EQ(inText, "52");
-    getline(fileRead, inText);
-    EXPECT_EQ(inText, "0");
-    getline(fileRead, inText);
-    EXPECT_EQ(inText, "51");
-    getline(fileRead, inText);
-    EXPECT_EQ(inText, "50");
-    getline(fileRead, inText);
-    EXPECT_EQ(inText, "testpassword");
-    getline(fileRead, inText);
-    EXPECT_EQ(inText, "face1");
-    getline(fileRead, inText);
-    EXPECT_EQ(inText, "face2");
+    Config configTest;
+    EXPECT_EQ(configTest.getSensitivity(), 52);
+    EXPECT_EQ(configTest.getCaptureMode(), false);
+    EXPECT_EQ(configTest.getSeconds(), 51);
+    EXPECT_EQ(configTest.getPhotosPer(), 50);
+    EXPECT_EQ(configTest.getPassword(), "testpassword");
+    EXPECT_EQ(configTest.isAuthorizedFace("face1"), true);
+    EXPECT_EQ(configTest.isAuthorizedFace("face2"), true);
 }
 
 // 4. Test removing of face
 TEST_F(ConfigTests, RemoveFace) {
-    remove("config.txt");
+    remove("config.json");
     Config configTest;
     configTest.addAuthorizedFace("face");
     configTest.removeAuthorizedFace("face");
@@ -91,7 +83,7 @@ TEST_F(ConfigTests, RemoveFace) {
 
 // 5. Test removing face that does not exist
 TEST_F(ConfigTests, RemoveFaceNotExist) {
-    remove("config.txt");
+    remove("config.json");
     Config configTest;
     bool success = configTest.removeAuthorizedFace("face");
 
@@ -100,7 +92,7 @@ TEST_F(ConfigTests, RemoveFaceNotExist) {
 
 // 6. Test adding duplicate faces
 TEST_F(ConfigTests, AddDoubleFace) {
-    remove("config.txt");
+    remove("config.json");
     Config configTest;
     configTest.addAuthorizedFace("face");
     bool success = configTest.addAuthorizedFace("face");

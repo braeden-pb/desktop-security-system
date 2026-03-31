@@ -318,7 +318,7 @@ bool Config::writeToFile() {
         configFile << "\t],\n";
         configFile << "\t\"sound\": \"" << alarmSound << "\"," << endl;
         configFile << "\t\"MaxDuration\": \"" << maxAlarmDuration << "\"," << endl;
-        configFile << "\t\"AlarmOnMotion\": \"" << alarmOnMotion << "\"," << endl;
+        configFile << "\t\"AlarmOnMotion\": \"" << alarmOnMotion << "\"" << endl;
         configFile << "}";
 
         configFile.close();
@@ -386,7 +386,7 @@ bool Config::readFromFile() {
         getline(configFile, inText);
 
         authorizedFaces.clear(); //Clear authorized faces list before refilling it
-        while (getline (configFile, inText) && inText != "\t]") {
+        while (getline (configFile, inText) && inText != "\t],") {
             inText.erase(0, inText.find_first_not_of(" \t"));
             inText.erase(inText.find_last_not_of(" \t") + 1);
             if (!inText.empty() && inText.front() == '"') inText.erase(0, 1);
