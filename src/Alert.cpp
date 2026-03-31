@@ -6,11 +6,15 @@
 #include "SecuritySystem.h"
 #include <iostream>
 
-Alert::Alert(SecuritySystem& system)
-    : system(system) {}
+Alert::Alert(Event event, SecuritySystem& system)
+    : event(event),system(system) {}
 
 void Alert::sendAlert() {
     system.triggerAlert(event.getType());
+}
+
+Event Alert::getEvent() {
+    return event;
 }
 
 void Alert::discard() {

@@ -6,18 +6,22 @@
 #define GROUP55_ALERT_H
 
 #include <string>
+#include "Event.h"
 #include "Observer.h"
 
 class SecuritySystem;
 
 class Alert : public Observer {
 private:
+    Event event;
+    //std::string email;
     SecuritySystem& system;
 
 public:
-    Alert(SecuritySystem& system);
+    Alert(Event event,SecuritySystem& system);
     void motionDetected();
     void sendAlert();
+    Event getEvent();
     void discard();
     void update(const std::string& eventMsg) override;
     virtual ~Alert() = default;

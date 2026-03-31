@@ -55,6 +55,7 @@ add_executable(SecuritySystem
         Camera.cpp Camera.h
         ../Shared/Protocol.h
         Motion_Sensor.cpp Motion_Sensor.h
+        Event.cpp Event.h
 
 )
 
@@ -101,6 +102,8 @@ add_executable(SystemTests
         Alert.cpp
         Device.cpp
         Config_Panel.cpp
+        Event.cpp
+        Event.h
 )
 
 add_executable(AlertTest
