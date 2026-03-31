@@ -27,10 +27,14 @@ void Alarm_PI::soundAlarm(std::string soundOption) {
 
 
 void Alarm_PI::disableAlarm() {
-    int result = system(("pkill -f " + sound + ".wav").c_str());
-    if (result != 0) {
-        std::cerr << "Failed to stop alarm sound, error code: " << result << std::endl;
-    }
+    std::string cmd = "pkill -f \"aplay.*" + sound + "\"";
+    system(cmd.c_str());
+    // Also kill any lingering shell loops
+    system("pkill -f 'while true'");
+    //int result = system(("pkill -f " + "../sounds" + sound + ".wav").c_str());
+    // if (result != 0) {
+    //     std::cerr << "Failed to stop alarm sound, error code: " << result << std::endl;
+    // }
     alarmPlaying = false;
 
 }
