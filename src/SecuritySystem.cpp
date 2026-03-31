@@ -70,9 +70,9 @@ SecuritySystem::SecuritySystem() {
 SecuritySystem::SecuritySystem(bool headless) {
     mainStorage = std::make_unique<Storage>("../saved_data/");
     systemStatus = Status::disarmed;
-    config = std::make_unique<Config>();
+    config = std::make_unique<Config>(*network);
     network = std::make_unique<Network>();
-    alarm = std::make_unique<Alarm>(*network);
+    alarm = std::make_unique<Alarm>(*network,*config);
     motion_sensor = std::make_unique<Motion_Sensor>();
     addObserver(alarm.get());
     addObserver(this);
