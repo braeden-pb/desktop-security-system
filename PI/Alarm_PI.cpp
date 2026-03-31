@@ -46,5 +46,4 @@ void Alarm_PI::disableAlarm() {
     }
     alarmPlaying = false;
     sound.clear();
-
 }
