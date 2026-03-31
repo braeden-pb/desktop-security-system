@@ -44,7 +44,7 @@ void Alarm::activate() {
     isActive = true;
     std::cout << "Alarm activated!" << std::endl;
 
-    std::string soundOption = "beep";
+    std::string soundOption = config.getSound();
 
     PacketHeader header{};
     header.system      = System::Speaker;
