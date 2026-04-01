@@ -1,7 +1,7 @@
 /**
 * @file Camera_PI.cpp
  * @brief Implementation of the Camera_PI class for managing camera operations on Raspberry Pi.
- * @author evan
+ * @author Evan
  * @date 2026-03-25
  */
 

@@ -110,6 +110,17 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     
 }
 
+void Home_Panel::onAlarmTriggered() {
+    alarmBtn->SetValue(true);
+    alarmBtn->SetLabel("Turn Off Alarm");
+}
+
+void Home_Panel::onAlarmDisabled() {
+    alarmBtn->SetValue(false);
+    alarmBtn->SetLabel("Sound Alarm");
+
+}
+
 
 /**
  * @brief Handles the ARM/DISARM toggle button press.
@@ -251,8 +262,7 @@ void Home_Panel::onConfigButtonPressed(wxCommandEvent &event) {
  */
 void Home_Panel::onAlarmButtonPressed(wxCommandEvent &event) {
     if (!m_system->getIsAlarmActive()) {
-        alarmBtn->SetValue(true);
-        alarmBtn->SetLabel("Turn Off Alarm");
+       onAlarmTriggered();
         m_system->soundAlarm();
     }
     else {

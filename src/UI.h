@@ -27,7 +27,6 @@ class UI : public wxFrame,public Observer{
         Setting_ID = 3
     };
     void SwitchPage(PageID id);
-    void onExit(wxCommandEvent& event);
     PageID GetPageID() const;
     Login_Panel* getLoginPanel();
     Storage_Panel* getStoragePanel() const;
@@ -43,6 +42,8 @@ class UI : public wxFrame,public Observer{
     Storage_Panel* storagePage;
     Home_Panel* homePage;
     Config_Panel* configPage;
+    void onExit(wxCommandEvent& event);
+    void onAbout(wxCommandEvent& event);
 
 
 

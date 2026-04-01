@@ -5,10 +5,11 @@
 #ifndef GROUP55_ALARM_PI_H
 #define GROUP55_ALARM_PI_H
 #include <string>
-#include "NetworkServer.h"
-#include <unistd.h>   
-#include <signal.h>   
+#include <unistd.h>
+#include <signal.h>
 #include <sys/wait.h>
+#include "NetworkServer.h"
+
 class Alarm_PI {
 
 public:

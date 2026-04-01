@@ -15,7 +15,6 @@
 #include <opencv2/opencv.hpp>
 #include <sstream>
 #include <iomanip>
-#
 #include <ctime>
 #include <thread>
 #include <fstream>

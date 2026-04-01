@@ -25,8 +25,12 @@ private:
 
     Config &config;
 
+    void notifyObservers(const std::string& event);
+
 
 public:
+
+    std::vector<Observer*> observers;
     // Constructor
     Alarm(Network &network,Config &config);
     ~Alarm();
@@ -40,6 +44,9 @@ public:
     bool getStatus() const;
 
     void update(const std::string& event) override;
+
+    void addObserver(Observer* o);
+
 
 
 

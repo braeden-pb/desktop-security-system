@@ -189,6 +189,8 @@ void SecuritySystem::activateHardware() {
     motion_sensor->addObserver(this);
     motion_sensor->addObserver(alarm.get());
     motion_sensor->activate();
+
+    alarm->addObserver(mainUi.get());
 }
 
 /**

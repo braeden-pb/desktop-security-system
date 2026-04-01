@@ -34,6 +34,7 @@ void Alarm::activate() {
     if (isActive) return;
     isActive = true;
     std::cout << "Alarm activated!" << std::endl;
+    notifyObservers("Alarm triggered");
 
     std::string soundOption = config.getSound();
 
@@ -51,6 +52,15 @@ void Alarm::activate() {
     oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
     lastActivatedAt = oss.str();
 
+}
+
+void Alarm::addObserver(Observer* o) {
+    observers.push_back(o);
+}
+
+void Alarm::notifyObservers(const std::string &event) {
+    for (auto* o : observers)
+        o->update(event);
 }
 
 
