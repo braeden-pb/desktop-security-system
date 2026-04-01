@@ -1,26 +1,28 @@
+//
+// Created by Braeden Patierno-Barker on 3/31/2026.
+//
+
 #include <gtest/gtest.h>
 #include "../Alarm.h"
 #include "../Network.h"
+#include "../Config.h"
 
-class SilentAlarm : public Alarm {
-public:
-    SilentAlarm(Network& network) : Alarm(network) {}
-protected:
-    bool loadSound(sf::SoundBuffer&) override { return true; }
-};
-
+// Remove SilentAlarm entirely and just use Alarm directly
 class AlarmTest : public ::testing::Test {
 protected:
     void SetUp() override {
         network = new Network();
-        alarm = new SilentAlarm(*network);
+        config = new Config(*network);
+        alarm = new Alarm(*network, *config);
     }
     void TearDown() override {
         delete alarm;
+        delete config;
         delete network;
     }
     Network* network;
-    SilentAlarm* alarm;
+    Config* config;
+    Alarm* alarm;
 };
 
 TEST_F(AlarmTest, DefaultStatusIsInactive) {

@@ -1,3 +1,7 @@
+//
+// Created by Braeden Patierno-Barker on 3/31/2026.
+//
+
 #include <gtest/gtest.h>
 #include "../Alert.h"
 #include "../SecuritySystem.h"
@@ -6,15 +10,18 @@ class AlertTest : public ::testing::Test {
 protected:
     void SetUp() override {
         system = new SecuritySystem(true);
-        alert = new Alert(*system);
+        event = new Event("2026-03-06 15:00", "Motion detected");
+        alert = new Alert(*event, *system);
     }
 
     void TearDown() override {
         delete alert;
+        delete event;
         delete system;
     }
 
     SecuritySystem* system;
+    Event* event;
     Alert* alert;
 };
 
