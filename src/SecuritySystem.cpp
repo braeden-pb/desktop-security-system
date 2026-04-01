@@ -253,7 +253,7 @@ void SecuritySystem::notifyObservers(const std::string& event) {
 }
 
 void SecuritySystem::soundAlert() {
-    notifyObservers("Motion detected");
+    notifyObservers("Alarm triggered");
 }
 
 void SecuritySystem::setUI(UI* ui) {
