@@ -6,6 +6,7 @@
  */
 
 #include "Device.h"
+
 /**
  * @brief Constructs a Device object.
  *
@@ -13,6 +14,7 @@
  * Derived classes are responsible for their own setup.
  */
 Device::Device(){}
+
 /**
  * @brief Destructs a Device object.
  *

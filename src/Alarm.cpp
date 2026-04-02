@@ -36,9 +36,6 @@ Alarm::Alarm(Network &network,Config &config)
  */
 Alarm::~Alarm() {}
 
-
-
-
 /**
  * @brief Activates the alarm and signals the Raspberry Pi to begin playing sound.
  *

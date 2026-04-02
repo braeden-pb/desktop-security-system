@@ -5,7 +5,9 @@
  * @author evan, Rushd
  * @date 2026-03-21
  */
+
 #include "Event.h"
+
 /**
  * @brief Constructs an Event with a timestamp only.
  *
