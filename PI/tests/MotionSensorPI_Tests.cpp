@@ -9,6 +9,7 @@
 #include <gmock/gmock.h>
 #include "Motion_Sensor_PI.h"
 #include "NetworkServer.h"
+#include "../../Shared/Protocol.h"
 
 /**
  * @brief Mock for NetworkServer to verify that motion packets are dispatched.
