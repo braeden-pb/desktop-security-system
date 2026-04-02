@@ -102,6 +102,7 @@ add_executable(CameraPI_Tests
 )
 target_include_directories(CameraPI_Tests PRIVATE
         ${CMAKE_SOURCE_DIR}/../Shared
+        ${CMAKE_SOURCE_DIR}
         ${LIBCAMERA_INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
 )
