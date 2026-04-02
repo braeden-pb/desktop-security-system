@@ -22,6 +22,8 @@ public:
     void setSeconds(int seconds);
     int getPhotosPer();
     void setPhotosPer(int photos);
+    int getPhotoFreq();
+    void setPhotoFreq(int photoFreq);
     string getPassword();
     void setPassword(string newPassword);
     bool writeToFile();
@@ -42,6 +44,8 @@ private:
 
 
     int photosPer;
+
+    int photoFreq;
 
     string password;
 

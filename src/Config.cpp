@@ -21,6 +21,7 @@ Config::Config(Network &network) : network(network) {
         captureMode = false;
         clipSeconds = 0;
         photosPer = 3;
+        photoFreq = 2;
         password = "123";
         alarmSound = "alarm";
         maxAlarmDuration = 60;
@@ -97,6 +98,14 @@ void Config::setSeconds(int seconds) {
      */
 int Config::getPhotosPer() {
     return photosPer;
+}
+
+int Config::getPhotoFreq() {
+    return photoFreq;
+}
+
+void Config::setPhotoFreq(int photoFreq) {
+    this->photoFreq = photoFreq;
 }
 
 /**
@@ -185,10 +194,8 @@ bool Config::writeToFile() {
         configFile << "\t\"captureMode\": \"" << captureMode << "\"," << endl;
         configFile << "\t\"clipSeconds\": \"" << clipSeconds << "\"," << endl;
         configFile << "\t\"photosPer\": \"" << photosPer << "\"," << endl;
+        configFile << "\t\"photosFreq\": \"" << photoFreq << "\"," << endl;
         configFile << "\t\"password\": \"" << password << "\"," << endl;
-
-
-
         configFile << "\t\"sound\": \"" << alarmSound << "\"," << endl;
         configFile << "\t\"MaxDuration\": \"" << maxAlarmDuration << "\"," << endl;
         configFile << "\t\"AlarmOnMotion\": \"" << alarmOnMotion << "\"" << endl;
@@ -244,6 +251,12 @@ bool Config::readFromFile() {
         end = inText.find("\"", start);
         inText = inText.substr(start, end - start);
         this->photosPer = stoi(inText);
+
+        getline(configFile, inText);
+        start = inText.find("\"", inText.find(":")) + 1;
+        end = inText.find("\"", start);
+        inText = inText.substr(start, end - start);
+        this->photoFreq = stoi(inText);
 
         getline(configFile, inText);
         start = inText.find("\"", inText.find(":")) + 1;

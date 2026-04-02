@@ -34,7 +34,7 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame), changesMade(false)
     wxBoxSizer *windowSizer2 = new wxBoxSizer(wxVERTICAL);
 
     PasswordBtn    = new wxButton( innerScrollWindow, wxID_ANY, _("Change Password"),           wxDefaultPosition, wxSize(-1, 50), 0 );
-    ClipLenBtn     = new wxButton( innerScrollWindow, wxID_ANY, _("Photo/Image Settings"),      wxDefaultPosition, wxSize(-1, 50), 0 );
+    ClipLenBtn     = new wxButton( innerScrollWindow, wxID_ANY, _("Photo Settings"),      wxDefaultPosition, wxSize(-1, 50), 0 );
     motionBtn      = new wxButton( innerScrollWindow, wxID_ANY, _("Motion Settings"), wxDefaultPosition, wxSize(-1, 50), 0 );
     alarmConfigBtn = new wxButton( innerScrollWindow, wxID_ANY, _("Alarm Settings"),            wxDefaultPosition, wxSize(-1, 50), 0 );
 
@@ -202,32 +202,15 @@ void Config_Panel::onChangeAlarm(wxCommandEvent &event) {
 }
 
 void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
-    wxDialog dlg(this, wxID_ANY, "Photo/Video Settings", wxDefaultPosition, wxDefaultSize);
+    wxDialog dlg(this, wxID_ANY, "Photo Settings", wxDefaultPosition, wxDefaultSize);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
     wxStaticBoxSizer* enableSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Capture Mode");
-    wxCheckBox* enablePhoto = new wxCheckBox(&dlg, wxID_ANY, "Enable Photo/Video Capture");
+    wxCheckBox* enablePhoto = new wxCheckBox(&dlg, wxID_ANY, "Enable Photo Capture");
     enablePhoto->SetValue(true);
     enableSizer->Add(enablePhoto,0, wxALL, 8);
     mainSizer->Add(enableSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
 
-    wxStaticBoxSizer* clipSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Recording Clip Length");
-    wxBoxSizer* clipRowSizer = new wxBoxSizer(wxHORIZONTAL);
-    wxSlider* clipSlider = new wxSlider(&dlg, wxID_ANY, 30, 5, 120,
-                                         wxDefaultPosition, wxDefaultSize,
-                                         wxSL_HORIZONTAL);
-    wxStaticText* clipLabel = new wxStaticText(&dlg, wxID_ANY, "30s",
-                                                wxDefaultPosition, wxSize(40, -1));
-    clipRowSizer->Add(clipSlider, 1, wxEXPAND|wxRIGHT, 5);
-    clipRowSizer->Add(clipLabel,  0, wxALIGN_CENTER_VERTICAL);
-    clipSizer->Add(clipRowSizer, 0, wxEXPAND|wxALL, 8);
-    clipSizer->Add(new wxStaticText(&dlg, wxID_ANY, "Min: 5s     Max: 120s"),
-                   0, wxLEFT|wxBOTTOM, 8);
-    mainSizer->Add(clipSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
-
-    clipSlider->Bind(wxEVT_SLIDER, [&](wxCommandEvent&) {
-        clipLabel->SetLabel(wxString::Format("%ds", clipSlider->GetValue()));
-    });
 
     wxStaticBoxSizer* photoSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Photos capture frequency");
     wxBoxSizer* photoRowSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -240,9 +223,23 @@ void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
     photoSizer->Add(photoRowSizer, 0, wxALL, 8);
     mainSizer->Add(photoSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
 
+
+    wxStaticBoxSizer* photoCaptureSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Photos per capture");
+    wxBoxSizer* photoCaptureRowSizer = new wxBoxSizer(wxHORIZONTAL);
+    wxSpinCtrl* photoCaptureSpin = new wxSpinCtrl(&dlg, wxID_ANY, "3",
+                                            wxDefaultPosition, wxDefaultSize,
+                                            wxSP_ARROW_KEYS, 1, 20, 3);
+    wxStaticText* photoCaptureHint = new wxStaticText(&dlg, wxID_ANY, "Number of photos captured per event");
+    photoCaptureRowSizer->Add(photoCaptureSpin, 0, wxRIGHT, 10);
+    photoCaptureRowSizer->Add(photoCaptureHint, 0, wxALIGN_CENTER_VERTICAL);
+    photoCaptureSizer->Add(photoCaptureRowSizer, 0, wxALL, 8);
+    mainSizer->Add(photoCaptureSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
+
     enablePhoto->Bind(wxEVT_CHECKBOX, [&](wxCommandEvent&) {
         photoSpin->Enable(enablePhoto->GetValue());
         photoHint->Enable(enablePhoto->GetValue());
+        photoCaptureSpin->Enable(enablePhoto->GetValue());
+        photoCaptureHint->Enable(enablePhoto->GetValue());
     });
 
     wxStaticText* errorText = new wxStaticText(&dlg, wxID_ANY, "");
@@ -257,12 +254,12 @@ void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
     mainSizer->Add(btnSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 15);
 
     enablePhoto->SetValue(m_system->getConfig()->getCaptureMode());
-    clipSlider->SetValue(m_system->getConfig()->getSeconds());
-    clipLabel->SetLabel(wxString::Format("%ds", m_system->getConfig()->getSeconds()));
-    photoSpin->SetValue(m_system->getConfig()->getPhotosPer());
+    photoSpin->SetValue(m_system->getConfig()->getPhotoFreq());
+    photoCaptureSpin->SetValue(m_system->getConfig()->getPhotosPer());
 
     // Reflect initial enabled state
     photoSpin->Enable(m_system->getConfig()->getCaptureMode());
+    photoCaptureSpin->Enable(m_system->getConfig()->getCaptureMode());
 
     dlg.SetSizer(mainSizer);
     mainSizer->Fit(&dlg);
@@ -276,14 +273,14 @@ void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
 
     if (dlg.ShowModal() == wxID_OK) {
         bool photoEnabled     = enablePhoto->GetValue();
-        int  clipLength       = clipSlider->GetValue();
         int  photosPerCapture = photoSpin->GetValue();
+        int photoFreqPerCapture = photoCaptureSpin->GetValue();
 
         m_system->getConfig()->setCaptureMode(photoEnabled);
-        m_system->getConfig()->setSeconds(clipLength);
-        m_system->getConfig()->setPhotosPer(photosPerCapture);
+        m_system->getConfig()->setPhotoFreq(photosPerCapture);
+        m_system->getConfig()->setPhotosPer(photoFreqPerCapture);
 
-        wxMessageBox("Photo/Video settings saved!", "Success", wxOK|wxICON_INFORMATION);
+        wxMessageBox("Photo settings saved!", "Success", wxOK|wxICON_INFORMATION);
         changesMade = true;
     }
 }

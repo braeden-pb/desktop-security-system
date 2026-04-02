@@ -15,7 +15,6 @@ Camera::Camera(Network &network,Storage &storage) : recording(false), network(ne
 
 Camera::~Camera() {
     if (streaming) stopStream();
-    if (recording) stopRecording();
 }
 
 
