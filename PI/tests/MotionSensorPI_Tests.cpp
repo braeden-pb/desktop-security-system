@@ -15,7 +15,7 @@
  * @brief Static Mock for NetworkServer.
  * Since we aren't using virtuals, we don't inherit from the real class.
  */
-class MockNetworkServer {
+class MockNetworkServer : public NetworkServer {
 public:
     // No 'override' keyword here because there's no virtual function to override
     MOCK_METHOD(void, sendPacket, (const PacketHeader&, const std::vector<uint8_t>&));

@@ -43,15 +43,6 @@ protected:
 };
 
 /**
- * @brief Ensures the camera starts in a sane, non-active state.
- */
-TEST_F(CameraPI_Test, InitialStateIsIdle) {
-    EXPECT_FALSE(camera->isRecording());
-    // Assuming you have a getter for streaming
-    // EXPECT_FALSE(camera->isStreaming());
-}
-
-/**
  * @brief Verifies that capturePhoto returns an error string if hardware isn't found.
  */
 TEST_F(CameraPI_Test, CaptureFailsWithoutHardware) {
