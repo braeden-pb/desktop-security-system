@@ -18,6 +18,7 @@ public:
     void init();
     void soundAlarm(std::string soundOption);
     void disableAlarm();
+    bool isPlaying() const;
 
 private:
     bool alarmPlaying;

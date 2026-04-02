@@ -89,3 +89,13 @@ void Alarm_PI::disableAlarm() {
     alarmPlaying = false;
     sound.clear();
 }
+
+/**
+ * @brief Displays if the alarm is active
+ *
+ * Returns a boolean as true if the alarm is playing and false otherwise
+ */
+
+bool isPlaying() const {
+    return alarmPlaying;
+}
