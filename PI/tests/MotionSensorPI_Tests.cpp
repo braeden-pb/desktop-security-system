@@ -71,7 +71,7 @@ TEST_F(MotionSensorPI_Test, ManualMotionTriggerSetsFlags) {
  * The first should trigger motionPending, the second should be ignored
  * by the cooldown timer.
  */
-TEST_F(MotionSensorPITest, ISRRespectsCooldownTimer) {
+TEST_F(MotionSensorPI_Test, ISRRespectsCooldownTimer) {
     sensor->activate();
 
     // Simulate the static ISR call via the singleton pointer
@@ -89,7 +89,7 @@ TEST_F(MotionSensorPITest, ISRRespectsCooldownTimer) {
 /**
  * @brief Ensures the singleton pointer is cleared upon destruction.
  */
-TEST_F(MotionSensorPITest, SingletonManagement) {
+TEST_F(MotionSensorPI_Test, SingletonManagement) {
     sensor.reset(); // Trigger destructor
     // In your .cpp, you might want to add 'instance_ = nullptr;' in the destructor
     // to make this test pass/be valid.
@@ -98,7 +98,7 @@ TEST_F(MotionSensorPITest, SingletonManagement) {
 /**
  * @brief Verifies that the background thread dispatches a packet when motion is pending.
  */
-TEST_F(MotionSensorPITest, ThreadSendsPacketOnPendingMotion) {
+TEST_F(MotionSensorPI_Test, ThreadSendsPacketOnPendingMotion) {
     // Expect the network to be called exactly once
     EXPECT_CALL(mockNetwork, sendPacket(::testing::Field(&PacketHeader::command, Command::MotionDetected), ::testing::_))
         .Times(1);
