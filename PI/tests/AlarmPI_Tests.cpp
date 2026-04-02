@@ -9,7 +9,9 @@
 class AlarmPI_Tests : public ::testing::Test {
 protected:
     void SetUp() override {
-        server = new NetworkServer(0); // port 0 = any available port
+        server = new NetworkServer(0);
+        server->start();
+        // port 0 = any available port
         alarm = new Alarm_PI(*server);
     }
 
