@@ -25,7 +25,6 @@ private:
     std::string sound;
     NetworkServer &server;
     pid_t alarmPid = -1;
-    bool isPlaying() const;
 
 
 };

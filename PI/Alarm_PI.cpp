@@ -99,3 +99,4 @@ void Alarm_PI::disableAlarm() {
 bool isPlaying() const {
     return alarmPlaying;
 }
+
