@@ -20,10 +20,11 @@
 
 class Network;
 class Storage;
+class Config;
 
 class Camera {
 public:
-    Camera(Network &network,Storage &storage);
+    Camera(Network &network,Storage &storage,Config &config);
     ~Camera();
 
     std::string capturePhoto();
@@ -45,6 +46,7 @@ private:
 
     Network &network;
     Storage &storage;
+    Config &config;
     bool recording;
     std::atomic<bool> streaming{false};
     std::string lastPhoto;
