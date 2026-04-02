@@ -7,12 +7,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(FetchContent)
 
 
-# WiringPi (no CMakeLists.txt, manual build)
+#WiringPi (no CMakeLists.txt, manual build)
 #FetchContent_Declare(
 #        wiringpi
 #        GIT_REPOSITORY https://github.com/WiringPi/WiringPi.git
 #        GIT_TAG        3.10
 #)
+
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 find_library(WIRINGPI_LIB wiringPi REQUIRED)
 set(GPIO_LIB ${WIRINGPI_LIB})
 
@@ -74,3 +82,61 @@ target_link_libraries(camera-test PRIVATE
 )
 
 target_compile_options(camera-test PRIVATE -Wall -Wextra)
+
+add_executable(AlarmPITests
+        tests/AlarmPITests.cpp
+        Alarm_PI.cpp
+        NetworkServer.cpp
+        ../Shared/Protocol.h
+)
+target_include_directories(AlarmPITests PRIVATE
+        ${CMAKE_SOURCE_DIR}/../Shared
+)
+target_link_libraries(AlarmPITests PRIVATE GTest::gtest_main)
+
+add_executable(CameraPITests
+        tests/CameraPITests.cpp
+        Camera_PI.cpp
+        NetworkServer.cpp
+        ../Shared/Protocol.h
+)
+target_include_directories(CameraPITests PRIVATE
+        ${CMAKE_SOURCE_DIR}/../Shared
+        ${LIBCAMERA_INCLUDE_DIRS}
+        ${OpenCV_INCLUDE_DIRS}
+)
+target_link_libraries(CameraPITests PRIVATE
+        GTest::gtest_main
+        camera
+        camera-base
+        ${OpenCV_LIBS}
+)
+
+add_executable(MotionSensorPITests
+        tests/MotionSensorPITests.cpp
+        Motion_Sensor_PI.cpp
+        ../Shared/Protocol.h
+)
+target_include_directories(MotionSensorPITests PRIVATE
+        ${CMAKE_SOURCE_DIR}/../Shared
+)
+target_link_libraries(MotionSensorPITests PRIVATE
+        GTest::gtest_main
+        wiringPi
+)
+
+add_executable(NetworkServerTests
+        tests/NetworkServerTests.cpp
+        NetworkServer.cpp
+        ../Shared/Protocol.h
+)
+target_include_directories(NetworkServerTests PRIVATE
+        ${CMAKE_SOURCE_DIR}/../Shared
+)
+target_link_libraries(NetworkServerTests PRIVATE GTest::gtest_main)
+
+enable_testing()
+add_test(NAME AlarmPITests COMMAND AlarmPITests)
+add_test(NAME CameraPITests COMMAND CameraPITests)
+add_test(NAME MotionSensorPITests COMMAND MotionSensorPITests)
+add_test(NAME NetworkServerTests COMMAND NetworkServerTests)
