@@ -8,11 +8,12 @@
 #include <wx/wx.h>
 #include <wx/simplebook.h>
 #include <wx/display.h>
-#include "Home_Panel.h"
-#include "Login_Panel.h"
-#include "Storage_Panel.h"
-#include "Config_Panel.h"
 #include "Observer.h"
+
+class Login_Panel;
+class Storage_Panel;
+class Home_Panel;
+class Config_Panel;
 
 
 class SecuritySystem;
@@ -29,6 +30,7 @@ class UI : public wxFrame,public Observer{
     };
     void SwitchPage(PageID id);
     PageID GetPageID() const;
+
     Login_Panel* getLoginPanel();
     Storage_Panel* getStoragePanel() const;
     void update(const std::string& event) override;
