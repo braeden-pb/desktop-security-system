@@ -79,9 +79,9 @@ int main() {
             case Command::TakePhoto: {
                 int numPhotos = payload.empty() ? 1 : payload[0];
             std::thread([&camera, numPhotos]() {
-                for (int i = 0; i < numPhotos; i++) {
+                for (int i = 0; i < numPhotos+1; i++) {
                     camera.capturePhoto();
-                    if (i < numPhotos - 1) {
+                    if (i < numPhotos) {
                         std::this_thread::sleep_for(std::chrono::milliseconds(500));
                     }
                 }

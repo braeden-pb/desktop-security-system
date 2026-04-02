@@ -41,12 +41,11 @@ SecuritySystem::SecuritySystem() {
     } else {
         std::cerr << "Could not connect to Pi" << std::endl;
     }
-
-    camera = std::make_unique<Camera>(*network,*mainStorage);
+    config = std::make_unique<Config>(*network);
+    camera = std::make_unique<Camera>(*network,*mainStorage,*config);
     mainUi = std::make_unique<UI>(this);
     setUI(mainUi.get());
     systemStatus = Status::disarmed;
-    config = std::make_unique<Config>(*network);
     alarm = std::make_unique<Alarm>(*network,*config);
     motion_sensor = std::make_unique<Motion_Sensor>(*config,*camera);
     addObserver(mainUi.get());
@@ -71,6 +70,7 @@ SecuritySystem::SecuritySystem(bool headless) {
     config = std::make_unique<Config>(*network);
     network = std::make_unique<Network>();
     alarm = std::make_unique<Alarm>(*network,*config);
+    camera = std::make_unique<Camera>(*network,*mainStorage,*config);
     motion_sensor = std::make_unique<Motion_Sensor>(*config,*camera);
     addObserver(alarm.get());
     addObserver(this);
