@@ -12,6 +12,7 @@
 #include <chrono>
 #include <filesystem>
 
+#include "Config.h"
 #include "Storage.h"
 /**
  * @brief Constructs a Camera object and registers a packet handler for camera events.
@@ -26,7 +27,7 @@
  * @param storage Reference to the Storage instance used to record saved
  *                photo and video file paths with their timestamps.
  */
-Camera::Camera(Network &network,Storage &storage) : recording(false), network(network),storage(storage) {
+Camera::Camera(Network &network,Storage &storage,Config &config) : recording(false), network(network),storage(storage),config(config) {
     network.onPacket(System::Camera, [this](Command cmd, const std::vector<uint8_t> &payload) {
         handlePacket(cmd, payload);
     });
@@ -53,12 +54,13 @@ Camera::~Camera() {
  *         no photo response has been received yet.
  */
 std::string Camera::capturePhoto() {
+    int numPhotos = config.getPhotosPer();
     PacketHeader header{};
     header.system      = System::Camera;
     header.command     = Command::TakePhoto;
-    header.payloadSize = 0;
-    network.send(header, {});
-    return lastPhoto; // will be populated when Pi responds
+    header.payloadSize = 1;
+    network.send(header, {static_cast<uint8_t>(numPhotos)});
+    return lastPhoto;
 }
 /**
  * @brief Sends a start stream command to the Raspberry Pi.

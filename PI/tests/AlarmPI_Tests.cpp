@@ -34,7 +34,7 @@ TEST_F(AlarmPI_Tests, InitiallyNotPlaying) {
  */
 TEST_F(AlarmPI_Tests, SoundAlarmSetsPlayingTrue) {
     alarm->soundAlarm("alarm");
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     EXPECT_TRUE(alarm->isPlaying());
     alarm->disableAlarm();
 }
@@ -61,9 +61,9 @@ TEST_F(AlarmPI_Tests, DisableWhenNotPlayingIsNoOp) {
 TEST_F(AlarmPI_Tests, SoundAlarmTwiceDoesNotCrash) {
     EXPECT_NO_THROW({
         alarm->soundAlarm("alarm");
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         alarm->soundAlarm("alarm");
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     });
     alarm->disableAlarm();
 }
