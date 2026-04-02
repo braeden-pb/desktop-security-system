@@ -96,7 +96,7 @@ void Alarm_PI::disableAlarm() {
  * Returns a boolean as true if the alarm is playing and false otherwise
  */
 
-bool isPlaying() const {
+bool Alarm_PI::isPlaying() const {
     return alarmPlaying;
 }
 
