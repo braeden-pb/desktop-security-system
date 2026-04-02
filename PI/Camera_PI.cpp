@@ -288,7 +288,7 @@ void Camera_PI::startRecording() {
     devicePath = oss.str();
 
     videoWriter.open(devicePath,
-                      cv::VideoWriter::fourcc('M','J','P','G'),
+                      cv::VideoWriter::fourcc('X','V','I','D'),
                       15,
                       cv::Size(1280, 720));
 
@@ -351,10 +351,10 @@ void Camera_PI::stopRecording() {
 
     lastCaptureAt = std::chrono::system_clock::now();
     std::cout << "Recording stopped. File saved to: " << devicePath << std::endl;
+        stopStreaming();
+        startStreaming();
     }).detach();
 
-    stopStreaming();
-    startStreaming();
 }
 
 /**
