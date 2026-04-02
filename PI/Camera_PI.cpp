@@ -284,7 +284,7 @@ void Camera_PI::startRecording() {
     std::time_t t = std::chrono::system_clock::to_time_t(now);
     std::tm tm = *std::localtime(&t);
     std::ostringstream oss;
-    oss << "/home/pi/media/video_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".mjpeg";
+    oss << "/home/pi/media/video_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".avi";
     devicePath = oss.str();
 
     videoWriter.open(devicePath,
