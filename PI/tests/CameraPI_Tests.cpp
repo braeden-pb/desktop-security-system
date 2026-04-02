@@ -44,7 +44,7 @@ protected:
 /**
  * @brief Ensures the camera starts in a sane, non-active state.
  */
-TEST_F(CameraPITest, InitialStateIsIdle) {
+TEST_F(CameraPI_Test, InitialStateIsIdle) {
     EXPECT_FALSE(camera->isRecording());
     // Assuming you have a getter for streaming
     // EXPECT_FALSE(camera->isStreaming());
@@ -53,7 +53,7 @@ TEST_F(CameraPITest, InitialStateIsIdle) {
 /**
  * @brief Verifies that capturePhoto returns an error string if hardware isn't found.
  */
-TEST_F(CameraPITest, CaptureFailsWithoutHardware) {
+TEST_F(CameraPI_Test, CaptureFailsWithoutHardware) {
     // If running on a PC without a Pi camera, this should return empty
     std::string path = camera->capturePhoto();
     EXPECT_EQ(path, "");
@@ -62,7 +62,7 @@ TEST_F(CameraPITest, CaptureFailsWithoutHardware) {
 /**
  * @brief Tests the logic guard preventing simultaneous photo and video.
  */
-TEST_F(CameraPITest, CannotCapturePhotoWhileRecording) {
+TEST_F(CameraPI_Test, CannotCapturePhotoWhileRecording) {
     // Manually trigger recording state (if you have a setter or via startRecording)
     // For this test, we simulate the state if recording was active
     // This assumes you've uncommented your recording logic

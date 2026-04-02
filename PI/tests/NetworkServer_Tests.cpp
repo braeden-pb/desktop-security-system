@@ -54,7 +54,7 @@ protected:
 /**
  * @brief Verifies that the server can bind and start listening on the port.
  */
-TEST_F(NetworkServerTest, ServerStartsAndReportsCorrectPort) {
+TEST_F(NetworkServer_Test, ServerStartsAndReportsCorrectPort) {
     EXPECT_TRUE(server->start());
     EXPECT_EQ(server->getPort(), testPort);
 }
@@ -62,7 +62,7 @@ TEST_F(NetworkServerTest, ServerStartsAndReportsCorrectPort) {
 /**
  * @brief Verifies that the server correctly identifies its own IP.
  */
-TEST_F(NetworkServerTest, ServerRetrievesIPAddress) {
+TEST_F(NetworkServer_Test, ServerRetrievesIPAddress) {
     std::string ip = server->getIP();
     EXPECT_FALSE(ip.empty());
     // Basic check to see if it looks like an IP (contains dots or is 'localhost')
@@ -72,7 +72,7 @@ TEST_F(NetworkServerTest, ServerRetrievesIPAddress) {
 /**
  * @brief Verifies the command callback is triggered when the client sends a packet.
  */
-TEST_F(NetworkServerTest, TriggersOnCommandWhenPacketReceived) {
+TEST_F(NetworkServer_Test, TriggersOnCommandWhenPacketReceived) {
     bool commandReceived = false;
     Command receivedCmd = Command::None;
 
@@ -107,7 +107,7 @@ TEST_F(NetworkServerTest, TriggersOnCommandWhenPacketReceived) {
 /**
  * @brief Verifies that sendPacket correctly transmits data to a connected client.
  */
-TEST_F(NetworkServerTest, TransmitsPacketToClient) {
+TEST_F(NetworkServer_Test, TransmitsPacketToClient) {
     server->start();
     int clientSock = createTestClient();
     ASSERT_GT(clientSock, 0);
@@ -135,7 +135,7 @@ TEST_F(NetworkServerTest, TransmitsPacketToClient) {
 /**
  * @brief Verifies the onDisconnect callback is triggered when the socket is closed.
  */
-TEST_F(NetworkServerTest, TriggersOnDisconnectCallback) {
+TEST_F(NetworkServer_Test, TriggersOnDisconnectCallback) {
     bool disconnected = false;
     server->onDisconnect([&]() {
         disconnected = true;

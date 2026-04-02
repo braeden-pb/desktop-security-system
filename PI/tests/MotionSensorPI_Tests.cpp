@@ -44,7 +44,7 @@ protected:
 /**
  * @brief Verifies that the sensor starts in an inactive state.
  */
-TEST_F(MotionSensorPITest, InitialStateIsInactive) {
+TEST_F(MotionSensorPI_Test, InitialStateIsInactive) {
     EXPECT_FALSE(sensor->isActive());
     EXPECT_FALSE(sensor->isMotionDetected());
 }
@@ -52,7 +52,7 @@ TEST_F(MotionSensorPITest, InitialStateIsInactive) {
 /**
  * @brief Verifies that activation correctly starts the background thread.
  */
-TEST_F(MotionSensorPITest, ActivationStartsThread) {
+TEST_F(MotionSensorPI_Test, ActivationStartsThread) {
     sensor->activate();
     EXPECT_TRUE(sensor->isActive());
 }
@@ -60,7 +60,7 @@ TEST_F(MotionSensorPITest, ActivationStartsThread) {
 /**
  * @brief Tests the logic of the manual onMotion trigger.
  */
-TEST_F(MotionSensorPITest, ManualMotionTriggerSetsFlags) {
+TEST_F(MotionSensorPI_Test, ManualMotionTriggerSetsFlags) {
     sensor->onMotion();
     EXPECT_TRUE(sensor->isMotionDetected());
 }
