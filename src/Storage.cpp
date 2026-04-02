@@ -9,7 +9,6 @@
 #include <iostream>
 #include <chrono>
 
-
 /**
  * @brief Construct a new Storage object.
  * * Initializes the storage directory if it doesn't exist and synchronizes the
@@ -123,11 +122,23 @@ bool Storage::hasTimeStamp(int imageID) const {
     return false;
 }
 
+/**
+ * @brief Determines if a file path points to a supported video format.
+ * * @param path The file path to check.
+ * @return true if the extension matches a known video format (.mp4, .avi, .h264, .mov).
+ */
 bool Storage::isVideoFile(const std::string path) {
     return path.ends_with(".mp4") || path.ends_with(".avi") ||
            path.ends_with(".h264") || path.ends_with(".mov");
 }
 
+/**
+ * @brief Adds a new Image entry to the internal tracking list.
+ * * This is typically used when receiving new files over the network that
+ * need to be registered with the UI without re-scanning the entire folder.
+ * * @param path The filesystem path to the file.
+ * @param timestamp The human-readable timestamp for the file.
+ */
 void Storage::addImage(const std::string& path, const std::string& timestamp) {
     imageList.push_back(Image(path, timestamp));
 }

@@ -126,11 +126,24 @@ Storage_Panel* UI::getStoragePanel() const {
     return storagePage;
 }
 
+/**
+ * @brief Displays a modal alert message to the user.
+ *
+ * @param message The string message to display in the warning box.
+ */
 void UI::showAlert(const std::string& message)
     {
     wxMessageBox(message, "Alert", wxOK | wxICON_WARNING, this);
     }
 
+/**
+ * @brief Responds to system-wide observer events.
+ *
+ * Specifically handles the "Alarm triggered" event by updating the UI state
+ * safely via the main thread's event loop.
+ *
+ * @param event The string identifier of the event.
+ */
 void UI::update(const std::string& event) {
     if (event == "Alarm triggered") {
         wxTheApp->CallAfter([this]() {
@@ -139,4 +152,7 @@ void UI::update(const std::string& event) {
     }
 }
 
+/**
+ * @brief Destroys the UI frame.
+ */
 UI::~UI() {}
