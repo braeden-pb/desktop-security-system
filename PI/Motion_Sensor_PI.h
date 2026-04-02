@@ -24,7 +24,7 @@ class Motion_Sensor_PI {
     void deactivate();
     bool isActive();
     bool isMotionDetected();
-
+    void onMotion();
 
 
 
@@ -32,7 +32,6 @@ private:
     std::atomic<bool> motionPending = false;
     time_t lastSent = 0;
     void detectMotion();
-    void onMotion();
 
     std::atomic<bool> active;
     std::atomic<bool> motionDetected;

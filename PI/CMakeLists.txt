@@ -35,8 +35,7 @@ add_executable(pi-camera
         main.cpp
         NetworkServer.cpp NetworkServer.h
         Motion_Sensor_PI.cpp Motion_Sensor_PI.h
-        Camera_PI.cpp
-        Camera_PI.h
+        Camera_PI.cpp Camera_PI.h
         Alarm_PI.cpp Alarm_PI.h
 )
 
@@ -112,6 +111,7 @@ target_link_libraries(CameraPI_Tests PRIVATE
         camera-base
         GTest::gmock
         ${OpenCV_LIBS}
+        pthread
 )
 
 add_executable(MotionSensorPI_Tests
@@ -127,6 +127,7 @@ target_link_libraries(MotionSensorPI_Tests PRIVATE
         GTest::gtest_main
         GTest::gmock
         wiringPi
+        pthread
 )
 
 add_executable(NetworkServer_Tests
@@ -141,7 +142,7 @@ target_include_directories(NetworkServer_Tests PRIVATE
 target_link_libraries(NetworkServer_Tests PRIVATE GTest::gtest_main)
 
 enable_testing()
-add_test(NAME AlarmPITests COMMAND AlarmPI_Tests)
-add_test(NAME CameraPITests COMMAND CameraPI_Tests)
-add_test(NAME MotionSensorPITests COMMAND MotionSensorPI_Tests)
-add_test(NAME NetworkServerTests COMMAND NetworkServer_Tests)
+add_test(NAME AlarmPI_Tests COMMAND AlarmPI_Tests)
+add_test(NAME CameraPI_Tests COMMAND CameraPI_Tests)
+add_test(NAME MotionSensorPI_Tests COMMAND MotionSensorPI_Tests)
+add_test(NAME NetworkServer_Tests COMMAND NetworkServer_Tests)

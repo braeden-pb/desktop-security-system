@@ -7,16 +7,22 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "Motion_Sensor_PI.h"
-#include "NetworkServer.h"
+#include "../Motion_Sensor_PI.h"
+#include "../NetworkServer.h"
+#include "../../Shared/Protocol.h"
 
 /**
- * @brief Mock for NetworkServer to verify that motion packets are dispatched.
+ * @brief Static Mock for NetworkServer.
+ * Since we aren't using virtuals, we don't inherit from the real class.
  */
-class MockNetworkServer : public NetworkServer {
+class MockNetworkServer {
 public:
-    MockNetworkServer() : NetworkServer(5000) {}
-    MOCK_METHOD(void, sendPacket, (const PacketHeader& header, const std::vector<uint8_t>& payload), (override));
+    // No 'override' keyword here because there's no virtual function to override
+    MOCK_METHOD(void, sendPacket, (const PacketHeader&, const std::vector<uint8_t>&));
+    MOCK_METHOD(void, sendFrame, (const uint8_t*, size_t));
+
+    // Add any other methods your code calls
+    MOCK_METHOD(bool, isConnected, ());
 };
 
 /**

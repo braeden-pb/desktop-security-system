@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <thread>
 #include <chrono>
-#include "NetworkServer.h"
+#include "../NetworkServer.h"
 
 /**
  * @brief Test fixture for NetworkServer.

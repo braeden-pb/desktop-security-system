@@ -7,8 +7,9 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "Camera_PI.h"
-#include "NetworkServer.h"
+#include "../Camera_PI.h"
+#include "../NetworkServer.h"
+#include "../../Shared/Protocol.h"
 
 /**
  * @brief Mock class for the NetworkServer to track outgoing packets.
@@ -57,20 +58,6 @@ TEST_F(CameraPI_Test, CaptureFailsWithoutHardware) {
     // If running on a PC without a Pi camera, this should return empty
     std::string path = camera->capturePhoto();
     EXPECT_EQ(path, "");
-}
-
-/**
- * @brief Tests the logic guard preventing simultaneous photo and video.
- */
-TEST_F(CameraPI_Test, CannotCapturePhotoWhileRecording) {
-    // Manually trigger recording state (if you have a setter or via startRecording)
-    // For this test, we simulate the state if recording was active
-    // This assumes you've uncommented your recording logic
-
-    /* camera->startRecording();
-    std::string path = camera->capturePhoto();
-    EXPECT_TRUE(path.empty());
-    */
 }
 
 /**
