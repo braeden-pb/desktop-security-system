@@ -78,7 +78,9 @@ SecuritySystem::SecuritySystem(bool headless) {
 /**
  * @brief Destroys the SecuritySystem and releases all owned subsystems.
  */
-SecuritySystem::~SecuritySystem() {}
+SecuritySystem::~SecuritySystem() {
+    turnOffAlarm();
+}
 
 /**
  * @brief Returns a non-owning pointer to the UI subsystem.

@@ -22,4 +22,5 @@ Device::Device(){}
  * Declared to ensure derived class destructors are called correctly
  * when deleting through a base class pointer.
  */
-Device::~Device(){}
+Device::~Device() {
+}

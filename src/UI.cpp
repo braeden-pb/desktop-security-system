@@ -151,4 +151,5 @@ void UI::update(const std::string& event) {
 /**
  * @brief Destroys the UI frame.
  */
-UI::~UI() {}
+UI::~UI() {
+}

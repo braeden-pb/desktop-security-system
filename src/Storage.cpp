@@ -40,7 +40,8 @@ Storage::Storage(std::string storagePath) : storagePath(storagePath) {
     }
 }
 
-Storage::~Storage() {}
+Storage::~Storage() {
+}
 
 /**
 * @brief Saves an image to the local storage directory.

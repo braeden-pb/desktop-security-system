@@ -33,6 +33,7 @@ Camera::Camera(Network &network,Storage &storage,Config &config) : recording(fal
  */
 Camera::~Camera() {
     if (streaming) stopStream();
+    if (recording) stopRecording();
 }
 
 /**

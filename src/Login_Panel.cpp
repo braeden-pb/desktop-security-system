@@ -99,5 +99,4 @@ bool Login_Panel::isLoginSuccessful() const {
  * @brief Destructor for Login_Panel.
  */
 Login_Panel::~Login_Panel() {
-
 }

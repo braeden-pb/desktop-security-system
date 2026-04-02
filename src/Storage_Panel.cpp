@@ -318,4 +318,5 @@ void Storage_Panel::openVideo(const wxString& path) {
 /**
  * @brief Destructor for Storage_Panel.
  */
-Storage_Panel::~Storage_Panel() {}
+Storage_Panel::~Storage_Panel() {
+}

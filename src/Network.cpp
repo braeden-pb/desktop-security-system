@@ -29,6 +29,7 @@ Network::~Network() {
     if (connected_) {
         disconnect();
     }
+    this->stopReceiving();
 }
 
 /**

@@ -185,4 +185,6 @@ void Motion_Sensor_PI::deactivate() {
  * the destructor is defined to maintain clear ownership semantics.
  */
 
-Motion_Sensor_PI::~Motion_Sensor_PI(){}
+Motion_Sensor_PI::~Motion_Sensor_PI() {
+    deactivate();
+}
