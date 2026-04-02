@@ -76,17 +76,7 @@ int main() {
         switch (cmd) {
             case Command::StartStream: camera.startStreaming(); break;
             case Command::StopStream:  camera.stopStreaming();  break;
-            case Command::TakePhoto: {
-                int numPhotos = payload.empty() ? 1 : payload[0];
-            std::thread([&camera, numPhotos]() {
-                for (int i = 0; i < numPhotos+1; i++) {
-                    camera.capturePhoto();
-                    if (i < numPhotos-1) {
-                        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-                    }
-                }
-            }).detach();  break;
-            }
+            case Command::TakePhoto: camera.capturePhoto(); break;
             case Command::disableAlarm: alarm.disableAlarm();    break;
             case Command::soundAlarm:   alarm.soundAlarm(std::string(payload.begin(), payload.end())); break;
             default: break;
