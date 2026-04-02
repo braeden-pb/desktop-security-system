@@ -287,9 +287,13 @@ void Camera_PI::startRecording() {
     oss << "/home/pi/media/video_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".mjpeg";
     devicePath = oss.str();
 
-    videoFile = std::make_unique<std::ofstream>(devicePath, std::ios::binary);
-    if (!videoFile->is_open()) {
-        std::cerr << "Failed to open output file: " << devicePath << std::endl;
+    videoWriter.open(devicePath,
+                      cv::VideoWriter::fourcc('M','J','P','G'),
+                      15,                    // fps — match your actual frame rate
+                      cv::Size(1280, 720));
+
+    if (!videoWriter.isOpened()) {
+        std::cerr << "Failed to open VideoWriter: " << devicePath << std::endl;
         return;
     }
 
@@ -314,8 +318,12 @@ void Camera_PI::stopRecording() {
     }
 
     recording = false;
-    camera->stop();
-    camera->requestCompleted.disconnect();
+
+    {
+        std::lock_guard<std::mutex> lock(videoMutex);
+        videoWriter.release();  // flushes and closes the file properly
+    }
+
 
     if (videoFile) {
         videoFile->flush();
@@ -382,24 +390,22 @@ void Camera_PI::startStreaming() {
             camera->queueRequest(req);
 
 
-            std::thread([this, rawFrame = std::move(rawFrame)]() {
-                cv::Mat yuyv(720, 1280, CV_8UC2,
-                             const_cast<uint8_t*>(rawFrame.data()));
-                cv::Mat bgr;
-                cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
+            std::thread([this, fd = std::move(frameData)]() mutable {
+    cv::Mat yuyv(720, 1280, CV_8UC2, fd.data());
+    cv::Mat bgr;
+    cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
 
-                std::vector<uint8_t> encoded;
-                std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 60}; // lower quality = faster
-                cv::imencode(".jpg", bgr, encoded, params);
+    std::vector<uint8_t> encoded;
+    std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 60};
+    cv::imencode(".jpg", bgr, encoded, params);
+    server.sendFrame(encoded.data(), encoded.size());
 
-                server.sendFrame(encoded.data(), encoded.size());
-
-                if (recording && videoFile && videoFile->is_open()) {
-                    std::lock_guard<std::mutex> lock(videoMutex);
-                    videoFile->write(reinterpret_cast<const char*>(encoded.data()),
-                                     encoded.size());
-                }
-            }).detach();
+    // Write BGR frame to video — VideoWriter handles encoding
+    if (recording && videoWriter.isOpened()) {
+        std::lock_guard<std::mutex> lock(videoMutex);
+        videoWriter.write(bgr);  // ← just pass the mat directly
+    }
+}).detach();
 
             return; // already requeued above
         }

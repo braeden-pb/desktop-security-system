@@ -48,7 +48,7 @@ private:
     std::unique_ptr<CameraConfiguration> config;
     FrameBufferAllocator               *allocator = nullptr;
     std::vector<std::unique_ptr<Request>> requests;
-    std::unique_ptr<std::ofstream> videoFile;
+    cv::VideoWriter videoWriter;
     std::mutex videoMutex;
 
     NetworkServer &server;
