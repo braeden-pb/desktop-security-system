@@ -6,7 +6,6 @@
  */
 
 #include "Motion_Sensor_PI.h"
-#include "NetworkServer.h"
 
 /**
  * @brief Singleton instance pointer used by the static ISR handler to access the live object.
