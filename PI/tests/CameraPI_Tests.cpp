@@ -76,14 +76,6 @@ TEST_F(CameraPI_Test, CannotCapturePhotoWhileRecording) {
 /**
  * @brief Verifies that stopping a non-existent stream doesn't crash.
  */
-TEST_F(CameraPITest, StopStreamingWhenNotStreamingIsSafe) {
+TEST_F(CameraPI_Test, StopStreamingWhenNotStreamingIsSafe) {
     EXPECT_NO_THROW(camera->stopStreaming());
-}
-
-/**
- * @brief Verifies MJPEG configuration constraints.
- */
-TEST_F(CameraPITest, InitializationSetsCorrectResolution) {
-    // This test would check if the internal StreamConfiguration
-    // matches 1280x720. This requires exposing the config for testing.
 }
