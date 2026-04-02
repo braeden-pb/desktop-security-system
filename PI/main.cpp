@@ -81,7 +81,7 @@ int main() {
             std::thread([&camera, numPhotos]() {
                 for (int i = 0; i < numPhotos+1; i++) {
                     camera.capturePhoto();
-                    if (i < numPhotos) {
+                    if (i < numPhotos-1) {
                         std::this_thread::sleep_for(std::chrono::milliseconds(500));
                     }
                 }
