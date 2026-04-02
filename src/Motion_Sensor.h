@@ -12,6 +12,11 @@
 #include "Observer.h"
 #include <vector>
 
+#include "Config.h"
+
+class config;
+class Camera;
+
 class Motion_Sensor : public Device {
     private:
         int sensitivity;
@@ -23,9 +28,11 @@ class Motion_Sensor : public Device {
         int motionCount;
         int rearmDelayMs;
         std::chrono::steady_clock::time_point rearmUntil;
+        Config &config;
+        Camera &camera;
 
     public:
-        Motion_Sensor();
+        Motion_Sensor(Config &config,Camera &camera);
         ~Motion_Sensor();
         void addObserver(Observer* o);
         void notifyObservers(const std::string& event);

@@ -3,12 +3,21 @@
 //
 
 #include <gtest/gtest.h>
+
+#include "../Camera.h"
 #include "../Motion_Sensor.h"
+
+class Config;
+class camera;
+class Network;
 
 class MotionSensorTests : public ::testing::Test {
 protected:
     void SetUp() override {
-        sensor = new Motion_Sensor();
+        network = new Network();
+        config = new Config(*network);
+        camera = new Camera(*network);
+        sensor = new Motion_Sensor(*config, *camera);
     }
 
     void TearDown() override {
@@ -16,6 +25,9 @@ protected:
     }
 
     Motion_Sensor* sensor;
+    Camera* camera;
+    Config* config;
+    Network* network;
 };
 
 TEST_F(MotionSensorTests, InitiallyNotConnected) {

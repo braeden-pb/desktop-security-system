@@ -51,6 +51,7 @@ menuBar(new wxMenuBar())
     Centre();
 
     Bind(wxEVT_MENU, &UI::onExit, this, wxID_EXIT);
+    Bind(wxEVT_MENU,&UI::onAbout,this,wxID_ABOUT);
 
 
 
@@ -88,6 +89,20 @@ void UI::onExit(wxCommandEvent& event) {
 }
 
 /**
+ * @brief Handles the About menu item event.
+ *
+ * Initiates a wxWidgets message box to give info on the software.
+ *
+ * @param event The wxCommandEvent triggered by the about menu item.
+ */
+void UI::onAbout(wxCommandEvent &event) {
+
+    wxMessageBox("This is the SecuritySystem UI. From here you can view your camera feed, sound the alarm, view pictures taken and modify config settings.",
+                 "About Securtiy System", wxOK | wxICON_INFORMATION);
+
+}
+
+/**
  * @brief Returns the currently active page ID.
  *
  * Queries the wxSimplebook for its current selection and casts
@@ -117,7 +132,11 @@ void UI::showAlert(const std::string& message)
     }
 
 void UI::update(const std::string& event) {
-    //showAlert(event);
+    if (event == "Alarm triggered") {
+        wxTheApp->CallAfter([this]() {
+            homePage->onAlarmTriggered();
+        });
+    }
 }
 
 UI::~UI() {}

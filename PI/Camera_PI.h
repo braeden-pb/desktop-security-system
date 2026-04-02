@@ -15,7 +15,6 @@
 #include <opencv2/opencv.hpp>
 #include <sstream>
 #include <iomanip>
-#
 #include <ctime>
 #include <thread>
 #include <fstream>
@@ -35,9 +34,9 @@ public:
     ~Camera_PI();
 
     std::string capturePhoto();
-    void startRecording();
-    void stopRecording();
-    bool isRecording();
+    // void startRecording();
+    // void stopRecording();
+    // bool isRecording() const;
     void startStreaming();
     void stopStreaming();
     std::atomic<bool> streaming{false};
@@ -49,7 +48,6 @@ private:
     std::unique_ptr<CameraConfiguration> config;
     FrameBufferAllocator               *allocator = nullptr;
     std::vector<std::unique_ptr<Request>> requests;
-    std::unique_ptr<std::ofstream> videoFile;
 
     NetworkServer &server;
 

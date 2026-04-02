@@ -16,21 +16,16 @@ class Config {
 public:
     Config(Network &network);
     ~Config();
-    int getSensitivity();
-    void setSensitivity(int sensitivity);
     bool getCaptureMode();
     void setCaptureMode(bool mode);
     int getSeconds();
     void setSeconds(int seconds);
     int getPhotosPer();
     void setPhotosPer(int photos);
+    int getPhotoFreq();
+    void setPhotoFreq(int photoFreq);
     string getPassword();
     void setPassword(string newPassword);
-    vector<string> getAuthorizedFaces();
-    bool removeAuthorizedFace(string face);
-    bool addAuthorizedFace(string face);
-    bool isAuthorizedFace(string face);
-    void resetAuthorizedFaces();
     bool writeToFile();
     string getSound();
     void setSound(string alarmSound);
@@ -40,35 +35,21 @@ public:
     void setAlarmOnMotion(bool alarmOnMotion);
 
 private:
-    /**
-     * Stores the sensitivity level for the motion detection as an integer value.
-     */
-    int motionSensitivity;
 
-    /**
-     * Stores the capture mode for the security system as a boolean value.
-     */
+
     bool captureMode;
 
-    /**
-     * Stores the number of seconds per clip recorded as an integer value.
-     */
+
     int clipSeconds;
 
-    /**
-     * Stores the number of photos taken per camera trigger as an integer value.
-     */
+
     int photosPer;
 
-    /**
-     * Stores the password for the system.
-     */
+    int photoFreq;
+
     string password;
 
-    /**
-     * Stores a list of strings representing all the authorized faces for the security system.
-     */
-    vector<string> authorizedFaces;
+
 
     bool readFromFile();
 

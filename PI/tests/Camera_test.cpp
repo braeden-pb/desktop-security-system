@@ -5,8 +5,8 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include "Camera_PI.h"
-#include "NetworkServer.h"
+#include "../Camera_PI.h"
+#include "../NetworkServer.h"
 
 int main() {
     // Start network server first

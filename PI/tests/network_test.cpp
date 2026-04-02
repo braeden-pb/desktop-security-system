@@ -1,7 +1,7 @@
 //
 // Created by evan on 2026-03-26.
 //
-#include "NetworkServer.h"
+#include "../NetworkServer.h"
 #include <iostream>
 #include <thread>
 #include <chrono>

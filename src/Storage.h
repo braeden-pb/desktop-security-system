@@ -23,6 +23,8 @@ public:
     std::string saveImage(Image image, std::string sourcePath = "");    bool deleteImage(int imageID);
     std::list<Image> listImage();
     bool hasTimeStamp(int imageID) const;
+    void addImage(const std::string& path, const std::string& timestamp);
+
 
     bool isVideoFile(std::string path);
 };

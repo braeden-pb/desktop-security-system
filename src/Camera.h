@@ -15,12 +15,14 @@
 #include "Network.h"
 #include "../Shared/Protocol.h"
 #include <iostream>
+#include "Image.h"
 
 class Network;
+class Storage;
 
 class Camera {
 public:
-    Camera(Network &network);
+    Camera(Network &network,Storage &storage);
     ~Camera();
 
     std::string capturePhoto();
@@ -41,6 +43,7 @@ private:
     void handlePacket(Command cmd, const std::vector<uint8_t> &payload);
 
     Network &network;
+    Storage &storage;
     bool recording;
     std::atomic<bool> streaming{false};
     std::string lastPhoto;

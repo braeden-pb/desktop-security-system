@@ -1,13 +1,31 @@
-//
-// Created by evan on 2026-03-08.
-//
+/**
+* @file Config_Panel.cpp
+ * @brief Implementation of the Config_Panel class, a wxPanel providing the
+ *        settings UI for the security system.
+ * @author evan
+ * @date 2026-03-08
+ */
 
 #include "Config_Panel.h"
-
 #include "Config.h"
 #include "SecuritySystem.h"
 #include "UI.h"
-
+/**
+ * @brief Constructs the Config_Panel and builds the full settings UI layout.
+ *
+ * Creates and arranges the following UI elements inside a wxScrolledWindow:
+ * - A "< Home" button in the top-left corner.
+ * - A bold "Settings" title centered below the top bar.
+ * - Four navigation buttons leading to sub-dialogs for password, photo/video,
+ *   motion, and alarm settings.
+ * - A "Save" button anchored to the bottom center of the panel.
+ *
+ * All buttons are bound to their respective event handlers at construction time.
+ *
+ * @param parent     The parent wxWindow that owns this panel.
+ * @param system     Pointer to the SecuritySystem, used to read and write config values.
+ * @param mainFrame  Pointer to the main UI frame, used for page navigation.
+ */
 Config_Panel::Config_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame) :
 wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame), changesMade(false),changesSaved(false) {
     wxBoxSizer *outerSizer = new wxBoxSizer(wxVERTICAL);
@@ -34,8 +52,8 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame), changesMade(false)
     wxBoxSizer *windowSizer2 = new wxBoxSizer(wxVERTICAL);
 
     PasswordBtn    = new wxButton( innerScrollWindow, wxID_ANY, _("Change Password"),           wxDefaultPosition, wxSize(-1, 50), 0 );
-    ClipLenBtn     = new wxButton( innerScrollWindow, wxID_ANY, _("Photo/Image Settings"),      wxDefaultPosition, wxSize(-1, 50), 0 );
-    motionBtn      = new wxButton( innerScrollWindow, wxID_ANY, _("Adjust Motion Sensitivity"), wxDefaultPosition, wxSize(-1, 50), 0 );
+    ClipLenBtn     = new wxButton( innerScrollWindow, wxID_ANY, _("Photo Settings"),      wxDefaultPosition, wxSize(-1, 50), 0 );
+    motionBtn      = new wxButton( innerScrollWindow, wxID_ANY, _("Motion Settings"), wxDefaultPosition, wxSize(-1, 50), 0 );
     alarmConfigBtn = new wxButton( innerScrollWindow, wxID_ANY, _("Alarm Settings"),            wxDefaultPosition, wxSize(-1, 50), 0 );
 
     windowSizer2->Add( PasswordBtn,    0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 10 );
@@ -70,7 +88,18 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame), changesMade(false)
     this->SetSizer( outerSizer );
     this->Layout();
 }
-
+/**
+ * @brief Opens a modal dialog for changing the system password.
+ *
+ * Presents three masked text fields: current password, new password, and
+ * confirmation. Validates that all fields are filled, the current password
+ * matches the stored one, the new and confirmation passwords match, and the
+ * new password differs from the current one. Inline error messages are shown
+ * for each failure case without closing the dialog. On success, updates the
+ * password in Config and sets changesMade to true.
+ *
+ * @param event The wxCommandEvent from the "Change Password" button click.
+ */
 void Config_Panel::onChangePass(wxCommandEvent &event) {
     wxDialog dlg(this, wxID_ANY, "Change Password", wxDefaultPosition, wxSize(350, 280));
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -136,7 +165,17 @@ void Config_Panel::onChangePass(wxCommandEvent &event) {
         changesMade = true;
     }
 }
-
+/**
+ * @brief Opens a modal dialog for configuring alarm settings.
+ *
+ * Presents a sound selection dropdown (Alarm, Beep, Siren, Buzzer) pre-selected
+ * to match the current Config sound value, and a spin control for maximum alarm
+ * duration (5–300 seconds) pre-populated from Config. The selected sound is
+ * stored in lowercase via wxString::Lower() to match the Config naming convention.
+ * On confirmation, updates the sound and duration in Config and sets changesMade to true.
+ *
+ * @param event The wxCommandEvent from the "Alarm Settings" button click.
+ */
 void Config_Panel::onChangeAlarm(wxCommandEvent &event) {
     wxDialog dlg(this, wxID_ANY, "Alarm Settings", wxDefaultPosition, wxDefaultSize);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -200,49 +239,59 @@ void Config_Panel::onChangeAlarm(wxCommandEvent &event) {
         changesMade=true;
     }
 }
-
+/**
+ * @brief Opens a modal dialog for configuring photo and video capture settings.
+ *
+ * Presents three controls pre-populated from the current Config:
+ * - A checkbox to enable or disable photo/video capture entirely.
+ * - A slider (5–120 seconds) for recording clip length, with a live second label.
+ * - A spin control (1–20) for the photo capture frequency per trigger event.
+ *
+ * The photos spin control is automatically disabled when the capture checkbox
+ * is unchecked. On confirmation, updates captureMode, clipSeconds, and photosPer
+ * in Config and sets changesMade to true.
+ *
+ * @param event The wxCommandEvent from the "Photo/Image Settings" button click.
+ */
 void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
-    wxDialog dlg(this, wxID_ANY, "Photo/Video Settings", wxDefaultPosition, wxDefaultSize);
+    wxDialog dlg(this, wxID_ANY, "Photo Settings", wxDefaultPosition, wxDefaultSize);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
     wxStaticBoxSizer* enableSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Capture Mode");
-    wxCheckBox* enablePhoto = new wxCheckBox(&dlg, wxID_ANY, "Enable Photo/Video Capture");
+    wxCheckBox* enablePhoto = new wxCheckBox(&dlg, wxID_ANY, "Enable Photo Capture");
     enablePhoto->SetValue(true);
     enableSizer->Add(enablePhoto,0, wxALL, 8);
     mainSizer->Add(enableSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
 
-    wxStaticBoxSizer* clipSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Recording Clip Length");
-    wxBoxSizer* clipRowSizer = new wxBoxSizer(wxHORIZONTAL);
-    wxSlider* clipSlider = new wxSlider(&dlg, wxID_ANY, 30, 5, 120,
-                                         wxDefaultPosition, wxDefaultSize,
-                                         wxSL_HORIZONTAL);
-    wxStaticText* clipLabel = new wxStaticText(&dlg, wxID_ANY, "30s",
-                                                wxDefaultPosition, wxSize(40, -1));
-    clipRowSizer->Add(clipSlider, 1, wxEXPAND|wxRIGHT, 5);
-    clipRowSizer->Add(clipLabel,  0, wxALIGN_CENTER_VERTICAL);
-    clipSizer->Add(clipRowSizer, 0, wxEXPAND|wxALL, 8);
-    clipSizer->Add(new wxStaticText(&dlg, wxID_ANY, "Min: 5s     Max: 120s"),
-                   0, wxLEFT|wxBOTTOM, 8);
-    mainSizer->Add(clipSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
 
-    clipSlider->Bind(wxEVT_SLIDER, [&](wxCommandEvent&) {
-        clipLabel->SetLabel(wxString::Format("%ds", clipSlider->GetValue()));
-    });
-
-    wxStaticBoxSizer* photoSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Photos Per Capture");
+    wxStaticBoxSizer* photoSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Photos capture frequency");
     wxBoxSizer* photoRowSizer = new wxBoxSizer(wxHORIZONTAL);
     wxSpinCtrl* photoSpin = new wxSpinCtrl(&dlg, wxID_ANY, "3",
                                             wxDefaultPosition, wxDefaultSize,
                                             wxSP_ARROW_KEYS, 1, 20, 3);
-    wxStaticText* photoHint = new wxStaticText(&dlg, wxID_ANY, "photos per trigger event");
+    wxStaticText* photoHint = new wxStaticText(&dlg, wxID_ANY, "Photo capture per x events");
     photoRowSizer->Add(photoSpin, 0, wxRIGHT, 10);
     photoRowSizer->Add(photoHint, 0, wxALIGN_CENTER_VERTICAL);
     photoSizer->Add(photoRowSizer, 0, wxALL, 8);
     mainSizer->Add(photoSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
 
+
+    wxStaticBoxSizer* photoCaptureSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Photos per capture");
+    wxBoxSizer* photoCaptureRowSizer = new wxBoxSizer(wxHORIZONTAL);
+    wxSpinCtrl* photoCaptureSpin = new wxSpinCtrl(&dlg, wxID_ANY, "3",
+                                            wxDefaultPosition, wxDefaultSize,
+                                            wxSP_ARROW_KEYS, 1, 20, 3);
+    wxStaticText* photoCaptureHint = new wxStaticText(&dlg, wxID_ANY, "Number of photos captured per event");
+    photoCaptureRowSizer->Add(photoCaptureSpin, 0, wxRIGHT, 10);
+    photoCaptureRowSizer->Add(photoCaptureHint, 0, wxALIGN_CENTER_VERTICAL);
+    photoCaptureSizer->Add(photoCaptureRowSizer, 0, wxALL, 8);
+    mainSizer->Add(photoCaptureSizer, 0, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 15);
+
     enablePhoto->Bind(wxEVT_CHECKBOX, [&](wxCommandEvent&) {
         photoSpin->Enable(enablePhoto->GetValue());
         photoHint->Enable(enablePhoto->GetValue());
+        photoCaptureSpin->Enable(enablePhoto->GetValue());
+        photoCaptureHint->Enable(enablePhoto->GetValue());
     });
 
     wxStaticText* errorText = new wxStaticText(&dlg, wxID_ANY, "");
@@ -257,12 +306,12 @@ void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
     mainSizer->Add(btnSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 15);
 
     enablePhoto->SetValue(m_system->getConfig()->getCaptureMode());
-    clipSlider->SetValue(m_system->getConfig()->getSeconds());
-    clipLabel->SetLabel(wxString::Format("%ds", m_system->getConfig()->getSeconds()));
-    photoSpin->SetValue(m_system->getConfig()->getPhotosPer());
+    photoSpin->SetValue(m_system->getConfig()->getPhotoFreq());
+    photoCaptureSpin->SetValue(m_system->getConfig()->getPhotosPer());
 
     // Reflect initial enabled state
     photoSpin->Enable(m_system->getConfig()->getCaptureMode());
+    photoCaptureSpin->Enable(m_system->getConfig()->getCaptureMode());
 
     dlg.SetSizer(mainSizer);
     mainSizer->Fit(&dlg);
@@ -276,49 +325,40 @@ void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
 
     if (dlg.ShowModal() == wxID_OK) {
         bool photoEnabled     = enablePhoto->GetValue();
-        int  clipLength       = clipSlider->GetValue();
         int  photosPerCapture = photoSpin->GetValue();
+        int photoFreqPerCapture = photoCaptureSpin->GetValue();
 
         m_system->getConfig()->setCaptureMode(photoEnabled);
-        m_system->getConfig()->setSeconds(clipLength);
-        m_system->getConfig()->setPhotosPer(photosPerCapture);
+        m_system->getConfig()->setPhotoFreq(photosPerCapture);
+        m_system->getConfig()->setPhotosPer(photoFreqPerCapture);
 
-        wxMessageBox("Photo/Video settings saved!", "Success", wxOK|wxICON_INFORMATION);
+        wxMessageBox("Photo settings saved!", "Success", wxOK|wxICON_INFORMATION);
         changesMade = true;
     }
 }
 
+/**
+ * @brief Opens a modal dialog for configuring motion detection settings.
+ *
+ * Presents a single checkbox pre-populated from the current Config value,
+ * allowing the user to enable or disable automatic alarm triggering when
+ * motion is detected. On confirmation, updates alarmOnMotion in Config
+ * and sets changesMade to true.
+ *
+ * @note This is a simplified version of the motion dialog — unlike the earlier
+ *       version, it does not include a sensitivity slider.
+ *
+ * @param event The wxCommandEvent from the "Motion Settings" button click.
+ */
 void Config_Panel::onChangeMotion(wxCommandEvent &event) {
-    wxDialog dlg(this, wxID_ANY, "Motion Sensitivity", wxDefaultPosition, wxDefaultSize);
+    wxDialog dlg(this, wxID_ANY, "Motion Settings", wxDefaultPosition, wxDefaultSize);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
     wxCheckBox* alarmOnMotion = new wxCheckBox(&dlg, wxID_ANY, "Sound alarm on motion detection");
     alarmOnMotion->SetValue(m_system->getConfig()->getAlarmOnMotion());
     mainSizer->Add(alarmOnMotion, 0, wxLEFT|wxRIGHT|wxTOP, 15);
 
-    wxStaticBoxSizer* sensitivitySizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Motion Sensitivity");
 
-    wxBoxSizer* sliderRowSizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticText* lowLabel  = new wxStaticText(&dlg, wxID_ANY, "Low");
-    wxSlider*     slider    = new wxSlider(&dlg, wxID_ANY, 50, 0, 100,
-                                           wxDefaultPosition, wxSize(200, -1),
-                                           wxSL_HORIZONTAL);
-    wxStaticText* highLabel = new wxStaticText(&dlg, wxID_ANY, "High");
-    sliderRowSizer->Add(lowLabel,  0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 8);
-    sliderRowSizer->Add(slider,    1, wxEXPAND);
-    sliderRowSizer->Add(highLabel, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 8);
-    sensitivitySizer->Add(sliderRowSizer, 0, wxEXPAND|wxALL, 8);
-
-    wxStaticText* valueLabel = new wxStaticText(&dlg, wxID_ANY, "50%",
-                                                 wxDefaultPosition, wxDefaultSize,
-                                                 wxALIGN_CENTER_HORIZONTAL);
-    sensitivitySizer->Add(valueLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM, 8);
-
-    mainSizer->Add(sensitivitySizer, 0, wxEXPAND|wxALL, 15);
-
-    slider->Bind(wxEVT_SLIDER, [&](wxCommandEvent&) {
-        valueLabel->SetLabel(wxString::Format("%d%%", slider->GetValue()));
-    });
 
     wxBoxSizer* btnSizer = new wxBoxSizer(wxHORIZONTAL);
     wxButton* okBtn     = new wxButton(&dlg, wxID_ANY, "Save");
@@ -333,21 +373,27 @@ void Config_Panel::onChangeMotion(wxCommandEvent &event) {
     dlg.Layout();
     dlg.Centre(wxBOTH);
 
-    slider->SetValue(m_system->getConfig()->getSensitivity());
-    valueLabel->SetLabel(wxString::Format("%d%%", m_system->getConfig()->getSensitivity()));
+
 
     okBtn->Bind(wxEVT_BUTTON, [&](wxCommandEvent&) {
         dlg.EndModal(wxID_OK);
     });
 
     if (dlg.ShowModal() == wxID_OK) {
-        m_system->getConfig()->setSensitivity(slider->GetValue());
         m_system->getConfig()->setAlarmOnMotion(alarmOnMotion->GetValue());
-        wxMessageBox("Motion sensitivity saved!", "Success", wxOK|wxICON_INFORMATION);
+        wxMessageBox("Motion settings saved!", "Success", wxOK|wxICON_INFORMATION);
         changesMade = true;
     }
 }
-
+/**
+ * @brief Persists all pending configuration changes to disk.
+ *
+ * Calls Config::writeToFile() and displays a success or failure message box
+ * depending on the result. Sets changesSaved to true on success, which
+ * suppresses the unsaved-changes warning in onHomeButton().
+ *
+ * @param event The wxCommandEvent from the "Save" button click.
+ */
 void Config_Panel::onSave(wxCommandEvent &event) {
     if (!m_system->getConfig()->writeToFile()) {
         wxMessageBox("Settings Failed to Save", "Failure", wxOK|wxICON_INFORMATION);
@@ -357,7 +403,15 @@ void Config_Panel::onSave(wxCommandEvent &event) {
         changesSaved = true;
     }
 }
-
+/**
+ * @brief Navigates back to the Home page, prompting the user if there are unsaved changes.
+ *
+ * If changesMade is true and changesSaved is false, displays a wxYES/wxNO warning
+ * dialog before allowing navigation. If the user confirms or no unsaved changes
+ * exist, switches the UI to the Home page via UI::SwitchPage().
+ *
+ * @param event The wxCommandEvent from the "< Home" button click.
+ */
 void Config_Panel::onHomeButton(wxCommandEvent &event) {
     if (changesMade && !changesSaved) {
         int confirm = wxMessageBox("Are you Sure you want to leave without saving your changes", "Warning", wxYES|wxNO|wxICON_WARNING);
@@ -371,4 +425,9 @@ void Config_Panel::onHomeButton(wxCommandEvent &event) {
 }
 
 
+/**
+ * @brief Destructs the Config_Panel object.
+ *
+ * wxWidgets manages child widget lifetimes automatically; no explicit cleanup required.
+ */
 Config_Panel::~Config_Panel() {}

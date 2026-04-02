@@ -33,6 +33,9 @@ public:
 
     ~Home_Panel();
 
+    void onAlarmTriggered();
+    void onAlarmDisabled();
+
 private:
     bool m_isArmed = false;        ///< Tracks whether the system is currently armed
     SecuritySystem* m_system;      ///< Pointer to the security system
@@ -48,6 +51,7 @@ private:
 
     void updateFrame(wxTimerEvent& event);
     void loadPlaceholder();
+
 
     /**
     * @brief Handles the Config button press, navigating to the Config panel.
