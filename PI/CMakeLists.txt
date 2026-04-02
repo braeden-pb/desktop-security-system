@@ -109,6 +109,7 @@ target_link_libraries(CameraPI_Tests PRIVATE
         GTest::gtest_main
         camera
         camera-base
+        GTest::gmock
         ${OpenCV_LIBS}
 )
 
@@ -118,6 +119,7 @@ add_executable(MotionSensorPI_Tests
         ../Shared/Protocol.h
 )
 target_include_directories(MotionSensorPI_Tests PRIVATE
+        ${CMAKE_SOURCE_DIR}
         ${CMAKE_SOURCE_DIR}/../Shared
 )
 target_link_libraries(MotionSensorPI_Tests PRIVATE
