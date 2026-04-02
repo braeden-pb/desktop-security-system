@@ -325,17 +325,7 @@ void Camera_PI::stopRecording() {
     }
 
 
-    if (videoFile) {
-        videoFile->flush();
-        videoFile->close();
-        videoFile.reset();
-    }
 
-    std::ifstream file(devicePath, std::ios::binary);
-    std::vector<uint8_t> data(
-        (std::istreambuf_iterator<char>(file)),
-         std::istreambuf_iterator<char>()
-    );
 
     // Send the recorded file to PC
     PacketHeader header{};
