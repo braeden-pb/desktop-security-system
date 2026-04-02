@@ -117,6 +117,7 @@ target_link_libraries(CameraPI_Tests PRIVATE
 add_executable(MotionSensorPI_Tests
         tests/MotionSensorPI_Tests.cpp
         Motion_Sensor_PI.cpp
+        NetworkServer.cpp
         ../Shared/Protocol.h
 )
 target_include_directories(MotionSensorPI_Tests PRIVATE
