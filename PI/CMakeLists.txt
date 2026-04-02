@@ -94,7 +94,7 @@ target_include_directories(AlarmPI_Tests PRIVATE
 )
 target_link_libraries(AlarmPI_Tests PRIVATE GTest::gtest_main)
 
-add_executable(CameraPITests
+add_executable(CameraPI_Tests
         tests/CameraPI_Tests.cpp
         Camera_PI.cpp
         NetworkServer.cpp
