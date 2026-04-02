@@ -327,12 +327,17 @@ void Camera_PI::stopRecording() {
 
 
 
-    // Send the recorded file to PC
+    std::ifstream file(devicePath, std::ios::binary);
+    std::vector<uint8_t> data(
+        (std::istreambuf_iterator<char>(file)),
+         std::istreambuf_iterator<char>()
+    );
     PacketHeader header{};
-    header.system  = System::Camera;
-    header.command = Command::StartClip;
+    header.system      = System::Camera;
+    header.command     = Command::StartClip;
     header.payloadSize = static_cast<uint32_t>(data.size());
     server.sendPacket(header, data);
+
     lastCaptureAt = std::chrono::system_clock::now();
     std::cout << "Recording stopped. File saved to: " << devicePath << std::endl;
 
