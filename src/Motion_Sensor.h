@@ -11,8 +11,9 @@
 #include <ctime>
 #include "Observer.h"
 #include <vector>
-
 #include "Config.h"
+#include <iostream>
+#include "Camera.h"
 
 class config;
 class Camera;

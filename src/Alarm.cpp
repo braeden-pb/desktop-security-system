@@ -6,13 +6,6 @@
  * @date 2026-03-21
  */
 #include "Alarm.h"
-#include <iostream>
-#include <SFML/Audio.hpp>
-#include <thread>
-#include <chrono>
-#include <filesystem>
-
-#include "Config.h"
 
 /**
  * @brief Constructs an Alarm object with default settings.

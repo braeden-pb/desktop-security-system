@@ -8,6 +8,8 @@
 #include <string>
 #include "Event.h"
 #include "Observer.h"
+#include "SecuritySystem.h"
+#include <iostream>
 
 class SecuritySystem;
 

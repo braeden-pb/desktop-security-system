@@ -23,5 +23,3 @@ Image::Image(std::string filePath, std::string timeStamp)
 
 //! Default destructor.
 Image::~Image() {}
-
-

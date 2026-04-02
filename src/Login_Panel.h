@@ -6,6 +6,8 @@
 #define GROUP55_LOGIN_PANEL_H
 
 #include <wx/wx.h>
+#include "SecuritySystem.h"
+#include "UI.h"
 
 class UI;
 class SecuritySystem;

@@ -7,10 +7,6 @@
  */
 
 #include "Home_Panel.h"
-#include "Camera.h"
-#include "SecuritySystem.h"
-#include "Storage_Panel.h"
-#include "UI.h"
 
 
 /**

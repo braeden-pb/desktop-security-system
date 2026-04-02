@@ -6,14 +6,6 @@
  * @date 2026-03-21
  */
 #include "Camera.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <chrono>
-#include <filesystem>
-
-#include "Config.h"
-#include "Storage.h"
 /**
  * @brief Constructs a Camera object and registers a packet handler for camera events.
  *

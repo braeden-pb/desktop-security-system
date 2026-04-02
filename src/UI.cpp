@@ -3,10 +3,6 @@
 //
 
 #include "UI.h"
-#include "Home_Panel.h"
-#include "Login_Panel.h"
-#include "Storage_Panel.h"
-
 
 /**
  * @brief Constructs the main UI frame.

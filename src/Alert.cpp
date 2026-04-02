@@ -7,8 +7,6 @@
  */
 
 #include "Alert.h"
-#include "SecuritySystem.h"
-#include <iostream>
 
 /**
  * @brief Constructs an Alert object bound to a specific event and security system.

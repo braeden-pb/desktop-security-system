@@ -14,6 +14,7 @@
 #include "Config_Panel.h"
 #include "Observer.h"
 
+
 class SecuritySystem;
 
 class UI : public wxFrame,public Observer{

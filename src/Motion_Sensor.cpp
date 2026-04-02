@@ -7,8 +7,6 @@
  */
 
 #include "Motion_Sensor.h"
-#include <iostream>
-#include "Camera.h"
 /**
  * @brief Constructs a Motion_Sensor with default sensitivity and inactive state.
  *

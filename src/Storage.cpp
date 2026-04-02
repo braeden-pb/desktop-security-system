@@ -6,8 +6,6 @@
  */
 
 #include "Storage.h"
-#include <iostream>
-#include <chrono>
 
 /**
  * @brief Construct a new Storage object.

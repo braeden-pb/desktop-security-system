@@ -16,6 +16,12 @@
 #include "../Shared/Protocol.h"
 #include <iostream>
 #include "Image.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
+#include "Config.h"
+#include "Storage.h"
 
 
 class Network;

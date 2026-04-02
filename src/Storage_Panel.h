@@ -8,6 +8,8 @@
 #include <wx/wx.h>
 #include <list>
 #include <wx/mediactrl.h>
+#include "SecuritySystem.h"
+#include "UI.h"
 
 class UI;
 class SecuritySystem;

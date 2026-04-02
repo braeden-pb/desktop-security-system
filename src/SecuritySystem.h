@@ -11,6 +11,14 @@
 #include "Observer.h"
 #include "../Shared/Protocol.h"
 #include "Alert.h"
+#include "Alarm.h"
+#include "Config.h"
+#include "UI.h"
+#include "Storage.h"
+#include "Alert.h"
+#include "Camera.h"
+#include "Motion_Sensor.h"
+#include "Network.h"
 
 
 enum class Status : int {

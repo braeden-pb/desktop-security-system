@@ -8,6 +8,9 @@
 #include <wx/wx.h>
 #include <wx/filepicker.h>
 #include <wx/spinctrl.h>
+#include "Config.h"
+#include "SecuritySystem.h"
+#include "UI.h"
 class UI;
 class SecuritySystem;
 
