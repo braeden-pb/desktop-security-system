@@ -175,7 +175,7 @@ std::string Camera_PI::capturePhoto() {
     std::time_t t = std::chrono::system_clock::to_time_t(now);
     std::tm tm = *std::localtime(&t);
     std::ostringstream oss;
-    oss << "/tmp/photo_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".jpg";
+    oss << "/home/pi/media/photo_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".jpg";
     std::string outPath = oss.str();
 
 
@@ -284,7 +284,7 @@ void Camera_PI::startRecording() {
     std::time_t t = std::chrono::system_clock::to_time_t(now);
     std::tm tm = *std::localtime(&t);
     std::ostringstream oss;
-    oss << "/tmp/video_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".mjpeg";
+    oss << "/home/pi/media/video_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".mjpeg";
     devicePath = oss.str();
 
     videoFile = std::make_unique<std::ofstream>(devicePath, std::ios::binary);
