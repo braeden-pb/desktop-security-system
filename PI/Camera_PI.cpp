@@ -319,10 +319,11 @@ void Camera_PI::stopRecording() {
 
     recording = false;
 
-    {
-        std::lock_guard<std::mutex> lock(videoMutex);
-        videoWriter.release();  // flushes and closes the file properly
-    }
+    std::thread([this]() {
+        {
+            std::lock_guard<std::mutex> lock(videoMutex);
+            videoWriter.release();
+        }
 
 
 
@@ -340,7 +341,7 @@ void Camera_PI::stopRecording() {
 
     lastCaptureAt = std::chrono::system_clock::now();
     std::cout << "Recording stopped. File saved to: " << devicePath << std::endl;
-
+    }).detach();
 }
 
 /**
@@ -395,10 +396,12 @@ void Camera_PI::startStreaming() {
             cv::imencode(".jpg", bgr, encoded, params);
             server.sendFrame(encoded.data(), encoded.size());
 
-            if (recording && videoWriter.isOpened()) {
-                std::lock_guard<std::mutex> lock(videoMutex);
-                videoWriter.write(bgr);
-            }
+                if (recording && videoWriter.isOpened()) {
+             std::unique_lock<std::mutex> lock(videoMutex, std::try_to_lock);
+             if (lock.owns_lock() && videoWriter.isOpened()) {
+                 videoWriter.write(bgr);
+             }
+         }
         }).detach();
 
             return; // already requeued above
