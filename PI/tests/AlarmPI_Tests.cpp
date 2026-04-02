@@ -9,9 +9,7 @@
 class AlarmPI_Tests : public ::testing::Test {
 protected:
     void SetUp() override {
-        server = new NetworkServer(0);
-        server->start();
-        // port 0 = any available port
+        server = new NetworkServer(0);// port 0 = any available port
         alarm = new Alarm_PI(*server);
     }
 
@@ -36,6 +34,7 @@ TEST_F(AlarmPI_Tests, InitiallyNotPlaying) {
  */
 TEST_F(AlarmPI_Tests, SoundAlarmSetsPlayingTrue) {
     alarm->soundAlarm("alarm");
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     EXPECT_TRUE(alarm->isPlaying());
     alarm->disableAlarm();
 }
@@ -62,7 +61,9 @@ TEST_F(AlarmPI_Tests, DisableWhenNotPlayingIsNoOp) {
 TEST_F(AlarmPI_Tests, SoundAlarmTwiceDoesNotCrash) {
     EXPECT_NO_THROW({
         alarm->soundAlarm("alarm");
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         alarm->soundAlarm("alarm");
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     });
     alarm->disableAlarm();
 }
