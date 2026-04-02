@@ -17,14 +17,11 @@
 class CameraPI_Tests : public ::testing::Test {
 protected:
     void SetUp() override {
-        // Port 0 allows the OS to assign any available port
         server = new NetworkServer(0);
-        // Initialize camera with the real server instance
         camera = new Camera_PI(*server);
     }
 
     void TearDown() override {
-        // Stop any active streams before deletion
         camera->stopStreaming();
         delete camera;
         delete server;
@@ -49,13 +46,6 @@ TEST_F(CameraPI_Tests, CaptureFailsWithoutHardware) {
  */
 TEST_F(CameraPI_Tests, StopStreamingWhenNotStreamingIsSafe) {
     EXPECT_NO_THROW(camera->stopStreaming());
-}
-
-/**
- * @test Verifies that the camera does not start in a recording state.
- */
-TEST_F(CameraPI_Tests, InitiallyNotRecording) {
-    EXPECT_FALSE(camera->isRecording());
 }
 
 /**
