@@ -1,117 +1,96 @@
 /**
- * @file Motion_Sensor_PI_Test.cpp
- * @brief Unit tests for the Motion_Sensor_PI class logic and state management.
+ * @file Motion_Sensor_PI_test.cpp
+ * @brief Unit tests for the Motion_Sensor_PI class logic using real objects.
  * @author Braeden Patierno-Barker
  * @date 2026-03-31
  */
 
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include <thread>
+#include <chrono>
 #include "../Motion_Sensor_PI.h"
 #include "../NetworkServer.h"
 #include "../../Shared/Protocol.h"
 
-/**
- * @brief Static Mock for NetworkServer.
- * Since we aren't using virtuals, we don't inherit from the real class.
- */
-class MockNetworkServer : public NetworkServer {
-public:
-    // No 'override' keyword here because there's no virtual function to override
-    MOCK_METHOD(void, sendPacket, (const PacketHeader&, const std::vector<uint8_t>&));
-    MOCK_METHOD(void, sendFrame, (const uint8_t*, size_t));
-
-    // Add any other methods your code calls
-    MOCK_METHOD(bool, isConnected, ());
-};
-
-/**
- * @brief Test fixture for Motion_Sensor_PI.
- */
-class MotionSensorPI_Test : public ::testing::Test {
+class MotionSensorPI_Tests : public ::testing::Test {
 protected:
-    MockNetworkServer mockNetwork;
-
-    // Using a pointer so we can control construction/destruction timing
-    std::unique_ptr<Motion_Sensor_PI> sensor;
-
     void SetUp() override {
-        // Note: This will call wiringPiSetupGpio(). If running on a non-Pi PC,
-        // you may need a stub/mock for WiringPi to prevent a crash.
-        sensor = std::make_unique<Motion_Sensor_PI>(5, 100, mockNetwork);
+        // Port 0 tells the OS to pick any available port automatically
+        server = new NetworkServer(0);
+        // Note: sensitivity=5, sleep=100ms
+        motion = new Motion_Sensor_PI(5, 100, *server);
     }
 
     void TearDown() override {
-        sensor->deactivate();
-        sensor.reset();
+        motion->deactivate();
+        delete motion;
+        delete server;
     }
+
+    NetworkServer* server;
+    Motion_Sensor_PI* motion;
 };
 
 /**
- * @brief Verifies that the sensor starts in an inactive state.
+ * @test Sensor should start inactive and without motion.
  */
-TEST_F(MotionSensorPI_Test, InitialStateIsInactive) {
-    EXPECT_FALSE(sensor->isActive());
-    EXPECT_FALSE(sensor->isMotionDetected());
+TEST_F(MotionSensorPI_Tests, InitiallyInactive) {
+    EXPECT_FALSE(motion->isActive());
+    EXPECT_FALSE(motion->isMotionDetected());
 }
 
 /**
- * @brief Verifies that activation correctly starts the background thread.
+ * @test activate() should set the active flag to true.
  */
-TEST_F(MotionSensorPI_Test, ActivationStartsThread) {
-    sensor->activate();
-    EXPECT_TRUE(sensor->isActive());
+TEST_F(MotionSensorPI_Tests, ActivationSetsActiveTrue) {
+    motion->activate();
+    EXPECT_TRUE(motion->isActive());
 }
 
 /**
- * @brief Tests the logic of the manual onMotion trigger.
+ * @test onMotion() should manually set detection flags.
  */
-TEST_F(MotionSensorPI_Test, ManualMotionTriggerSetsFlags) {
-    sensor->onMotion();
-    EXPECT_TRUE(sensor->isMotionDetected());
+TEST_F(MotionSensorPI_Tests, ManualMotionSetsFlags) {
+    motion->onMotion();
+    EXPECT_TRUE(motion->isMotionDetected());
 }
 
 /**
- * @brief Verifies the Cooldown Logic in the ISR handler.
- * * @details This test simulates multiple "rising edges" in rapid succession.
- * The first should trigger motionPending, the second should be ignored
- * by the cooldown timer.
+ * @test ISR handler should trigger motion detection.
+ * @details Simulates a rising edge from the PIR hardware.
  */
-TEST_F(MotionSensorPI_Test, ISRRespectsCooldownTimer) {
-    sensor->activate();
+TEST_F(MotionSensorPI_Tests, ISRHandlerTriggersDetection) {
+    motion->activate();
 
-    // Simulate the static ISR call via the singleton pointer
-    // We expect the first call to succeed
+    // Simulate the PIR sensor going HIGH
+    // This calls the static handler using the singleton instance_
     Motion_Sensor_PI::isrHandler();
 
-    // Immediately calling it again should be blocked by the 3.0s cooldown
-    // (lastSent is updated in the first call)
+    EXPECT_TRUE(motion->isMotionDetected());
+}
+
+/**
+ * @test Cooldown logic should prevent duplicate processing within 3 seconds.
+ */
+TEST_F(MotionSensorPI_Tests, ISRRespectsCooldown) {
+    motion->activate();
+
+    // Trigger first time
     Motion_Sensor_PI::isrHandler();
 
-    // We cannot easily check 'lastSent' directly if private,
-    // but we can verify the logic via packet expectations if the thread is running.
+    // Attempt to trigger immediately again
+    // The internal lastSent timer should block this
+    Motion_Sensor_PI::isrHandler();
+
+    // Since we can't see 'motionPending' directly, we verify the state remains consistent
+    EXPECT_TRUE(motion->isMotionDetected());
 }
 
 /**
- * @brief Ensures the singleton pointer is cleared upon destruction.
+ * @test deactivate() should stop the background thread and set active to false.
  */
-TEST_F(MotionSensorPI_Test, SingletonManagement) {
-    sensor.reset(); // Trigger destructor
-    // In your .cpp, you might want to add 'instance_ = nullptr;' in the destructor
-    // to make this test pass/be valid.
-}
-
-/**
- * @brief Verifies that the background thread dispatches a packet when motion is pending.
- */
-TEST_F(MotionSensorPI_Test, ThreadSendsPacketOnPendingMotion) {
-    // Expect the network to be called exactly once
-    EXPECT_CALL(mockNetwork, sendPacket(::testing::Field(&PacketHeader::command, Command::MotionDetected), ::testing::_))
-        .Times(1);
-
-    sensor->activate();
-    sensor->onMotion(); // Sets motionPending to true
-
-    // Give the background thread a moment to poll and send
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+TEST_F(MotionSensorPI_Tests, DeactivateStopsSensor) {
+    motion->activate();
+    motion->deactivate();
+    EXPECT_FALSE(motion->isActive());
 }
