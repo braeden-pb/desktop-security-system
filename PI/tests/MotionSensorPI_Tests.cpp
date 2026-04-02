@@ -11,13 +11,14 @@
 #include "NetworkServer.h"
 #include "../../Shared/Protocol.h"
 
+class NetworkServer;
 /**
  * @brief Mock for NetworkServer to verify that motion packets are dispatched.
  */
 class MockNetworkServer : public NetworkServer {
 public:
     MockNetworkServer() : NetworkServer(5000) {}
-    MOCK_METHOD(void, sendPacket, (const PacketHeader& header, const std::vector<uint8_t>& payload), (override));
+    MOCK_METHOD(void, sendPacket, (const PacketHeader& header, const std::vector<uint8_t>& payload), override));
 };
 
 /**
