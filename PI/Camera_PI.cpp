@@ -289,7 +289,7 @@ void Camera_PI::startRecording() {
 
     videoWriter.open(devicePath,
                       cv::VideoWriter::fourcc('M','J','P','G'),
-                      15,                    // fps — match your actual frame rate
+                      15,
                       cv::Size(1280, 720));
 
     if (!videoWriter.isOpened()) {
@@ -325,6 +325,16 @@ void Camera_PI::stopRecording() {
             videoWriter.release();
         }
 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    // Verify file exists and has content
+    std::ifstream checkFile(devicePath, std::ios::binary | std::ios::ate);
+    if (!checkFile.is_open() || checkFile.tellg() == 0) {
+        std::cerr << "Video file empty or missing: " << devicePath << std::endl;
+        return;
+    }
+    checkFile.close();
+
 
 
 
@@ -342,6 +352,9 @@ void Camera_PI::stopRecording() {
     lastCaptureAt = std::chrono::system_clock::now();
     std::cout << "Recording stopped. File saved to: " << devicePath << std::endl;
     }).detach();
+
+    stopStreaming();
+    startStreaming();
 }
 
 /**
