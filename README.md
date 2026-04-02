@@ -1,168 +1,215 @@
 # Group 55 — Security System
 
-A C++ desktop security system application built with wxWidgets and SFML. The system supports arming/disarming via PIN, motion-triggered alarms with audio playback, image and video capture storage, and an alert notification system.
+A C++ desktop security system application built with wxWidgets. The system connects to a Raspberry Pi over a local network to provide live camera streaming, motion detection, alarm triggering with audio playback, photo capture, and a storage browser.
 
 ---
 
 ## Table of Contents
-
 - [Prerequisites](#prerequisites)
-- [Building](#building)
+- [Building the Desktop App](#building-the-desktop-app)
+- [Building the Pi Server](#building-the-pi-server)
 - [Running the Application](#running-the-application)
 - [Running Tests](#running-tests)
 - [Project Structure](#project-structure)
+
 ---
+
 ## Prerequisites
 
-The following must be installed on your system **before** building. SFML and GoogleTest are fetched automatically by CMake.
+The following must be installed before building. GoogleTest is fetched automatically by CMake.
 
-### All Platforms
+### Desktop App (Linux)
+
 - [CMake](https://cmake.org/) 3.14 or newer
-- [Git](https://git-scm.com/) (required for CMake FetchContent)
-- A C++20 compatible compiler:
-    - **Linux/macOS:** GCC 10+ or Clang 12+
-    - **Windows:** MSVC 2019+ or MinGW-w64
+- [Git](https://git-scm.com/)
+- A C++20 compatible compiler (GCC 10+ or Clang 12+)
+- OpenCV 4.x
+- wxWidgets 3.2+
 
-### wxWidgets
-
-wxWidgets must be installed manually as it is not auto-fetched.
-
-**Linux (Ubuntu/Debian):**
+**Install dependencies (Ubuntu/Debian):**
 ```bash
 sudo apt update
-sudo apt install libwxgtk3.2-dev
+sudo apt install libwxgtk3.2-dev libopencv-dev cmake build-essential git
 ```
 
-**macOS:**
+### Raspberry Pi Server
+
+- Raspberry Pi 4 or 5 running Raspberry Pi OS
+- libcamera
+- OpenCV 4.x
+- WiringPi
+- A compatible camera module (CSI)
+- A MAX98357 I2S amplifier connected via GPIO pins
+
+**Install dependencies on Pi:**
 ```bash
-brew install wxwidgets
+sudo apt update
+sudo apt install libcamera-dev libopencv-dev cmake build-essential
+# WiringPi
+wget https://github.com/WiringPi/WiringPi/releases/download/3.2/wiringpi_3.2_arm64.deb
+sudo dpkg -i wiringpi_3.2_arm64.deb
 ```
-
-**Windows:**
-Download the installer from [wxwidgets.org](https://wxwidgets.org/downloads/) and follow the setup guide. Make sure to include the `core`, `base`, and `media` components.
 
 ---
 
-## Building
-
+## Building the Desktop App
 ```bash
 # Clone the repository
 git clone https://gitlab.sci.uwo.ca/courses/2026/01/COMPSCI3307/group55.git
-cd group55
+cd group55/src
 
 # Create a build directory
-mkdir build && cd build
+mkdir cmake-build-debug && cd cmake-build-debug
 
-# Configure
+# Configure and build
 cmake ..
-
-### Build the Application Only
 cmake --build . --target SecuritySystem
 ```
 
-> On first run, CMake will automatically download **SFML 3.0.0** and **GoogleTest 1.14.0** via FetchContent. This requires an internet connection.
+> On first run, CMake will automatically download **GoogleTest 1.14.0** via FetchContent. This requires an internet connection.
 
 ### Build Type (Optional)
-
 ```bash
-# Debug build
 cmake .. -DCMAKE_BUILD_TYPE=Debug
-
-# Release build
 cmake .. -DCMAKE_BUILD_TYPE=Release
+```
+
+---
+
+## Building the Pi Server
+```bash
+cd group55/PI
+
+mkdir build && cd build
+cmake ..
+cmake --build . --target pi-camera
 ```
 
 ---
 
 ## Running the Application
 
-From the `build/` directory:
-
+### Desktop
+Make sure the Raspberry Pi server is running first, then from the build directory:
 ```bash
 ./SecuritySystem
 ```
 
-**Default PIN:** `1234`
+**Default PIN:** `123`
+
+### Raspberry Pi Server
+```bash
+./pi-camera
+```
+The Pi will print its IP address and begin listening on port `5000`. Make sure the desktop app is configured with the correct Pi IP address.
 
 ---
 
-## Building & Running Tests
+## Running Tests
 
 Each test suite is a separate CMake target. Build and run them individually as needed.
-
-### Alarm Tests
 ```bash
-cmake --build . --target AlarmTest
-./AlarmTest
-```
+# Alarm Tests
+cmake --build . --target AlarmTest && ./AlarmTest
 
-### Storage Tests
-```bash
-cmake --build . --target StorageTests
-./StorageTests
-```
+# Storage Tests
+cmake --build . --target StorageTests && ./StorageTests
 
-### Image Tests
-```bash
-cmake --build . --target ImageTests
-./ImageTests
-```
+# Image Tests
+cmake --build . --target ImageTests && ./ImageTests
 
-### File Tests
-```bash
-cmake --build . --target FileTests
-./FileTests
-```
+# File Tests
+cmake --build . --target FileTests && ./FileTests
 
-### System Tests
-```bash
-cmake --build . --target SystemTests
-./SystemTests
-```
+# System Tests
+cmake --build . --target SystemTests && ./SystemTests
 
-### Video Tests
-```bash
-cmake --build . --target VideoTests
-./VideoTests
-```
-
-### Build and Run All Tests at Once
-
-```bash
-cmake --build . --target StorageTests AlarmTest ImageTests FileTests SystemTests VideoTests
+# Build and run all tests at once
+cmake --build . --target StorageTests AlarmTest ImageTests FileTests SystemTests
 ctest --output-on-failure
 ```
-
 
 ---
 
 ## Project Structure
-
 ```
 group55/
-├── main.cpp
-├── CMakeLists.txt
+├── src/                            # Desktop application
+│   ├── main.cpp
+│   ├── CMakeLists.txt
+│   ├── saved_data/                 # Stored photos
+│   │
+│   ├── SecuritySystem.cpp / .h    # Central coordinator
+│   ├── Alarm.cpp / .h             # Alarm — sends audio command to Pi
+│   ├── Alert.cpp / .h             # Alert and notification logic
+│   ├── Camera.cpp / .h            # Camera — receives frames and photos from Pi
+│   ├── Network.cpp / .h           # TCP client — connects to Pi
+│   ├── Config.cpp / .h            # Persisted user configuration
+│   ├── Storage.cpp / .h           # Photo storage and management
+│   ├── Image.cpp / .h             # Image model
+│   │
+│   ├── UI.cpp / .h                # wxWidgets UI shell and observer
+│   ├── Home_Panel.cpp / .h        # Main dashboard — stream, arm/disarm
+│   ├── Login_Panel.cpp / .h       # PIN entry panel
+│   ├── Config_Panel.cpp / .h      # Settings panel
+│   ├── Storage_Panel.cpp / .h     # Photo browser panel
+│   │
+│   └── tests/
+│       ├── AlarmTest.cpp
+│       ├── StorageTests.cpp
+│       ├── ImageTests.cpp
+│       ├── FileTests.cpp
+│       └── SystemTest.cpp
 │
-├── SecuritySystem.cpp / .h     # Central coordinator
-├── Alarm.cpp / .h              # SFML audio alarm
-├── Alert.cpp / .h              # Alert and notification logic
-├── UI.cpp / .h                 # wxWidgets UI shell
-├── Home_Panel.cpp / .h         # Main dashboard panel
-├── Login_Panel.cpp / .h        # PIN entry panel
-├── Config_Panel.cpp / .h       # System configuration panel
-├── Storage_Panel.cpp / .h      # Image/video browser panel
-├── Storage.cpp / .h            # Persistence layer
-├── Image.cpp / .h              # Image model
-├── Video.cpp / .h              # Video model
-├── File.cpp / .h               # Base file model
-│
-└── tests/
-    ├── AlarmTest.cpp
-    ├── StorageTests.cpp
-    ├── ImageTests.cpp
-    ├── FileTests.cpp
-    ├── SystemTest.cpp
-    └── VideoTests.cpp
+└── PI/                             # Raspberry Pi server
+    ├── main.cpp
+    ├── CMakeLists.txt
+    ├── sounds/                     # WAV alarm sound files
+    │
+    ├── Camera_PI.cpp / .h         # libcamera capture, streaming, photos
+    ├── Motion_Sensor_PI.cpp / .h  # PIR sensor via WiringPi ISR
+    ├── Alarm_PI.cpp / .h          # Audio playback via SoX
+    └── NetworkServer.cpp / .h     # TCP server — accepts desktop connection
 ```
 
 ---
+
+## Hardware Setup
+
+### Required Components
+- Raspberry Pi 4 or 5
+- Raspberry Pi Camera Module (CSI connector)
+- PIR Motion Sensor connected to GPIO pin 17
+- MAX98357 I2S Amplifier connected via I2S pins:
+  - DIN → GPIO 21
+  - BCLK → GPIO 18
+  - LRCLK → GPIO 19
+- Speaker connected to MAX98357 output
+
+### Network
+The desktop and Pi must be on the same network. The Pi's IP address is printed on startup. Update the IP in `SecuritySystem.cpp` if your network changes.
+    ├── CMakeLists.txt
+    ├── sounds/                     # WAV alarm sound files
+    │
+    ├── Camera_PI.cpp / .h         # libcamera capture, streaming, photos
+    ├── Motion_Sensor_PI.cpp / .h  # PIR sensor via WiringPi ISR
+    ├── Alarm_PI.cpp / .h          # Audio playback via SoX
+    └── NetworkServer.cpp / .h     # TCP server — accepts desktop connection
+```
+
+---
+
+## Hardware Setup
+
+### Required Components
+- Raspberry Pi 4 or 5
+- Raspberry Pi Camera Module (CSI connector)
+- PIR Motion Sensor connected to GPIO pin 17
+- MAX98357 I2S Amplifier connected via I2S pins:
+  - DIN → GPIO 21
+  - BCLK → GPIO 18
+  - LRCLK → GPIO 19
+- Speaker connected to MAX98357 output
+
+### Network
+The desktop and Pi must be on the same network. The Pi's IP address is printed on startup. Update the IP in `SecuritySystem.cpp` if your network changes.
