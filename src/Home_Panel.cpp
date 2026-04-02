@@ -1,23 +1,32 @@
-//
-// Created by evan on 2026-02-24.
-//
+/**
+* @file Home_Panel.cpp
+ * @brief Implementation of the Home_Panel class, the main dashboard UI panel
+ *        for the security system.
+ * @author evan
+ * @date 2026-02-24
+ */
 
 #include "Home_Panel.h"
-
 #include "Camera.h"
 #include "SecuritySystem.h"
 #include "Storage_Panel.h"
 #include "UI.h"
 
+
 /**
  * @brief Constructs the Home_Panel UI component.
  *
- * Initializes all UI elements including the camera placeholder, status label,
- * arm/disarm toggle, alarm button, and navigation buttons (Storage, Settings, Logout).
+ * Builds the full dashboard layout:
+ * - Left column: status label, live camera view, ARM/DISARM toggle, and Sound Alarm toggle.
+ * - Right column: Storage, Settings, and Logout navigation buttons.
  *
- * @param parent The parent wxWindow.
- * @param system Pointer to the SecuritySystem for system control.
- * @param mainFrame Pointer to the main UI frame for panel navigation.
+ * After layout, starts the camera stream and registers a frame callback that stores
+ * incoming JPEG frames under frameMutex. A wxTimer polling at ~30fps (33ms) is started
+ * to pick up pending frames on the UI thread and render them to the camera view.
+ *
+ * @param parent     The parent wxWindow that owns this panel.
+ * @param system     Pointer to the SecuritySystem for stream, arm, and alarm control.
+ * @param mainFrame  Pointer to the main UI frame for panel navigation.
  */
 Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     : wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame) {
@@ -109,12 +118,23 @@ Home_Panel::Home_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame)
     // });
     
 }
-
+/**
+ * @brief Updates the alarm button to reflect an externally triggered alarm state.
+ *
+ * Called by the SecuritySystem or observer mechanism when the alarm is activated
+ * outside of a direct button press (e.g. triggered by motion detection).
+ * Sets the toggle button to the pressed state and updates its label.
+ */
 void Home_Panel::onAlarmTriggered() {
     alarmBtn->SetValue(true);
     alarmBtn->SetLabel("Turn Off Alarm");
 }
-
+/**
+ * @brief Updates the alarm button to reflect an externally disabled alarm state.
+ *
+ * Called when the alarm is deactivated outside of a direct button press.
+ * Resets the toggle button to the unpressed state and restores its label.
+ */
 void Home_Panel::onAlarmDisabled() {
     alarmBtn->SetValue(false);
     alarmBtn->SetLabel("Sound Alarm");
@@ -163,6 +183,13 @@ void Home_Panel::onLogout(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Login_ID);
 }
 
+/**
+ * @brief Renders a dark placeholder bitmap into the camera view.
+ *
+ * Creates a 400x300 dark grey bitmap with centered white "No Camera Connected"
+ * text and assigns it to the cameraView widget. Called at construction and
+ * whenever the camera connection is lost.
+ */
 void Home_Panel::loadPlaceholder() {
     wxMemoryDC dc;
     wxBitmap bmp(400, 300);
@@ -188,7 +215,22 @@ void Home_Panel::loadPlaceholder() {
     cameraView->SetMinSize(wxSize(400, 400));
 
 }
-
+/**
+ * @brief Timer callback that decodes and renders the latest pending camera frame.
+ *
+ * Called every 33ms on the UI thread by the wxTimer. Handles two connection states:
+ * - **Disconnected**: Polls SecuritySystem::isConnected(). If a connection is newly
+ *   established, restarts the stream and re-registers the frame callback.
+ * - **Connected**: If the connection has been lost since the last tick, clears the
+ *   camera view by calling loadPlaceholder(). Otherwise, moves the latest pending
+ *   JPEG frame out from under frameMutex, decodes it with OpenCV, converts BGR to
+ *   RGB, resizes to the current display area, and renders it to the cameraView bitmap.
+ *
+ * @param event The wxTimerEvent fired by frameTimer (unused directly).
+ *
+ * @note Frame decoding and color conversion happen on the UI thread. For high
+ *       resolutions or slow hardware this could affect UI responsiveness.
+ */
 void Home_Panel::updateFrame(wxTimerEvent&) {
 
     if (!cameraConnected) {
@@ -249,7 +291,13 @@ void Home_Panel::onStorageButtonPressed(wxCommandEvent &event) {
     m_ui->getStoragePanel()->loadImages();
     m_ui->getStoragePanel()->Layout();
 }
-
+/**
+ * @brief Handles the Settings button press.
+ *
+ * Navigates to the Config panel via UI::SwitchPage().
+ *
+ * @param event The wxCommandEvent triggered by the settings button.
+ */
 void Home_Panel::onConfigButtonPressed(wxCommandEvent &event) {
     m_ui->SwitchPage(UI::Setting_ID);
 }
@@ -257,8 +305,12 @@ void Home_Panel::onConfigButtonPressed(wxCommandEvent &event) {
 /**
  * @brief Handles the Sound Alarm toggle button press.
  *
- * @param event The wxCommandEvent triggered by the alarm button.
- * @todo Implement alarm sound functionality.
+ * If the alarm is not currently active, calls onAlarmTriggered() to update
+ * the button state and triggers the alarm via SecuritySystem::soundAlarm().
+ * If the alarm is already active, resets the button and calls
+ * SecuritySystem::turnOffAlarm() to deactivate it.
+ *
+ * @param event The wxCommandEvent triggered by the alarm toggle button.
  */
 void Home_Panel::onAlarmButtonPressed(wxCommandEvent &event) {
     if (!m_system->getIsAlarmActive()) {
@@ -273,11 +325,12 @@ void Home_Panel::onAlarmButtonPressed(wxCommandEvent &event) {
 }
 
 /**
- * @brief Destructor for Home_Panel.
+ * @brief Destructs the Home_Panel, stopping the frame timer and camera stream.
+ *
+ * Stops the wxTimer to prevent callbacks firing on a partially destroyed object,
+ * then sends a StopStream command to the Pi via Camera::stopStream().
  */
 Home_Panel::~Home_Panel() {
     frameTimer->Stop();
     m_system->getCamera()->stopStream();
 }
-
-

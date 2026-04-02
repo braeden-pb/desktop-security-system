@@ -1,13 +1,31 @@
-//
-// Created by evan on 2026-03-08.
-//
+/**
+* @file Config_Panel.cpp
+ * @brief Implementation of the Config_Panel class, a wxPanel providing the
+ *        settings UI for the security system.
+ * @author evan
+ * @date 2026-03-08
+ */
 
 #include "Config_Panel.h"
-
 #include "Config.h"
 #include "SecuritySystem.h"
 #include "UI.h"
-
+/**
+ * @brief Constructs the Config_Panel and builds the full settings UI layout.
+ *
+ * Creates and arranges the following UI elements inside a wxScrolledWindow:
+ * - A "< Home" button in the top-left corner.
+ * - A bold "Settings" title centered below the top bar.
+ * - Four navigation buttons leading to sub-dialogs for password, photo/video,
+ *   motion, and alarm settings.
+ * - A "Save" button anchored to the bottom center of the panel.
+ *
+ * All buttons are bound to their respective event handlers at construction time.
+ *
+ * @param parent     The parent wxWindow that owns this panel.
+ * @param system     Pointer to the SecuritySystem, used to read and write config values.
+ * @param mainFrame  Pointer to the main UI frame, used for page navigation.
+ */
 Config_Panel::Config_Panel(wxWindow *parent, SecuritySystem *system, UI *mainFrame) :
 wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame), changesMade(false),changesSaved(false) {
     wxBoxSizer *outerSizer = new wxBoxSizer(wxVERTICAL);
@@ -70,7 +88,18 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame), changesMade(false)
     this->SetSizer( outerSizer );
     this->Layout();
 }
-
+/**
+ * @brief Opens a modal dialog for changing the system password.
+ *
+ * Presents three masked text fields: current password, new password, and
+ * confirmation. Validates that all fields are filled, the current password
+ * matches the stored one, the new and confirmation passwords match, and the
+ * new password differs from the current one. Inline error messages are shown
+ * for each failure case without closing the dialog. On success, updates the
+ * password in Config and sets changesMade to true.
+ *
+ * @param event The wxCommandEvent from the "Change Password" button click.
+ */
 void Config_Panel::onChangePass(wxCommandEvent &event) {
     wxDialog dlg(this, wxID_ANY, "Change Password", wxDefaultPosition, wxSize(350, 280));
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -136,7 +165,17 @@ void Config_Panel::onChangePass(wxCommandEvent &event) {
         changesMade = true;
     }
 }
-
+/**
+ * @brief Opens a modal dialog for configuring alarm settings.
+ *
+ * Presents a sound selection dropdown (Alarm, Beep, Siren, Buzzer) pre-selected
+ * to match the current Config sound value, and a spin control for maximum alarm
+ * duration (5–300 seconds) pre-populated from Config. The selected sound is
+ * stored in lowercase via wxString::Lower() to match the Config naming convention.
+ * On confirmation, updates the sound and duration in Config and sets changesMade to true.
+ *
+ * @param event The wxCommandEvent from the "Alarm Settings" button click.
+ */
 void Config_Panel::onChangeAlarm(wxCommandEvent &event) {
     wxDialog dlg(this, wxID_ANY, "Alarm Settings", wxDefaultPosition, wxDefaultSize);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -200,7 +239,20 @@ void Config_Panel::onChangeAlarm(wxCommandEvent &event) {
         changesMade=true;
     }
 }
-
+/**
+ * @brief Opens a modal dialog for configuring photo and video capture settings.
+ *
+ * Presents three controls pre-populated from the current Config:
+ * - A checkbox to enable or disable photo/video capture entirely.
+ * - A slider (5–120 seconds) for recording clip length, with a live second label.
+ * - A spin control (1–20) for the photo capture frequency per trigger event.
+ *
+ * The photos spin control is automatically disabled when the capture checkbox
+ * is unchecked. On confirmation, updates captureMode, clipSeconds, and photosPer
+ * in Config and sets changesMade to true.
+ *
+ * @param event The wxCommandEvent from the "Photo/Image Settings" button click.
+ */
 void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
     wxDialog dlg(this, wxID_ANY, "Photo Settings", wxDefaultPosition, wxDefaultSize);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -285,6 +337,19 @@ void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
     }
 }
 
+/**
+ * @brief Opens a modal dialog for configuring motion detection settings.
+ *
+ * Presents a single checkbox pre-populated from the current Config value,
+ * allowing the user to enable or disable automatic alarm triggering when
+ * motion is detected. On confirmation, updates alarmOnMotion in Config
+ * and sets changesMade to true.
+ *
+ * @note This is a simplified version of the motion dialog — unlike the earlier
+ *       version, it does not include a sensitivity slider.
+ *
+ * @param event The wxCommandEvent from the "Motion Settings" button click.
+ */
 void Config_Panel::onChangeMotion(wxCommandEvent &event) {
     wxDialog dlg(this, wxID_ANY, "Motion Settings", wxDefaultPosition, wxDefaultSize);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -320,7 +385,15 @@ void Config_Panel::onChangeMotion(wxCommandEvent &event) {
         changesMade = true;
     }
 }
-
+/**
+ * @brief Persists all pending configuration changes to disk.
+ *
+ * Calls Config::writeToFile() and displays a success or failure message box
+ * depending on the result. Sets changesSaved to true on success, which
+ * suppresses the unsaved-changes warning in onHomeButton().
+ *
+ * @param event The wxCommandEvent from the "Save" button click.
+ */
 void Config_Panel::onSave(wxCommandEvent &event) {
     if (!m_system->getConfig()->writeToFile()) {
         wxMessageBox("Settings Failed to Save", "Failure", wxOK|wxICON_INFORMATION);
@@ -330,7 +403,15 @@ void Config_Panel::onSave(wxCommandEvent &event) {
         changesSaved = true;
     }
 }
-
+/**
+ * @brief Navigates back to the Home page, prompting the user if there are unsaved changes.
+ *
+ * If changesMade is true and changesSaved is false, displays a wxYES/wxNO warning
+ * dialog before allowing navigation. If the user confirms or no unsaved changes
+ * exist, switches the UI to the Home page via UI::SwitchPage().
+ *
+ * @param event The wxCommandEvent from the "< Home" button click.
+ */
 void Config_Panel::onHomeButton(wxCommandEvent &event) {
     if (changesMade && !changesSaved) {
         int confirm = wxMessageBox("Are you Sure you want to leave without saving your changes", "Warning", wxYES|wxNO|wxICON_WARNING);
@@ -344,4 +425,9 @@ void Config_Panel::onHomeButton(wxCommandEvent &event) {
 }
 
 
+/**
+ * @brief Destructs the Config_Panel object.
+ *
+ * wxWidgets manages child widget lifetimes automatically; no explicit cleanup required.
+ */
 Config_Panel::~Config_Panel() {}

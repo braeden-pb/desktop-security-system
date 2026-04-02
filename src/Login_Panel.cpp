@@ -1,6 +1,10 @@
-//
-// Created by evan on 2026-03-06.
-//
+/**
+* @file Login_Panel.cpp
+ * @brief Implementation of the Login_Panel class, the authentication UI panel
+ *        for the security system.
+ * @author evan
+ * @date 2026-03-06
+ */
 
 #include "Login_Panel.h"
 

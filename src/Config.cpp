@@ -1,18 +1,25 @@
-//
-// Created by Mitchell on 2026-03-06.
-//
-
+/**
+* @file Config.cpp
+ * @brief Implementation of the Config class for managing persistent security system
+ *        settings via a JSON configuration file.
+ * @author Mitchell
+ * @date 2026-03-06
+ */
 #include "Config.h"
 using namespace std;
 
+
 /**
-    * @brief Constructs new config object using either saved file values or default values.
-    *
-    * @details
-    * Runs the read from file in order to attempt to read from the config file to initiate the config object
-    * using the saved values. If the file does not exist or cannot be read, sends a message to specify this
-    * and then initiates config object using simple default values.
-    */
+ * @brief Constructs a Config object, loading settings from file or applying defaults.
+ *
+ * Attempts to read configuration values from "config.json" via readFromFile().
+ * If the file does not exist or cannot be parsed, falls back to hardcoded default
+ * values and immediately writes them to disk via writeToFile() so a valid config
+ * file exists for future runs.
+ *
+ * @param network Reference to the Network instance (reserved for future networked
+ *                config synchronization).
+ */
 Config::Config(Network &network) : network(network) {
     if (readFromFile() == false) { //Attempt to read values from file
         //If the file cannot be read from, specify this and then set default values for all variables.
@@ -29,73 +36,56 @@ Config::Config(Network &network) : network(network) {
         writeToFile();
     }
 }
-
 /**
-     * @brief Deconstructor method.
-     */
+ * @brief Destructs the Config object.
+ *
+ * No explicit cleanup required for this version of Config.
+ */
 Config::~Config() {
 }
 
 
 /**
-     * @brief Returns the capture mode.
-     *
-     * @details
-     * Returns the boolean representing the capture mode for the camera.
-     *
-     * @return The capture mode value.
-     */
+ * @brief Returns the current capture mode.
+ *
+ * @return true if photo/video capture is enabled, false otherwise.
+ */
 bool Config::getCaptureMode() {
     return captureMode;
 }
-
 /**
-     * @brief Sets the capture mode.
-     *
-     * @details
-     * Sets the boolean representing the security system's capture mode to a given boolean value.
-     *
-     * @param mode The new value for captureMode.
-     */
+ * @brief Sets the capture mode.
+ *
+ * @param mode The new capture mode value; true to enable, false to disable.
+ */
 void Config::setCaptureMode(bool mode) {
     captureMode = mode;
 }
 
+
 /**
-     * @brief Returns the clip seconds value.
-     *
-     * @details
-     * Returns as an integer the value given for how long the system should record videos in
-     * seconds.
-     *
-     * @return The clip seconds value.
-     */
+ * @brief Returns the clip duration in seconds.
+ *
+ * @return Integer number of seconds the system records per video clip.
+ */
 int Config::getSeconds() {
     return clipSeconds;
 }
-
 /**
-     * @brief Sets the clip seconds value.
-     *
-     * @details
-     * Sets the value representing the number of seconds in a clip to the value given as a
-     * parameter.
-     *
-     * @param seconds The new value for clip seconds.
-     */
+ * @brief Sets the clip duration in seconds.
+ *
+ * @param seconds The new clip duration value in seconds.
+ */
 void Config::setSeconds(int seconds) {
     clipSeconds = seconds;
 }
 
+
 /**
-     * @brief Returns the photos per value.
-     *
-     * @details
-     * Returns as an integer the number of photos that are to be taken each time the camera is
-     * triggered/an event is called.
-     *
-     * @return The photos per value.
-     */
+ * @brief Returns the number of photos taken per triggered event.
+ *
+ * @return Integer number of photos captured each time the camera is triggered.
+ */
 int Config::getPhotosPer() {
     return photosPer;
 }
@@ -109,79 +99,95 @@ void Config::setPhotoFreq(int photoFreq) {
 }
 
 /**
-   * @brief Sets the photos per value.
-   *
-   * @details
-   * Sets the value representing the number of photos taken per event/security system trigger to
-   * the value given by this method's parameter.
-   *
-   * @param photos The new value for photos per.
-   */
+ * @brief Sets the number of photos taken per triggered event.
+ *
+ * @param photos The new photos-per-event value.
+ */
 void Config::setPhotosPer(int photos) {
     photosPer = photos;
 }
 
+
 /**
-     * @brief Returns the password.
-     *
-     * @details
-     * Returns a string representing the password being used for this security system.
-     *
-     * @return A string of the password
-     */
+ * @brief Returns the security system password.
+ *
+ * @return A string containing the current password.
+ */
 string Config::getPassword() {
     return this->password;
 }
 
 /**
-   * @brief Sets the password value
-   *
-   * @details
-   * Sets the value representing the password for the security system to the given string.
-   *
-   * @param password The new password to be used.
-   */
+ * @brief Sets the security system password.
+ *
+ * @param password The new password string to use.
+ */
 void Config::setPassword(string password) {
     this->password = password;
 }
 
+/**
+ * @brief Returns the alarm sound name.
+ *
+ * @return A string containing the configured alarm sound name.
+ */
 string Config::getSound() {
     return alarmSound;
 }
-
+/**
+ * @brief Sets the alarm sound name.
+ *
+ * @param sound The name of the alarm sound to use.
+ */
 void Config::setSound(string sound) {
     alarmSound = sound;
 }
-
+/**
+ * @brief Returns the maximum alarm duration in seconds.
+ *
+ * @return Integer number of seconds the alarm is allowed to sound before
+ *         automatically stopping.
+ */
 int Config::getMaxAlarmDuration() {
     return maxAlarmDuration;
 }
-
+/**
+ * @brief Sets the maximum alarm duration in seconds.
+ *
+ * @param maxAlarmDuration The new maximum alarm duration value in seconds.
+ */
 void Config::setMaxAlarmDuration(int maxAlarmDuration) {
     this->maxAlarmDuration = maxAlarmDuration;
 }
-
+/**
+ * @brief Returns whether the alarm should trigger automatically on motion detection.
+ *
+ * @return true if the alarm fires on motion, false otherwise.
+ */
 bool Config::getAlarmOnMotion() {
     return alarmOnMotion;
 }
-
+/**
+ * @brief Sets whether the alarm should trigger automatically on motion detection.
+ *
+ * @param alarmOnMotion true to enable alarm-on-motion, false to disable.
+ */
 void Config::setAlarmOnMotion(bool alarmOnMotion) {
     this->alarmOnMotion = alarmOnMotion;
 }
 
 
 
+
 /**
-     * @brief Stores current config values to file to be read from later.
-     *
-     * @details
-     * Creates or overwrites a file named "config.json". Creates this file with a json format such
-     * to store all of the instance variables of the config object. Afterwards, closes the file.
-     * If the writing to file is unsuccessful, returns false. Otherwise, returns true upon successful file
-     * writing.
-     *
-     * @return A boolean true if successful, false otherwise.
-     */
+ * @brief Serializes all configuration values to "config.json".
+ *
+ * Creates or overwrites "config.json" in the working directory, writing all
+ * instance variables in JSON format. Any exception during file I/O causes the
+ * method to return false immediately.
+ *
+ * @return true if the file was written successfully, false on any I/O error.
+ */
 bool Config::writeToFile() {
     try {
         ofstream configFile("config.json");
@@ -209,19 +215,21 @@ bool Config::writeToFile() {
     return true; //Return true if no errors
 }
 
+
 /**
-     * @brief Reads value for all config variables from file.
-     *
-     * @details
-     * Checks the "config.json" file that is created by the writeToFile method. Reads out each of
-     * the lines in order to set the instance variables for this config object. Order is the same as in
-     * the writeToFile method, ending with a comprehensive list of all the entries in the
-     * AuthorizedFaces list. If the file does not exist, or the file's format is wrong,
-     * or reading of the file otherwise fails, returns false. Returns true upon successful
-     * file reading. Appropriately parses json format.
-     *
-     * @return A boolean true if the file was read without error, false otherwise.
-     */
+ * @brief Deserializes all configuration values from "config.json".
+ *
+ * Reads "config.json" line by line in the same order as writeToFile(), parsing
+ * each quoted value after the colon separator. Any exception during parsing or
+ * file I/O causes the method to return false immediately.
+ *
+ * @return true if the file was read and all values parsed successfully,
+ *         false if the file is missing, malformed, or any I/O error occurs.
+ *
+ * @note The field order in the file must exactly match the order written by
+ *       writeToFile(); any deviation will cause parsing to fail or produce
+ *       incorrect values.
+ */
 bool Config::readFromFile() {
     try {
         string inText;
