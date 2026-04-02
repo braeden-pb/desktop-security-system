@@ -29,7 +29,6 @@ Camera_PI::Camera_PI(NetworkServer &server) : recording(false),server(server) {
 
 Camera_PI::~Camera_PI() {
     if (streaming) stopStreaming();
-    if (recording) stopRecording();
     delete allocator;
 }
 
@@ -251,111 +250,90 @@ std::string Camera_PI::capturePhoto() {
     return outPath;
 }
 
-/**
- * @brief Begins recording a continuous MJPEG video stream to a file.
- *
- * Stops and disconnects any existing camera pipeline, then reconnects the
- * requestCompleted signal to a recording callback that memory-maps each incoming
- * frame buffer and appends its raw plane data to a timestamped .mjpeg file under /tmp/.
- * Each processed request is immediately requeued to keep the pipeline running.
- *
- * @note Recording and streaming are mutually exclusive; call stopStreaming() before
- *       invoking this method if streaming is currently active.
- * @warning Does nothing and prints a message if recording is already in progress
- *          or if the camera has not been initialized.
- */
-
-void Camera_PI::startRecording() {
-    if (recording) {
-        std::cout << "Already recording." << std::endl;
-        return;
-    }
-    if (!camera) {
-        std::cerr << "Camera not initialised." << std::endl;
-        return;
-    }
-
-    if (!streaming) {
-        std::cerr << "Must be streaming to record." << std::endl;
-        return;
-    }
-
-    auto now = std::chrono::system_clock::now();
-    std::time_t t = std::chrono::system_clock::to_time_t(now);
-    std::tm tm = *std::localtime(&t);
-    std::ostringstream oss;
-    oss << "/home/pi/media/video_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".avi";
-    devicePath = oss.str();
-
-    videoWriter.open(devicePath,
-                      cv::VideoWriter::fourcc('X','V','I','D'),
-                      15,
-                      cv::Size(1280, 720));
-
-    if (!videoWriter.isOpened()) {
-        std::cerr << "Failed to open VideoWriter: " << devicePath << std::endl;
-        return;
-    }
-
-    recording = true;
-    std::cout << "Recording started -> " << devicePath << std::endl;
-}
-
-/**
- * @brief Stops an in-progress video recording and finalizes the output file.
- *
- * Clears the recording flag, halts the camera pipeline, disconnects the
- * requestCompleted signal, and flushes and closes the output video file.
- * Updates lastCaptureAt to the time recording was stopped.
- *
- * @note Does nothing and prints a message if no recording is currently active.
- */
-
-void Camera_PI::stopRecording() {
-    if (!recording) {
-        std::cout << "Not currently recording." << std::endl;
-        return;
-    }
-
-    recording = false;
-
-    std::thread([this]() {
-        {
-            std::lock_guard<std::mutex> lock(videoMutex);
-            videoWriter.release();
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    // Verify file exists and has content
-    std::ifstream checkFile(devicePath, std::ios::binary | std::ios::ate);
-    if (!checkFile.is_open() || checkFile.tellg() == 0) {
-        std::cerr << "Video file empty or missing: " << devicePath << std::endl;
-        return;
-    }
-    checkFile.close();
 
 
+// void Camera_PI::startRecording() {
+//     if (recording) {
+//         std::cout << "Already recording." << std::endl;
+//         return;
+//     }
+//     if (!camera) {
+//         std::cerr << "Camera not initialised." << std::endl;
+//         return;
+//     }
+//
+//     if (!streaming) {
+//         std::cerr << "Must be streaming to record." << std::endl;
+//         return;
+//     }
+//
+//     auto now = std::chrono::system_clock::now();
+//     std::time_t t = std::chrono::system_clock::to_time_t(now);
+//     std::tm tm = *std::localtime(&t);
+//     std::ostringstream oss;
+//     oss << "/home/pi/media/video_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".avi";
+//     devicePath = oss.str();
+//
+//     videoWriter.open(devicePath,
+//                       cv::VideoWriter::fourcc('X','V','I','D'),
+//                       15,
+//                       cv::Size(1280, 720));
+//
+//     if (!videoWriter.isOpened()) {
+//         std::cerr << "Failed to open VideoWriter: " << devicePath << std::endl;
+//         return;
+//     }
+//
+//     recording = true;
+//     std::cout << "Recording started -> " << devicePath << std::endl;
+// }
 
 
-    std::ifstream file(devicePath, std::ios::binary);
-    std::vector<uint8_t> data(
-        (std::istreambuf_iterator<char>(file)),
-         std::istreambuf_iterator<char>()
-    );
-    PacketHeader header{};
-    header.system      = System::Camera;
-    header.command     = Command::StartClip;
-    header.payloadSize = static_cast<uint32_t>(data.size());
-    server.sendPacket(header, data);
-
-    lastCaptureAt = std::chrono::system_clock::now();
-    std::cout << "Recording stopped. File saved to: " << devicePath << std::endl;
-        stopStreaming();
-        startStreaming();
-    }).detach();
-
-}
+// void Camera_PI::stopRecording() {
+//     if (!recording) {
+//         std::cout << "Not currently recording." << std::endl;
+//         return;
+//     }
+//
+//     recording = false;
+//
+//     std::thread([this]() {
+//         {
+//             std::lock_guard<std::mutex> lock(videoMutex);
+//             videoWriter.release();
+//         }
+//
+//         std::this_thread::sleep_for(std::chrono::milliseconds(500));
+//
+//     // Verify file exists and has content
+//     std::ifstream checkFile(devicePath, std::ios::binary | std::ios::ate);
+//     if (!checkFile.is_open() || checkFile.tellg() == 0) {
+//         std::cerr << "Video file empty or missing: " << devicePath << std::endl;
+//         return;
+//     }
+//     checkFile.close();
+//
+//
+//
+//
+//     std::ifstream file(devicePath, std::ios::binary);
+//     std::vector<uint8_t> data(
+//         (std::istreambuf_iterator<char>(file)),
+//          std::istreambuf_iterator<char>()
+//     );
+//     PacketHeader header{};
+//     header.system      = System::Camera;
+//     header.command     = Command::StartClip;
+//     header.payloadSize = static_cast<uint32_t>(data.size());
+//     server.sendPacket(header, data);
+//
+//     lastCaptureAt = std::chrono::system_clock::now();
+//     std::cout << "Recording stopped. File saved to: " << devicePath << std::endl;
+//         stopStreaming();
+//         startStreaming();
+//     }).detach();
+//
+// }
 
 /**
  * @brief Starts a live MJPEG stream and pushes encoded frames to the PC in real time.
@@ -380,7 +358,6 @@ void Camera_PI::startStreaming() {
     Stream *stream = config->at(0).stream();
 
     camera->requestCompleted.connect(this, [this, stream](Request *req) {
-        // Check BOTH flags — streaming might have been cleared mid-callback
         if (!streaming) return;
         if (req->status() == Request::RequestCancelled) return;
 
@@ -390,36 +367,19 @@ void Camera_PI::startStreaming() {
         void *mem = mmap(nullptr, plane.length, PROT_READ,
                          MAP_SHARED, plane.fd.get(), 0);
         if (mem != MAP_FAILED) {
-            std::vector<uint8_t> rawFrame(static_cast<uint8_t*>(mem),
-                                           static_cast<uint8_t*>(mem) + plane.length);
-            munmap(mem, plane.length);
-
-            // Requeue immediately before doing any heavy work
-            req->reuse(Request::ReuseBuffers);
-            camera->queueRequest(req);
-
-
-            std::thread([this, frameData = std::move(rawFrame)]() mutable {
-            cv::Mat yuyv(720, 1280, CV_8UC2, frameData.data());
+            cv::Mat yuyv(720, 1280, CV_8UC2, mem);
             cv::Mat bgr;
             cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
 
             std::vector<uint8_t> encoded;
-            std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 60};
+            std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 80};
             cv::imencode(".jpg", bgr, encoded, params);
             server.sendFrame(encoded.data(), encoded.size());
 
-                if (recording && videoWriter.isOpened()) {
-             std::unique_lock<std::mutex> lock(videoMutex, std::try_to_lock);
-             if (lock.owns_lock() && videoWriter.isOpened()) {
-                 videoWriter.write(bgr);
-             }
-         }
-        }).detach();
-
-            return; // already requeued above
+            munmap(mem, plane.length);
         }
 
+        if (!streaming) return;
         req->reuse(Request::ReuseBuffers);
         camera->queueRequest(req);
     });
@@ -457,12 +417,7 @@ void Camera_PI::stopStreaming() {
     std::cout << "Streaming stopped." << std::endl;
 }
 
-/**
- * @brief Returns whether the camera is currently recording.
- *
- * @return true if a recording session is active, false otherwise.
- */
 
-bool Camera_PI::isRecording() const {
-    return recording;
-}
+// bool Camera_PI::isRecording() const {
+//     return recording;
+// }

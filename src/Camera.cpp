@@ -53,29 +53,29 @@ bool Camera::isStreaming() const {
     return streaming;
 }
 
-void Camera::startRecording() {
-    if (recording) return;
-    PacketHeader header{};
-    header.system      = System::Camera;
-    header.command     = Command::StartClip;
-    header.payloadSize = 0;
-    network.send(header, {});
-    recording = true;
-}
-
-void Camera::stopRecording() {
-    if (!recording) return;  // was inverted
-    PacketHeader header{};
-    header.system      = System::Camera;
-    header.command     = Command::StopClip;
-    header.payloadSize = 0;
-    network.send(header, {});
-    recording = false;
-}
-
-bool Camera::isRecording() const {
-    return recording;
-}
+// void Camera::startRecording() {
+//     if (recording) return;
+//     PacketHeader header{};
+//     header.system      = System::Camera;
+//     header.command     = Command::StartClip;
+//     header.payloadSize = 0;
+//     network.send(header, {});
+//     recording = true;
+// }
+//
+// void Camera::stopRecording() {
+//     if (!recording) return;
+//     PacketHeader header{};
+//     header.system      = System::Camera;
+//     header.command     = Command::StopClip;
+//     header.payloadSize = 0;
+//     network.send(header, {});
+//     recording = false;
+// }
+//
+// bool Camera::isRecording() const {
+//     return recording;
+// }
 
 
 void Camera::handlePacket(Command cmd, const std::vector<uint8_t> &payload) {
@@ -124,32 +124,7 @@ void Camera::handlePacket(Command cmd, const std::vector<uint8_t> &payload) {
             break;
         }
 
-        case Command::StartClip: {
-            std::cout << "Video clip received: " << payload.size() << " bytes" << std::endl;
-            if (payload.empty()) break;
 
-            auto now = std::chrono::system_clock::now();
-            std::time_t t = std::chrono::system_clock::to_time_t(now);
-            std::ostringstream oss;
-            oss << "../saved_data/video_" << t << ".avi";
-            std::string videoPath = oss.str();
-
-            std::ofstream file(videoPath, std::ios::binary);
-            if (!file.is_open()) {
-                std::cerr << "Failed to open file for writing: " << videoPath << std::endl;
-                break;
-            }
-            file.write(reinterpret_cast<const char*>(payload.data()), payload.size());
-            file.close();
-
-            std::tm* tmInfo = std::localtime(&t);
-            std::ostringstream timeOss;
-            timeOss << std::put_time(tmInfo, "%b %d, %Y  %I:%M %p");
-            storage.addImage(videoPath, timeOss.str());
-
-            std::cout << "Video saved to: " << videoPath << std::endl;
-            break;
-        }
         default:
             std::cout << "Unhandled command: " << static_cast<int>(cmd) << std::endl;
             break;

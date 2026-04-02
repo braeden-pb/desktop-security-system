@@ -34,9 +34,9 @@ public:
     ~Camera_PI();
 
     std::string capturePhoto();
-    void startRecording();
-    void stopRecording();
-    bool isRecording() const;
+    // void startRecording();
+    // void stopRecording();
+    // bool isRecording() const;
     void startStreaming();
     void stopStreaming();
     std::atomic<bool> streaming{false};
@@ -48,8 +48,6 @@ private:
     std::unique_ptr<CameraConfiguration> config;
     FrameBufferAllocator               *allocator = nullptr;
     std::vector<std::unique_ptr<Request>> requests;
-    cv::VideoWriter videoWriter;
-    std::mutex videoMutex;
 
     NetworkServer &server;
 
