@@ -385,22 +385,21 @@ void Camera_PI::startStreaming() {
             camera->queueRequest(req);
 
 
-            std::thread([this, fd = std::move(frameData)]() mutable {
-    cv::Mat yuyv(720, 1280, CV_8UC2, fd.data());
-    cv::Mat bgr;
-    cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
+            std::thread([this, frameData = std::move(rawFrame)]() mutable {
+            cv::Mat yuyv(720, 1280, CV_8UC2, frameData.data());
+            cv::Mat bgr;
+            cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
 
-    std::vector<uint8_t> encoded;
-    std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 60};
-    cv::imencode(".jpg", bgr, encoded, params);
-    server.sendFrame(encoded.data(), encoded.size());
+            std::vector<uint8_t> encoded;
+            std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 60};
+            cv::imencode(".jpg", bgr, encoded, params);
+            server.sendFrame(encoded.data(), encoded.size());
 
-    // Write BGR frame to video — VideoWriter handles encoding
-    if (recording && videoWriter.isOpened()) {
-        std::lock_guard<std::mutex> lock(videoMutex);
-        videoWriter.write(bgr);  // ← just pass the mat directly
-    }
-}).detach();
+            if (recording && videoWriter.isOpened()) {
+                std::lock_guard<std::mutex> lock(videoMutex);
+                videoWriter.write(bgr);
+            }
+        }).detach();
 
             return; // already requeued above
         }
