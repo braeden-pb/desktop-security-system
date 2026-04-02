@@ -416,8 +416,3 @@ void Camera_PI::stopStreaming() {
     }
     std::cout << "Streaming stopped." << std::endl;
 }
-
-
-// bool Camera_PI::isRecording() const {
-//     return recording;
-// }
