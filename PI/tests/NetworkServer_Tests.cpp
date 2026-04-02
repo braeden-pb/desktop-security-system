@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <thread>
 #include <chrono>
-#include "NetworkServer.h"
+#include "../NetworkServer.h"
 
 /**
  * @brief Test fixture for NetworkServer.
@@ -86,16 +86,13 @@ TEST_F(NetworkServer_Test, TriggersOnCommandWhenPacketReceived) {
     int clientSock = createTestClient();
     ASSERT_GT(clientSock, 0);
 
-    // Prepare a dummy PacketHeader
     PacketHeader header{};
     header.system = System::Camera;
     header.command = Command::TakePhoto;
     header.payloadSize = 0;
 
-    // Send the header to the server
     send(clientSock, &header, sizeof(header), 0);
 
-    // Give the server thread a moment to process
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     EXPECT_TRUE(commandReceived);
@@ -112,7 +109,6 @@ TEST_F(NetworkServer_Test, TransmitsPacketToClient) {
     int clientSock = createTestClient();
     ASSERT_GT(clientSock, 0);
 
-    // Give acceptLoop a moment to mark clientConnected = true
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     PacketHeader sendHeader{};
@@ -122,7 +118,6 @@ TEST_F(NetworkServer_Test, TransmitsPacketToClient) {
 
     server->sendPacket(sendHeader, {});
 
-    // Client attempts to receive the header
     PacketHeader recvHeader{};
     int n = recv(clientSock, &recvHeader, sizeof(recvHeader), MSG_WAITALL);
 
@@ -147,7 +142,6 @@ TEST_F(NetworkServer_Test, TriggersOnDisconnectCallback) {
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-    // Close the client to trigger the server's receiveLoop to exit
     close(clientSock);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

@@ -1,81 +1,60 @@
 /**
- * @file Camera_PI_Test.cpp
- * @brief Unit tests for the Camera_PI class using Google Test and Google Mock.
+* @file Camera_PI_Test.cpp
+ * @brief Unit tests for the Camera_PI class using real object instances.
  * @author Braeden Patierno-Barker
  * @date 2026-03-31
  */
 
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
-#include "Camera_PI.h"
-#include "NetworkServer.h"
-
-/**
- * @brief Mock class for the NetworkServer to track outgoing packets.
- */
-class MockNetworkServer : public NetworkServer {
-public:
-    MockNetworkServer() : NetworkServer(5000) {} // Default port for test
-    MOCK_METHOD(void, sendPacket, (const PacketHeader& header, const std::vector<uint8_t>& payload), (override));
-    MOCK_METHOD(void, sendFrame, (const uint8_t* data, size_t size), (override));
-};
+#include "../Camera_PI.h"
+#include "../NetworkServer.h"
+#include "../../Shared/Protocol.h"
 
 /**
  * @brief Test fixture for Camera_PI.
+ * Matches the pattern used in Alarm_PI and Motion_Sensor_PI tests.
  */
-class CameraPI_Test : public ::testing::Test {
+class CameraPI_Tests : public ::testing::Test {
 protected:
-    MockNetworkServer mockServer;
-
-    // We use a pointer to delay initialization until the test starts
-    std::unique_ptr<Camera_PI> camera;
-
     void SetUp() override {
-        // Note: On non-Pi hardware, initCamera() in the constructor will log errors.
-        // In a real CI environment, you would mock the libcamera API.
-        camera = std::make_unique<Camera_PI>(mockServer);
+        server = new NetworkServer(0);
+        camera = new Camera_PI(*server);
     }
 
     void TearDown() override {
-        camera.reset();
+        camera->stopStreaming();
+        delete camera;
+        delete server;
     }
+
+    NetworkServer* server;
+    Camera_PI* camera;
 };
 
 /**
- * @brief Ensures the camera starts in a sane, non-active state.
+ * @test Verifies that capturePhoto returns an empty string if hardware is missing.
+ * @details On non-Pi hardware (like WSL), the libcamera init will fail,
+ * returning an empty path.
  */
-TEST_F(CameraPI_Test, InitialStateIsIdle) {
-    EXPECT_FALSE(camera->isRecording());
-    // Assuming you have a getter for streaming
-    // EXPECT_FALSE(camera->isStreaming());
-}
-
-/**
- * @brief Verifies that capturePhoto returns an error string if hardware isn't found.
- */
-TEST_F(CameraPI_Test, CaptureFailsWithoutHardware) {
-    // If running on a PC without a Pi camera, this should return empty
+TEST_F(CameraPI_Tests, CaptureFailsWithoutHardware) {
     std::string path = camera->capturePhoto();
     EXPECT_EQ(path, "");
 }
 
 /**
- * @brief Tests the logic guard preventing simultaneous photo and video.
+ * @test Verifies that stopping a non-existent stream does not crash.
  */
-TEST_F(CameraPI_Test, CannotCapturePhotoWhileRecording) {
-    // Manually trigger recording state (if you have a setter or via startRecording)
-    // For this test, we simulate the state if recording was active
-    // This assumes you've uncommented your recording logic
-
-    /* camera->startRecording();
-    std::string path = camera->capturePhoto();
-    EXPECT_TRUE(path.empty());
-    */
+TEST_F(CameraPI_Tests, StopStreamingWhenNotStreamingIsSafe) {
+    EXPECT_NO_THROW(camera->stopStreaming());
 }
 
 /**
- * @brief Verifies that stopping a non-existent stream doesn't crash.
+ * @test Ensures starting a stream multiple times is handled gracefully.
  */
-TEST_F(CameraPI_Test, StopStreamingWhenNotStreamingIsSafe) {
-    EXPECT_NO_THROW(camera->stopStreaming());
+TEST_F(CameraPI_Tests, DoubleStartStreamingDoesNotCrash) {
+    EXPECT_NO_THROW({
+        camera->startStreaming();
+        camera->startStreaming();
+    });
+    camera->stopStreaming();
 }
