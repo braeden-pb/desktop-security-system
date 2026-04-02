@@ -122,6 +122,7 @@ target_include_directories(MotionSensorPI_Tests PRIVATE
 )
 target_link_libraries(MotionSensorPI_Tests PRIVATE
         GTest::gtest_main
+        GTest::gmock
         wiringPi
 )
 
@@ -131,6 +132,7 @@ add_executable(NetworkServer_Tests
         ../Shared/Protocol.h
 )
 target_include_directories(NetworkServer_Tests PRIVATE
+        ${CMAKE_SOURCE_DIR}
         ${CMAKE_SOURCE_DIR}/../Shared
 )
 target_link_libraries(NetworkServer_Tests PRIVATE GTest::gtest_main)

@@ -23,7 +23,7 @@ public:
 /**
  * @brief Test fixture for Camera_PI.
  */
-class CameraPITest : public ::testing::Test {
+class CameraPI_Test : public ::testing::Test {
 protected:
     MockNetworkServer mockServer;
 

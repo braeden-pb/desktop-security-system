@@ -18,7 +18,7 @@
  * * Handles starting the server on a non-standard port (5001) to avoid
  * conflicts with the live system.
  */
-class NetworkServerTest : public ::testing::Test {
+class NetworkServer_Test : public ::testing::Test {
 protected:
     int testPort = 5001;
     std::unique_ptr<NetworkServer> server;

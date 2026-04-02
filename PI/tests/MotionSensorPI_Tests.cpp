@@ -22,7 +22,7 @@ public:
 /**
  * @brief Test fixture for Motion_Sensor_PI.
  */
-class MotionSensorPITest : public ::testing::Test {
+class MotionSensorPI_Test : public ::testing::Test {
 protected:
     MockNetworkServer mockNetwork;
 
