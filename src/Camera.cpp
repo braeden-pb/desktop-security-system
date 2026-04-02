@@ -147,7 +147,11 @@ void Camera::handlePacket(Command cmd, const std::vector<uint8_t> &payload) {
             auto now = std::chrono::system_clock::now();
             std::time_t t = std::chrono::system_clock::to_time_t(now);
             std::ostringstream oss;
-            oss << "../saved_data/photo_" << t << ".jpg";
+            std::tm* tmInfo = std::localtime(&t);
+            std::ostringstream timeOss;
+            timeOss << std::put_time(tmInfo, "%b-%d,-%Y-%I:%M%p");
+            std::string timeString = timeOss.str() + std::to_string(rand()%100+1);
+            oss << "../saved_data/photo_" << timeOss.str() << ".jpg";
             lastPhoto = oss.str();
 
 
@@ -161,9 +165,6 @@ void Camera::handlePacket(Command cmd, const std::vector<uint8_t> &payload) {
             file.close();
 
             std::cout << "Photo saved to: " << lastPhoto << std::endl;
-            std::tm* tmInfo = std::localtime(&t);
-            std::ostringstream timeOss;
-            timeOss << std::put_time(tmInfo, "%b %d, %Y  %I:%M %p");
             storage.addImage(lastPhoto,timeOss.str());
 
             if (photoCallback)

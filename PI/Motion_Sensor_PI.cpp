@@ -153,7 +153,7 @@ void Motion_Sensor_PI::isrHandler() {
 
     if (detected) {
         time_t now = time(nullptr);
-        if (difftime(now, instance_->lastSent) >= 5.0) {
+        if (difftime(now, instance_->lastSent) >= 3.0) {
             instance_->lastSent = now;
             instance_->motionDetected = true;
             instance_->motionPending = true;  // set flag directly, skip onMotion()

@@ -139,8 +139,12 @@ void Motion_Sensor::updateState(bool currentState) {
         motionDetected = true;
         notifyObservers("Motion detected");
         lastDetected = std::time(nullptr);
-        if (motionCount % config.getPhotosPer() == 0 &&config.getCaptureMode()) {
-            camera.capturePhoto();
+        if (motionCount % config.getPhotoFreq() == 0 &&config.getCaptureMode()) {
+            for (int i=0; i<config.getPhotosPer()-1; i++) {
+                camera.capturePhoto();
+
+            }
+
 
         }
     }
