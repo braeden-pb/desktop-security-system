@@ -14,42 +14,24 @@ class Config;
 
 class Alarm : public Observer{
 private:
-    bool isActive;                 // shows whether the alarm is currently active
-    std::string soundType;         // type of sound the alarm produces
-    std::string lastActivatedAt;   // timestamp of the last activation
-
+    bool isActive;
+    std::string soundType;
+    std::string lastActivatedAt;
     sf::SoundBuffer buffer;
     std::optional<sf::Sound> sound;
-
     Network &network;
-
     Config &config;
-
     void notifyObservers(const std::string& event);
 
-
 public:
-
     std::vector<Observer*> observers;
-    // Constructor
     Alarm(Network &network,Config &config);
     ~Alarm();
-
-    // Activates the alarm indefinitely
     void activate();
-    // Deactivates the alarm
     void deactivate();
-
-    // Returns the current alarm status
     bool getStatus() const;
-
     void update(const std::string& event) override;
-
     void addObserver(Observer* o);
-
-
-
-
 };
 
 #endif // GROUP55_ALARM_H

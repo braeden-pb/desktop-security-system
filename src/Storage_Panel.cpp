@@ -1,9 +1,11 @@
-//
-// Created by evan on 2026-03-08.
-//
+/**
+* @file Storage_Panel.cpp
+ * @brief Implementation of the storage gallery panel for the security system.
+ * @author evan
+ * @date 2026-03-08
+ */
 
 #include "Storage_Panel.h"
-
 #include "SecuritySystem.h"
 #include "UI.h"
 
@@ -60,7 +62,7 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(ui) {
     outerSizer->Add(galleryPanel, 1, wxEXPAND | wxALL, 20);
 
     errorLabel = new wxStaticText(this, wxID_ANY, "");
-    //outerSizer->AddStretchSpacer(1);
+
     outerSizer->Add(errorLabel, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 50);
     errorLabel->Hide();
     homeBtn->Bind(wxEVT_BUTTON,&Storage_Panel::onBackHome,this);
@@ -215,10 +217,8 @@ void Storage_Panel::onBackHome(wxCommandEvent &event) {
  */
 void Storage_Panel::OnGalleryResize(wxSizeEvent& event) {
     int panelWidth = event.GetSize().GetWidth();
-    int thumbSize = 265; // 250px + 15px gap
+    int thumbSize = 265;
     int cols = std::max(1, panelWidth / thumbSize);
-
-
 
     gridSizer->SetCols(cols);
     galleryPanel->FitInside();
@@ -306,8 +306,13 @@ void Storage_Panel::OpenFullImage(const wxString& path) {
     frame->Layout();
 }
 
-
-
+/**
+ * @brief Launches an external video player for the selected file.
+ *
+ * Uses wxExecute to launch VLC media player as a background process.
+ *
+ * @param path The file path of the video to open.
+ */
 void Storage_Panel::openVideo(const wxString& path) {
     wxExecute("vlc \"" + path + "\"", wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
 }

@@ -1,5 +1,4 @@
 #include "SecuritySystem.h"
-
 #include "Alarm.h"
 #include "Config.h"
 #include "UI.h"
@@ -8,7 +7,6 @@
 #include "Camera.h"
 #include "Motion_Sensor.h"
 #include "Network.h"
-
 
 /**
  * @brief Constructs a fully initialized SecuritySystem with UI, storage, and alarm.
