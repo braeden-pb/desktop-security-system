@@ -15,7 +15,7 @@ protected:
     std::string resolution;
 
 public:
-    File(int id, std::string filePath, std::string timeStamp, std::string resolution);
+    File(std::string filePath, std::string timeStamp);
     virtual ~File();
     int getID() const;
     std::string getPath() const;

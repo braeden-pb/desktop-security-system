@@ -49,6 +49,7 @@ private:
     FrameBufferAllocator               *allocator = nullptr;
     std::vector<std::unique_ptr<Request>> requests;
     std::unique_ptr<std::ofstream> videoFile;
+    std::mutex videoMutex;
 
     NetworkServer &server;
 

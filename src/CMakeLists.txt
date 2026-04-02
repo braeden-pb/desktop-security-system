@@ -180,6 +180,9 @@ add_executable(MotionSensorTests
         tests/MotionSensorTests.cpp
         Motion_Sensor.cpp
         Device.cpp
+        Camera.cpp
+        Config.cpp
+        Network.cpp
 )
 target_link_libraries(MotionSensorTests GTest::gtest_main)
 

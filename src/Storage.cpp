@@ -33,8 +33,8 @@ Storage::Storage(std::string storagePath) : storagePath(storagePath) {
                 auto sctime = std::chrono::file_clock::to_sys(ftime);
                 auto sys_tp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(sctime);
                 auto cftime = std::chrono::system_clock::to_time_t(sys_tp);
-                std::string time_str = std::format("{:%Y-%m-%d %H:%M:%S}", sctime);
-                imageList.push_back(Image(idCounter, path, time_str, "1080p", 0));
+                std::string time_str = std::format("{:%b %d, %Y  %I:%M %p}", sctime);
+                imageList.push_back(Image(path, time_str));
                 idCounter++;
             }
         }
@@ -126,4 +126,8 @@ bool Storage::hasTimeStamp(int imageID) const {
 bool Storage::isVideoFile(const std::string path) {
     return path.ends_with(".mp4") || path.ends_with(".avi") ||
            path.ends_with(".h264") || path.ends_with(".mov");
+}
+
+void Storage::addImage(const std::string& path, const std::string& timestamp) {
+    imageList.push_back(Image(path, timestamp));
 }

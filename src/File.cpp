@@ -14,8 +14,8 @@
  * @param timeStamp The creation or last modified string.
  * @param resolution The image dimensions (e.g., "1080p").
  */
-File::File(int id, std::string filePath, std::string timeStamp, std::string resolution)
-    : id(id), filePath(filePath), timeStamp(timeStamp), resolution(resolution) {
+File::File(std::string filePath, std::string timeStamp)
+    : filePath(filePath), timeStamp(timeStamp) {
 }
 
 //! Default destructor.

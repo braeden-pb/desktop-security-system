@@ -275,10 +275,10 @@ void Camera_PI::startRecording() {
         return;
     }
 
-    camera->stop();
-    camera->requestCompleted.disconnect();
-
-    Stream *stream = config->at(0).stream();
+    if (!streaming) {
+        std::cerr << "Must be streaming to record." << std::endl;
+        return;
+    }
 
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
@@ -293,32 +293,7 @@ void Camera_PI::startRecording() {
         return;
     }
 
-    camera->requestCompleted.connect(this, [this, stream](libcamera::Request *req) {
-        if (!recording || req->status() == libcamera::Request::RequestCancelled) return;
-
-        const libcamera::FrameBuffer *buf = req->buffers().at(stream);
-        for (const auto &plane : buf->planes()) {
-            void *mem = mmap(nullptr, plane.length, PROT_READ,
-                             MAP_SHARED, plane.fd.get(), 0);
-            if (mem != MAP_FAILED) {
-                videoFile->write(static_cast<const char *>(mem), plane.length);
-                munmap(mem, plane.length);
-            }
-        }
-
-        req->reuse(libcamera::Request::ReuseBuffers);
-        camera->queueRequest(req);
-    });
-
     recording = true;
-    camera->start();
-
-
-    for (auto &req : requests) {
-        req->reuse(libcamera::Request::ReuseBuffers);
-        camera->queueRequest(req.get());
-    }
-
     std::cout << "Recording started -> " << devicePath << std::endl;
 }
 
@@ -348,8 +323,21 @@ void Camera_PI::stopRecording() {
         videoFile.reset();
     }
 
+    std::ifstream file(devicePath, std::ios::binary);
+    std::vector<uint8_t> data(
+        (std::istreambuf_iterator<char>(file)),
+         std::istreambuf_iterator<char>()
+    );
+
+    // Send the recorded file to PC
+    PacketHeader header{};
+    header.system  = System::Camera;
+    header.command = Command::StartClip;
+    header.payloadSize = static_cast<uint32_t>(data.size());
+    server.sendPacket(header, data);
     lastCaptureAt = std::chrono::system_clock::now();
     std::cout << "Recording stopped. File saved to: " << devicePath << std::endl;
+
 }
 
 /**
@@ -385,19 +373,37 @@ void Camera_PI::startStreaming() {
         void *mem = mmap(nullptr, plane.length, PROT_READ,
                          MAP_SHARED, plane.fd.get(), 0);
         if (mem != MAP_FAILED) {
-            cv::Mat yuyv(720, 1280, CV_8UC2, mem);
-            cv::Mat bgr;
-            cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
-
-            std::vector<uint8_t> encoded;
-            std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 80};
-            cv::imencode(".jpg", bgr, encoded, params);
-            server.sendFrame(encoded.data(), encoded.size());
-
+            std::vector<uint8_t> rawFrame(static_cast<uint8_t*>(mem),
+                                           static_cast<uint8_t*>(mem) + plane.length);
             munmap(mem, plane.length);
+
+            // Requeue immediately before doing any heavy work
+            req->reuse(Request::ReuseBuffers);
+            camera->queueRequest(req);
+
+
+            std::thread([this, rawFrame = std::move(rawFrame)]() {
+                cv::Mat yuyv(720, 1280, CV_8UC2,
+                             const_cast<uint8_t*>(rawFrame.data()));
+                cv::Mat bgr;
+                cv::cvtColor(yuyv, bgr, cv::COLOR_YUV2BGR_YUYV);
+
+                std::vector<uint8_t> encoded;
+                std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 60}; // lower quality = faster
+                cv::imencode(".jpg", bgr, encoded, params);
+
+                server.sendFrame(encoded.data(), encoded.size());
+
+                if (recording && videoFile && videoFile->is_open()) {
+                    std::lock_guard<std::mutex> lock(videoMutex);
+                    videoFile->write(reinterpret_cast<const char*>(encoded.data()),
+                                     encoded.size());
+                }
+            }).detach();
+
+            return; // already requeued above
         }
 
-        if (!streaming) return;
         req->reuse(Request::ReuseBuffers);
         camera->queueRequest(req);
     });

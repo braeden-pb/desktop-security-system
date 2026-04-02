@@ -234,7 +234,7 @@ void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
     wxSpinCtrl* photoSpin = new wxSpinCtrl(&dlg, wxID_ANY, "3",
                                             wxDefaultPosition, wxDefaultSize,
                                             wxSP_ARROW_KEYS, 1, 20, 3);
-    wxStaticText* photoHint = new wxStaticText(&dlg, wxID_ANY, "Photo per x events");
+    wxStaticText* photoHint = new wxStaticText(&dlg, wxID_ANY, "Photo capture per x events");
     photoRowSizer->Add(photoSpin, 0, wxRIGHT, 10);
     photoRowSizer->Add(photoHint, 0, wxALIGN_CENTER_VERTICAL);
     photoSizer->Add(photoRowSizer, 0, wxALL, 8);

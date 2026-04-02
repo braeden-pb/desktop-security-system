@@ -17,26 +17,11 @@
  * @param resolution The resolution (e.g., "1920x1080").
  * @param dpi Dots Per Inch, representing print/display density.
  */
-Image::Image(int id, std::string filePath, std::string timeStamp, std::string resolution, int dpi)
-    : File(id, filePath, timeStamp, resolution), dpi(dpi) {
+Image::Image(std::string filePath, std::string timeStamp)
+    : File(filePath, timeStamp) {
 }
 
 //! Default destructor.
 Image::~Image() {}
 
-/**
- * @brief Retrieves the image resolution.
- * @note This is an alias for the base class resolution metadata.
- * @return std::string The resolution string.
- */
-std::string Image::getSize() {
-    return resolution;
-}
 
-/**
- * @brief Gets the Dots Per Inch (DPI) of the image.
- * @return int The DPI value.
- */
-int Image::getDPI() const {
-    return dpi;
-}
