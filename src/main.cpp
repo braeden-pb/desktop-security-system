@@ -36,10 +36,5 @@ public:
         return true;
     }
 };
-/**
- * @brief wxWidgets application entry point macro.
- *
- * Replaces the standard main() function, instantiating MyApp and handing
- * control to the wxWidgets event loop.
- */
+
 wxIMPLEMENT_APP(MyApp);

@@ -10,6 +10,8 @@
 #include <filesystem>
 #include <chrono>
 #include "Image.h"
+#include <iostream>
+#include <chrono>
 
 class Storage {
 

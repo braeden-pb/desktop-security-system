@@ -9,6 +9,12 @@
 #include <SFML/Audio.hpp>
 #include "Observer.h"
 #include "Network.h"
+#include <iostream>
+#include <SFML/Audio.hpp>
+#include <thread>
+#include <chrono>
+#include <filesystem>
+#include "Config.h"
 
 class Config;
 

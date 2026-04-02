@@ -19,7 +19,8 @@ File::File(std::string filePath, std::string timeStamp)
 }
 
 //! Default destructor.
-File::~File() {}
+File::~File() {
+}
 
 /**
  * @brief Gets the unique ID of the file.

@@ -296,4 +296,3 @@ bool Config::readFromFile() {
 
     return true; //Return true if no errors
 }
-

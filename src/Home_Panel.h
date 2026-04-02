@@ -9,6 +9,10 @@
 #include <wx/wx.h>
 #include <wx/tglbtn.h>
 #include <opencv2/opencv.hpp>
+#include "Camera.h"
+#include "SecuritySystem.h"
+#include "Storage_Panel.h"
+#include "UI.h"
 
 
 class UI;

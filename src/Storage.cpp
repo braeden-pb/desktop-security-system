@@ -6,8 +6,6 @@
  */
 
 #include "Storage.h"
-#include <iostream>
-#include <chrono>
 
 /**
  * @brief Construct a new Storage object.
@@ -42,7 +40,8 @@ Storage::Storage(std::string storagePath) : storagePath(storagePath) {
     }
 }
 
-Storage::~Storage() {}
+Storage::~Storage() {
+}
 
 /**
 * @brief Saves an image to the local storage directory.

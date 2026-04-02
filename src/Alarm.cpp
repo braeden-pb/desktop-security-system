@@ -6,13 +6,6 @@
  * @date 2026-03-21
  */
 #include "Alarm.h"
-#include <iostream>
-#include <SFML/Audio.hpp>
-#include <thread>
-#include <chrono>
-#include <filesystem>
-
-#include "Config.h"
 
 /**
  * @brief Constructs an Alarm object with default settings.
@@ -34,10 +27,9 @@ Alarm::Alarm(Network &network,Config &config)
  * No explicit cleanup required; any active alarm should be stopped
  * by calling deactivate() before destruction.
  */
-Alarm::~Alarm() {}
-
-
-
+Alarm::~Alarm() {
+    deactivate();
+}
 
 /**
  * @brief Activates the alarm and signals the Raspberry Pi to begin playing sound.

@@ -6,8 +6,6 @@
  */
 
 #include "Storage_Panel.h"
-#include "SecuritySystem.h"
-#include "UI.h"
 
 /**
  * @brief Constructs the Storage_Panel UI component.
@@ -320,4 +318,5 @@ void Storage_Panel::openVideo(const wxString& path) {
 /**
  * @brief Destructor for Storage_Panel.
  */
-Storage_Panel::~Storage_Panel() {}
+Storage_Panel::~Storage_Panel() {
+}

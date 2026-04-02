@@ -6,6 +6,7 @@
  */
 
 #include "Device.h"
+
 /**
  * @brief Constructs a Device object.
  *
@@ -13,6 +14,7 @@
  * Derived classes are responsible for their own setup.
  */
 Device::Device(){}
+
 /**
  * @brief Destructs a Device object.
  *
@@ -20,4 +22,5 @@ Device::Device(){}
  * Declared to ensure derived class destructors are called correctly
  * when deleting through a base class pointer.
  */
-Device::~Device(){}
+Device::~Device() {
+}

@@ -1,12 +1,11 @@
+/**
+* @file SecuritySystem.cpp
+ * @brief Implementation of the main SecuritySystem controller.
+ * @author evan
+ * @date 2026-03-08
+ */
+
 #include "SecuritySystem.h"
-#include "Alarm.h"
-#include "Config.h"
-#include "UI.h"
-#include "Storage.h"
-#include "Alert.h"
-#include "Camera.h"
-#include "Motion_Sensor.h"
-#include "Network.h"
 
 /**
  * @brief Constructs a fully initialized SecuritySystem with UI, storage, and alarm.
@@ -79,7 +78,9 @@ SecuritySystem::SecuritySystem(bool headless) {
 /**
  * @brief Destroys the SecuritySystem and releases all owned subsystems.
  */
-SecuritySystem::~SecuritySystem() {}
+SecuritySystem::~SecuritySystem() {
+    turnOffAlarm();
+}
 
 /**
  * @brief Returns a non-owning pointer to the UI subsystem.
@@ -90,18 +91,38 @@ UI *SecuritySystem::getUI() const{
     return mainUi.get();
 }
 
+/**
+ * @brief Retrieves the configuration management object.
+ *
+ * @return Config* Pointer to system configuration.
+ */
 Config *SecuritySystem::getConfig() {
     return config.get();
 }
 
+/**
+ * @brief Retrieves the Camera controller.
+ *
+ * @return Camera* Pointer to the camera abstraction.
+ */
 Camera *SecuritySystem::getCamera() const {
     return camera.get();
 }
 
+/**
+ * @brief Checks if the PC is currently connected to the Pi.
+ *
+ * @return True if connection is active.
+ */
 bool SecuritySystem::isConnected() const {
     return network && network->isConnected();
 }
 
+/**
+ * @brief Responds to internal observer notifications.
+ *
+ * @param event The event string (e.g., "Motion detected").
+ */
 void SecuritySystem::update(const std::string& event) {
     if (event == "Motion detected")
         sendCommand(System::Motion, Command::MotionDetected);
@@ -201,6 +222,13 @@ void SecuritySystem::disarm() {
     setStatus(Status::disarmed);
 }
 
+/**
+ * @brief Formats and sends a network packet to the Raspberry Pi.
+ *
+ * @param sys The target subsystem on the Pi.
+ *
+ * @param cmd The specific command to execute.
+ */
 void SecuritySystem::sendCommand(System sys, Command cmd) {
     if (!network->isConnected()) return;
 
@@ -242,24 +270,47 @@ std::list<std::tuple<int,std::string,std::string>> SecuritySystem::getAllImages(
     return paths;
 }
 
+/**
+ * @brief Adds an observer to the system's notification list.
+ *
+ * @param o Pointer to the observer object.
+ */
 void SecuritySystem::addObserver(Observer* o) {
     observers.push_back(o);
 }
 
+/**
+ * @brief Notifies all registered observers of a system event.
+ *
+ * @param event String descriptor of the event.
+ */
 void SecuritySystem::notifyObservers(const std::string& event) {
     for (auto* o : observers) {
         o->update(event);
     }
 }
 
+/**
+ * @brief Convenience method to trigger an alarm notification.
+ */
 void SecuritySystem::soundAlert() {
     notifyObservers("Alarm triggered");
 }
 
+/**
+ * @brief Links a UI instance to the system controller.
+ *
+ * @param ui Pointer to the UI frame.
+ */
 void SecuritySystem::setUI(UI* ui) {
     m_ui = ui;
 }
 
+/**
+ * @brief Triggers a modal alert dialog in the user interface.
+ *
+ * @param type The message content of the alert.
+ */
 void SecuritySystem::triggerAlert(const std::string& type) {
     std::cout << "[DEBUG] triggerAlert called: " << type << std::endl;
     if (m_ui) {

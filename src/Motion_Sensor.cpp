@@ -7,8 +7,6 @@
  */
 
 #include "Motion_Sensor.h"
-#include <iostream>
-#include "Camera.h"
 /**
  * @brief Constructs a Motion_Sensor with default sensitivity and inactive state.
  *
@@ -28,7 +26,10 @@ Motion_Sensor::Motion_Sensor(Config &config, Camera &camera) : sensitivity(5), m
  *
  * No explicit cleanup required beyond what the member destructors handle.
  */
-Motion_Sensor::~Motion_Sensor() {}
+Motion_Sensor::~Motion_Sensor() {
+    disconnect();
+    deactivate();
+}
 /**
  * @brief Returns the name identifier of this sensor.
  *

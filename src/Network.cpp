@@ -7,9 +7,6 @@
  */
 #include "Network.h"
 
-#include <functional>
-#include <thread>
-
 /**
  * @brief Constructs a Network object with no active socket or connection.
  *
@@ -32,6 +29,7 @@ Network::~Network() {
     if (connected_) {
         disconnect();
     }
+    this->stopReceiving();
 }
 
 /**
