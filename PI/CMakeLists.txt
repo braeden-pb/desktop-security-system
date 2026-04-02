@@ -56,7 +56,7 @@ target_link_libraries(pi-camera PRIVATE
 target_compile_options(pi-camera PRIVATE -Wall -Wextra)
 
 add_executable(camera-test
-        Camera_test.cpp
+        tests/Camera_test.cpp
         NetworkServer.cpp NetworkServer.h
         Camera_PI.cpp Camera_PI.h
 )

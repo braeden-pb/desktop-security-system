@@ -5,8 +5,10 @@
 #include "Motion_Sensor.h"
 #include <iostream>
 
-Motion_Sensor::Motion_Sensor() : sensitivity(5), motionDetected(false), lastDetected(0),
-      lastState(false), rearmPending(false), motionCount(0), rearmDelayMs(2000) {
+#include "Camera.h"
+
+Motion_Sensor::Motion_Sensor(Config &config, Camera &camera) : sensitivity(5), motionDetected(false), lastDetected(0),
+                                                       lastState(false), rearmPending(false), motionCount(0), rearmDelayMs(2000), config(config),camera(camera){
 
 }
 
@@ -54,6 +56,9 @@ void Motion_Sensor::disconnect() {
 void Motion_Sensor::updateState(bool currentState) {
     if (currentState) {
         ++motionCount;
+        if (motionCount % config.getPhotosPer() == 0) {
+            camera.capturePhoto();
+        }
         motionDetected = true;
         notifyObservers("Motion detected");
         lastDetected = std::time(nullptr);

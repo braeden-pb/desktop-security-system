@@ -50,7 +50,7 @@ SecuritySystem::SecuritySystem() {
     systemStatus = Status::disarmed;
     config = std::make_unique<Config>(*network);
     alarm = std::make_unique<Alarm>(*network,*config);
-    motion_sensor = std::make_unique<Motion_Sensor>();
+    motion_sensor = std::make_unique<Motion_Sensor>(*config,*camera);
     addObserver(mainUi.get());
     addObserver(alarm.get());
     addObserver(this);
@@ -73,7 +73,7 @@ SecuritySystem::SecuritySystem(bool headless) {
     config = std::make_unique<Config>(*network);
     network = std::make_unique<Network>();
     alarm = std::make_unique<Alarm>(*network,*config);
-    motion_sensor = std::make_unique<Motion_Sensor>();
+    motion_sensor = std::make_unique<Motion_Sensor>(*config,*camera);
     addObserver(alarm.get());
     addObserver(this);
 }

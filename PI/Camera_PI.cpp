@@ -24,9 +24,12 @@ Camera_PI::Camera_PI(NetworkServer &server) : recording(false),server(server) {
  * @brief Destructs the Camera_PI object.
  *
  * Frees the FrameBufferAllocator instance created during camera initialization.
+ * Ends any running streams or recording
  */
 
 Camera_PI::~Camera_PI() {
+    if (streaming) stopStreaming();
+    if (recording) stopRecording();
     delete allocator;
 }
 
@@ -438,6 +441,6 @@ void Camera_PI::stopStreaming() {
  * @return true if a recording session is active, false otherwise.
  */
 
-bool Camera_PI::isRecording() {
+bool Camera_PI::isRecording() const {
     return recording;
 }

@@ -35,7 +35,7 @@ wxPanel(parent, wxID_ANY), m_system(system), m_ui(mainFrame), changesMade(false)
 
     PasswordBtn    = new wxButton( innerScrollWindow, wxID_ANY, _("Change Password"),           wxDefaultPosition, wxSize(-1, 50), 0 );
     ClipLenBtn     = new wxButton( innerScrollWindow, wxID_ANY, _("Photo/Image Settings"),      wxDefaultPosition, wxSize(-1, 50), 0 );
-    motionBtn      = new wxButton( innerScrollWindow, wxID_ANY, _("Adjust Motion Sensitivity"), wxDefaultPosition, wxSize(-1, 50), 0 );
+    motionBtn      = new wxButton( innerScrollWindow, wxID_ANY, _("Motion Settings"), wxDefaultPosition, wxSize(-1, 50), 0 );
     alarmConfigBtn = new wxButton( innerScrollWindow, wxID_ANY, _("Alarm Settings"),            wxDefaultPosition, wxSize(-1, 50), 0 );
 
     windowSizer2->Add( PasswordBtn,    0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 10 );
@@ -229,12 +229,12 @@ void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
         clipLabel->SetLabel(wxString::Format("%ds", clipSlider->GetValue()));
     });
 
-    wxStaticBoxSizer* photoSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Photos Per Capture");
+    wxStaticBoxSizer* photoSizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Photos capture frequency");
     wxBoxSizer* photoRowSizer = new wxBoxSizer(wxHORIZONTAL);
     wxSpinCtrl* photoSpin = new wxSpinCtrl(&dlg, wxID_ANY, "3",
                                             wxDefaultPosition, wxDefaultSize,
                                             wxSP_ARROW_KEYS, 1, 20, 3);
-    wxStaticText* photoHint = new wxStaticText(&dlg, wxID_ANY, "photos per trigger event");
+    wxStaticText* photoHint = new wxStaticText(&dlg, wxID_ANY, "Photo per x events");
     photoRowSizer->Add(photoSpin, 0, wxRIGHT, 10);
     photoRowSizer->Add(photoHint, 0, wxALIGN_CENTER_VERTICAL);
     photoSizer->Add(photoRowSizer, 0, wxALL, 8);
@@ -289,36 +289,14 @@ void Config_Panel::onChangeClipLen(wxCommandEvent &event) {
 }
 
 void Config_Panel::onChangeMotion(wxCommandEvent &event) {
-    wxDialog dlg(this, wxID_ANY, "Motion Sensitivity", wxDefaultPosition, wxDefaultSize);
+    wxDialog dlg(this, wxID_ANY, "Motion Settings", wxDefaultPosition, wxDefaultSize);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
     wxCheckBox* alarmOnMotion = new wxCheckBox(&dlg, wxID_ANY, "Sound alarm on motion detection");
     alarmOnMotion->SetValue(m_system->getConfig()->getAlarmOnMotion());
     mainSizer->Add(alarmOnMotion, 0, wxLEFT|wxRIGHT|wxTOP, 15);
 
-    wxStaticBoxSizer* sensitivitySizer = new wxStaticBoxSizer(wxVERTICAL, &dlg, "Motion Sensitivity");
 
-    wxBoxSizer* sliderRowSizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticText* lowLabel  = new wxStaticText(&dlg, wxID_ANY, "Low");
-    wxSlider*     slider    = new wxSlider(&dlg, wxID_ANY, 50, 0, 100,
-                                           wxDefaultPosition, wxSize(200, -1),
-                                           wxSL_HORIZONTAL);
-    wxStaticText* highLabel = new wxStaticText(&dlg, wxID_ANY, "High");
-    sliderRowSizer->Add(lowLabel,  0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 8);
-    sliderRowSizer->Add(slider,    1, wxEXPAND);
-    sliderRowSizer->Add(highLabel, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 8);
-    sensitivitySizer->Add(sliderRowSizer, 0, wxEXPAND|wxALL, 8);
-
-    wxStaticText* valueLabel = new wxStaticText(&dlg, wxID_ANY, "50%",
-                                                 wxDefaultPosition, wxDefaultSize,
-                                                 wxALIGN_CENTER_HORIZONTAL);
-    sensitivitySizer->Add(valueLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM, 8);
-
-    mainSizer->Add(sensitivitySizer, 0, wxEXPAND|wxALL, 15);
-
-    slider->Bind(wxEVT_SLIDER, [&](wxCommandEvent&) {
-        valueLabel->SetLabel(wxString::Format("%d%%", slider->GetValue()));
-    });
 
     wxBoxSizer* btnSizer = new wxBoxSizer(wxHORIZONTAL);
     wxButton* okBtn     = new wxButton(&dlg, wxID_ANY, "Save");
@@ -333,17 +311,15 @@ void Config_Panel::onChangeMotion(wxCommandEvent &event) {
     dlg.Layout();
     dlg.Centre(wxBOTH);
 
-    slider->SetValue(m_system->getConfig()->getSensitivity());
-    valueLabel->SetLabel(wxString::Format("%d%%", m_system->getConfig()->getSensitivity()));
+
 
     okBtn->Bind(wxEVT_BUTTON, [&](wxCommandEvent&) {
         dlg.EndModal(wxID_OK);
     });
 
     if (dlg.ShowModal() == wxID_OK) {
-        m_system->getConfig()->setSensitivity(slider->GetValue());
         m_system->getConfig()->setAlarmOnMotion(alarmOnMotion->GetValue());
-        wxMessageBox("Motion sensitivity saved!", "Success", wxOK|wxICON_INFORMATION);
+        wxMessageBox("Motion settings saved!", "Success", wxOK|wxICON_INFORMATION);
         changesMade = true;
     }
 }

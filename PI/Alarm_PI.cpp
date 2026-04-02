@@ -15,8 +15,7 @@
  * @param server Reference to the NetworkServer instance used for network communication.
  */
 
-Alarm_PI::Alarm_PI(NetworkServer &server) : alarmPlaying(false),server(server) {
-
+Alarm_PI::Alarm_PI(NetworkServer &server) : alarmPlaying(false), server(server) {
 }
 
 /**
@@ -81,6 +80,8 @@ void Alarm_PI::soundAlarm(std::string soundOption) {
 void Alarm_PI::disableAlarm() {
     if (!alarmPlaying) return;
     if (alarmPid > 0) {
+        kill(alarmPid, SIGTERM);  // polite first
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
         kill(alarmPid, SIGKILL);
         waitpid(alarmPid, nullptr, 0);
         alarmPid = -1;

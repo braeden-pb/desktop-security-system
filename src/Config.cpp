@@ -20,7 +20,7 @@ Config::Config(Network &network) : network(network) {
         std::cout << "Failed to read from file.";
         captureMode = false;
         clipSeconds = 0;
-        photosPer = 1;
+        photosPer = 3;
         password = "123";
         alarmSound = "alarm";
         maxAlarmDuration = 60;
@@ -33,7 +33,6 @@ Config::Config(Network &network) : network(network) {
      * @brief Deconstructor method.
      */
 Config::~Config() {
-    authorizedFaces.clear();
 }
 
 

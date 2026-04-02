@@ -36,7 +36,7 @@ public:
     std::string capturePhoto();
     void startRecording();
     void stopRecording();
-    bool isRecording();
+    bool isRecording() const;
     void startStreaming();
     void stopStreaming();
     std::atomic<bool> streaming{false};
