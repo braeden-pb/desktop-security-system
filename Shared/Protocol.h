@@ -15,6 +15,7 @@ enum class System : uint8_t {
 };
 
 enum class Command : uint8_t {
+    None            = 0x00,
     TakePhoto       = 0x01,
     StartClip       = 0x02,
     StopClip        = 0x03,
