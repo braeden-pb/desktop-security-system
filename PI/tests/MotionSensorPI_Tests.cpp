@@ -15,9 +15,7 @@
 class MotionSensorPI_Tests : public ::testing::Test {
 protected:
     void SetUp() override {
-        // Port 0 tells the OS to pick any available port automatically
         server = new NetworkServer(0);
-        // Note: sensitivity=5, sleep=100ms
         motion = new Motion_Sensor_PI(5, 100, *server);
     }
 
@@ -75,14 +73,10 @@ TEST_F(MotionSensorPI_Tests, ISRHandlerTriggersDetection) {
 TEST_F(MotionSensorPI_Tests, ISRRespectsCooldown) {
     motion->activate();
 
-    // Trigger first time
     Motion_Sensor_PI::isrHandler();
 
-    // Attempt to trigger immediately again
-    // The internal lastSent timer should block this
     Motion_Sensor_PI::isrHandler();
 
-    // Since we can't see 'motionPending' directly, we verify the state remains consistent
     EXPECT_TRUE(motion->isMotionDetected());
 }
 
