@@ -1,10 +1,3 @@
-/**
- * @file NetworkServer.cpp
- * @brief Implementation of the NetworkServer class for TCP client-server communication
- *        between the Raspberry Pi and a connected PC.
- * @author evan
- * @date 2026-03-21
- */
 #include "NetworkServer.h"
 /**
  * @brief Constructs a NetworkServer and resolves the device's local IP address.
