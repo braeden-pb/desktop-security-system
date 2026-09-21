@@ -1,7 +1,3 @@
-//
-// Created by evan on 2026-03-24.
-//
-
 #ifndef GROUP55_MOTION_SENSOR_PI_H
 #define GROUP55_MOTION_SENSOR_PI_H
 
