@@ -1,4 +1,4 @@
-# Group 55 — Security System
+# Security System
 
 A C++ desktop security system application built with wxWidgets. The system connects to a Raspberry Pi over a local network to provide live camera streaming, motion detection, alarm triggering with audio playback, photo capture, and a storage browser.
 
