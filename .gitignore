@@ -40,4 +40,10 @@ _deps/           # ← only need this once
 # Fetched lib sources (FetchContent)
 flac-src/
 ogg-src/
-vorbis-src/
+vorbis-src/build/ 
+bin/ 
+*.o 
+*.exe 
+html/ 
+PI/build/ 
+PI/pi-camera 
