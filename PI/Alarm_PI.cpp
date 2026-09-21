@@ -1,9 +1,3 @@
-/**
-* @file Alarm_PI.cpp
- * @brief Implementation of the Alarm_PI class for managing alarm sounds on Raspberry Pi.
- * @author Evan,Rushd
- * @date 2026-03-30
- */
 #include "Alarm_PI.h"
 
 /**
