@@ -1,3 +1,10 @@
+/**
+ * @file Motion_Sensor_PI.cpp
+ * @brief Implementation of the Motion_Sensor_PI class for PIR motion detection on Raspberry Pi.
+ * @author evan, Rushd
+ * @date 2026-03-24
+ */
+
 #include "Motion_Sensor_PI.h"
 
 /**
